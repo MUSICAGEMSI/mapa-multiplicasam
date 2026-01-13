@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hortolândia – Mapa Interativo</title>
+<title>Hortolândia – Premium Experience</title>
 
 <style>
 * {
@@ -14,13 +14,13 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0a0a0a;
+    background: #000;
     color: #fff;
     overflow: hidden;
     height: 100vh;
 }
 
-/* ========== FUNDO ========== */
+/* ========== FUNDO GRADIENTE ANIMADO (LEVE) ========== */
 #map-container {
     position: relative;
     width: 100vw;
@@ -28,7 +28,26 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0a0a0a;
+    background: 
+        radial-gradient(ellipse at 20% 30%, rgba(30, 58, 138, 0.15), transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(109, 40, 217, 0.12), transparent 50%),
+        #0a0a0a;
+    animation: bgShift 30s ease-in-out infinite alternate;
+}
+
+@keyframes bgShift {
+    0% { 
+        background: 
+            radial-gradient(ellipse at 20% 30%, rgba(30, 58, 138, 0.15), transparent 50%),
+            radial-gradient(ellipse at 80% 70%, rgba(109, 40, 217, 0.12), transparent 50%),
+            #0a0a0a;
+    }
+    100% { 
+        background: 
+            radial-gradient(ellipse at 70% 60%, rgba(30, 58, 138, 0.18), transparent 50%),
+            radial-gradient(ellipse at 30% 40%, rgba(109, 40, 217, 0.15), transparent 50%),
+            #0a0a0a;
+    }
 }
 
 /* ========== WRAPPER DO MAPA ========== */
@@ -36,7 +55,7 @@ body {
     position: relative;
     z-index: 10;
     cursor: grab;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #map-wrapper:active {
@@ -47,169 +66,309 @@ body {
     transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ========== SVG ========== */
+/* ========== SVG COM EFEITO PREMIUM ========== */
 #city-map {
     height: 80vh;
-    opacity: 0.95;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.15));
+    opacity: 0.96;
+    filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.2));
+    transition: filter 0.3s ease;
 }
 
-/* ========== MARCADORES ========== */
+#city-map:hover {
+    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.3));
+}
+
+/* ========== MARCADORES PREMIUM ========== */
 .marker {
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: rgba(59, 130, 246, 0.9);
-    border: 3px solid white;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.85));
+    border: 3px solid rgba(255, 255, 255, 0.95);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 21px;
     cursor: pointer;
     transform: translate(-50%, -50%);
-    transition: all 0.3s ease;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(59, 130, 246, 0.4);
+    animation: markerFloat 3.5s ease-in-out infinite;
+}
+
+@keyframes markerFloat {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50% { transform: translate(-50%, -50%) translateY(-5px); }
+}
+
+.marker::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .marker:hover {
-    transform: translate(-50%, -50%) scale(1.3);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+    transform: translate(-50%, -50%) scale(1.35);
+    box-shadow: 
+        0 6px 25px rgba(0, 0, 0, 0.8),
+        0 0 35px rgba(59, 130, 246, 0.7),
+        0 0 50px rgba(59, 130, 246, 0.4);
+    z-index: 200;
+    animation: none;
+}
+
+.marker:hover::before {
+    opacity: 1;
+    animation: ripple 1.5s ease-out infinite;
+}
+
+@keyframes ripple {
+    0% {
+        inset: -8px;
+        opacity: 0.5;
+    }
+    100% {
+        inset: -25px;
+        opacity: 0;
+    }
 }
 
 .marker.active {
-    background: rgba(239, 68, 68, 0.9);
-    border-color: #fff;
-    transform: translate(-50%, -50%) scale(1.2);
-    animation: pulse 1.5s infinite;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.9));
+    border-color: rgba(255, 255, 255, 1);
+    transform: translate(-50%, -50%) scale(1.25);
+    animation: activePulse 2s ease-in-out infinite;
+    box-shadow: 
+        0 6px 25px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(239, 68, 68, 0.8),
+        0 0 45px rgba(239, 68, 68, 0.5);
+    z-index: 150;
 }
 
-@keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+@keyframes activePulse {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1.25);
+        box-shadow: 
+            0 6px 25px rgba(0, 0, 0, 0.8),
+            0 0 30px rgba(239, 68, 68, 0.8),
+            0 0 45px rgba(239, 68, 68, 0.5);
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.3);
+        box-shadow: 
+            0 8px 30px rgba(0, 0, 0, 0.9),
+            0 0 40px rgba(239, 68, 68, 1),
+            0 0 60px rgba(239, 68, 68, 0.6);
+    }
 }
 
-/* ========== GLASS UI ========== */
+/* ========== GLASS MORPHISM ========== */
 .glass {
-    background: rgba(15, 15, 15, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(25px) saturate(150%);
+    -webkit-backdrop-filter: blur(25px) saturate(150%);
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.8),
+        inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
 /* ========== HEADER ========== */
 #header {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 16px 24px;
+    top: 22px;
+    right: 22px;
+    padding: 18px 26px;
     z-index: 1000;
+    animation: slideInDown 0.6s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 #header h2 {
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 700;
     margin-bottom: 4px;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 6s ease infinite;
+}
+
+@keyframes gradientFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 #header p {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.5);
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
 /* ========== SIDEBAR ========== */
 #sidebar {
     position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 300px;
-    max-height: calc(100vh - 40px);
-    padding: 20px;
+    top: 22px;
+    left: 22px;
+    width: 310px;
+    max-height: calc(100vh - 44px);
+    padding: 22px;
     overflow-y: auto;
     z-index: 1000;
+    animation: slideInLeft 0.6s ease;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 #sidebar h3 {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    color: #fff;
 }
 
 .total-count {
     display: inline-block;
-    background: rgba(59, 130, 246, 0.2);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(37, 99, 235, 0.15));
     border: 1px solid rgba(59, 130, 246, 0.4);
     color: #60a5fa;
-    padding: 4px 12px;
-    border-radius: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
     font-size: 11px;
     font-weight: 600;
     margin-bottom: 16px;
+    letter-spacing: 0.5px;
 }
 
 .bairro-item {
-    padding: 12px 14px;
-    margin-bottom: 6px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+    padding: 13px 15px;
+    margin-bottom: 7px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 11px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.bairro-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, #3b82f6, #6366f1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .bairro-item:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(59, 130, 246, 0.4);
-    transform: translateX(5px);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateX(6px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
+}
+
+.bairro-item:hover::before {
+    opacity: 1;
 }
 
 .bairro-item.active {
-    background: rgba(59, 130, 246, 0.2);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.12));
     border-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+}
+
+.bairro-item.active::before {
+    opacity: 1;
+    width: 4px;
 }
 
 .bairro-icon {
-    font-size: 18px;
-    margin-right: 10px;
+    font-size: 19px;
+    margin-right: 11px;
+    display: inline-block;
 }
 
 .bairro-nome {
     font-size: 13px;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
 }
 
 #sidebar::-webkit-scrollbar {
-    width: 6px;
+    width: 7px;
 }
 
 #sidebar::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
 }
 
 #sidebar::-webkit-scrollbar-thumb {
-    background: rgba(59, 130, 246, 0.3);
-    border-radius: 3px;
+    background: rgba(59, 130, 246, 0.35);
+    border-radius: 4px;
+    transition: background 0.3s;
 }
 
-/* ========== CARD ========== */
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.55);
+}
+
+/* ========== CARD DE INFORMAÇÕES ========== */
 #info-card {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 360px;
+    bottom: 32px;
+    right: 32px;
+    width: 370px;
     padding: 0;
     display: none;
     z-index: 1000;
-    animation: slideUp 0.4s ease;
+    animation: slideUpSmooth 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
 
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes slideUpSmooth {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 #info-card.visible {
@@ -217,134 +376,186 @@ body {
 }
 
 .card-header {
-    padding: 18px 22px;
+    padding: 20px 24px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(59, 130, 246, 0.1);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.08));
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 #card-title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
+    color: #fff;
 }
 
 .close-btn {
     background: rgba(255, 255, 255, 0.08);
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: #fff;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    font-size: 20px;
+    font-size: 21px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .close-btn:hover {
-    background: rgba(239, 68, 68, 0.8);
+    background: rgba(239, 68, 68, 0.85);
+    border-color: rgba(239, 68, 68, 1);
     transform: rotate(90deg);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
 .card-icon {
     width: 100%;
-    height: 140px;
+    height: 150px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 64px;
+    font-size: 68px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-icon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), transparent 60%);
+    animation: shine 4s ease-in-out infinite;
+}
+
+@keyframes shine {
+    0%, 100% { 
+        transform: translate(-20%, -20%) scale(1);
+        opacity: 0;
+    }
+    50% { 
+        transform: translate(0%, 0%) scale(1.5);
+        opacity: 1;
+    }
 }
 
 .card-content {
-    padding: 20px 22px;
+    padding: 22px 24px;
 }
 
 #card-description {
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.7;
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 18px;
 }
 
 .ver-dados-btn {
     width: 100%;
-    padding: 14px;
-    background: rgba(59, 130, 246, 0.9);
+    padding: 15px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
     color: #fff;
     border: none;
-    border-radius: 10px;
+    border-radius: 11px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    letter-spacing: 0.5px;
 }
 
 .ver-dados-btn:hover {
-    background: rgba(59, 130, 246, 1);
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.5);
 }
 
-/* ========== CONTROLES ========== */
+.ver-dados-btn:active {
+    transform: translateY(0);
+}
+
+/* ========== CONTROLES DE ZOOM ========== */
 #zoom-controls {
     position: fixed;
-    bottom: 30px;
-    left: 30px;
+    bottom: 32px;
+    left: 32px;
     display: flex;
-    gap: 10px;
+    gap: 11px;
     z-index: 1000;
+    animation: slideInUp 0.6s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .zoom-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(15, 15, 15, 0.85);
+    width: 50px;
+    height: 50px;
+    border-radius: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 15, 15, 0.8);
     backdrop-filter: blur(20px);
     color: #fff;
-    font-size: 22px;
+    font-size: 23px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
 }
 
 .zoom-btn:hover {
     background: rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.5);
-    transform: scale(1.1);
+    border-color: rgba(59, 130, 246, 0.6);
+    transform: scale(1.12);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+.zoom-btn:active {
+    transform: scale(1.05);
 }
 
 /* ========== RESPONSIVO ========== */
 @media (max-width: 768px) {
     #sidebar {
-        width: 260px;
-        left: 10px;
-        top: 10px;
+        width: 270px;
+        left: 12px;
+        top: 12px;
     }
 
     #header {
-        right: 10px;
-        top: 10px;
+        right: 12px;
+        top: 12px;
     }
 
     #info-card {
-        width: calc(100% - 20px);
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
+        width: calc(100% - 24px);
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
     }
 
     #zoom-controls {
-        left: 10px;
-        bottom: 10px;
+        left: 12px;
+        bottom: 12px;
+    }
+
+    #city-map {
+        height: 75vh;
     }
 }
 </style>
@@ -355,7 +566,7 @@ body {
 <!-- HEADER -->
 <div id="header" class="glass">
     <h2>🗺️ Hortolândia</h2>
-    <p>Mapa Interativo</p>
+    <p>Premium Experience</p>
 </div>
 
 <!-- CONTAINER DO MAPA -->
@@ -387,14 +598,14 @@ body {
 
 <!-- CONTROLES -->
 <div id="zoom-controls">
-    <button class="zoom-btn" onclick="zoom(1.3)">+</button>
-    <button class="zoom-btn" onclick="zoom(0.77)">−</button>
-    <button class="zoom-btn" onclick="resetZoom()">⟲</button>
+    <button class="zoom-btn" onclick="zoom(1.3)" title="Aumentar Zoom">+</button>
+    <button class="zoom-btn" onclick="zoom(0.77)" title="Diminuir Zoom">−</button>
+    <button class="zoom-btn" onclick="resetZoom()" title="Resetar Visualização">⟲</button>
 </div>
 
 <script>
 // ============================================
-// DADOS DAS 38 LOCALIDADES
+// DADOS DAS 38 LOCALIDADES (POSIÇÕES EXATAS)
 // ============================================
 const bairros = [
     {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", x: 680, y: 441},
@@ -502,13 +713,17 @@ function focarBairro(index) {
     if (marker) marker.classList.add('active');
     
     const items = document.querySelectorAll('.bairro-item');
-    if (items[index]) items[index].classList.add('active');
+    if (items[index]) {
+        items[index].classList.add('active');
+        // Scroll suave até o item
+        items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
     
-    // Zoom
+    // Zoom suave
     const wrapper = document.getElementById("map-wrapper");
     wrapper.classList.add('zooming');
     
-    scale = 1.6;
+    scale = 1.7;
     translateX = (window.innerWidth / 2) - (bairro.x * scale);
     translateY = (window.innerHeight / 2) - (bairro.y * scale);
     
@@ -559,6 +774,11 @@ function resetZoom() {
     translateX = 0;
     translateY = 0;
     updateTransform();
+    
+    // Limpar seleção
+    document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
+    fecharCard();
 }
 
 function updateTransform() {
@@ -595,14 +815,94 @@ document.addEventListener("mouseup", () => {
 });
 
 // ============================================
+// ZOOM COM SCROLL DO MOUSE
+// ============================================
+mapWrapper.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    const newScale = scale * delta;
+    
+    if (newScale >= 0.5 && newScale <= 3) {
+        // Zoom em direção ao cursor
+        const rect = mapWrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const xs = (x - translateX) / scale;
+        const ys = (y - translateY) / scale;
+        
+        scale = newScale;
+        
+        translateX = x - xs * scale;
+        translateY = y - ys * scale;
+        
+        updateTransform();
+    }
+}, { passive: false });
+
+// ============================================
+// TOUCH SUPPORT (MOBILE)
+// ============================================
+let touchStartDistance = 0;
+let touchStartScale = 1;
+
+mapWrapper.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) {
+        touchStartDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        touchStartScale = scale;
+    } else if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - translateX;
+        startY = e.touches[0].clientY - translateY;
+    }
+});
+
+mapWrapper.addEventListener("touchmove", (e) => {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        const distance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        const newScale = touchStartScale * (distance / touchStartDistance);
+        if (newScale >= 0.5 && newScale <= 3) {
+            scale = newScale;
+            updateTransform();
+        }
+    } else if (isDragging && e.touches.length === 1) {
+        e.preventDefault();
+        translateX = e.touches[0].clientX - startX;
+        translateY = e.touches[0].clientY - startY;
+        updateTransform();
+    }
+}, { passive: false });
+
+mapWrapper.addEventListener("touchend", () => {
+    isDragging = false;
+});
+
+// ============================================
 // INICIALIZAÇÃO
 // ============================================
 window.onload = () => {
     renderizarLista();
     criarMarcadores();
-    console.log('🗺️ Hortolândia carregado!');
-    console.log(`📍 ${bairros.length} localidades`);
+    console.log('🗺️ Hortolândia Premium carregado!');
+    console.log(`📍 ${bairros.length} localidades mapeadas`);
+    console.log('✨ Experiência otimizada e responsiva');
 };
+
+// ============================================
+// ANIMAÇÃO SUAVE DO SVG (OPCIONAL)
+// ============================================
+const svgImg = document.getElementById('city-map');
+svgImg.addEventListener('load', () => {
+    console.log('✅ Mapa SVG carregado com sucesso');
+});
 </script>
 
 </body>
