@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hortolândia – Mapa Interativo Premium</title>
+<title>Hortolândia – Mapa Interativo com Fotos</title>
 
 <style>
 * {
@@ -86,18 +86,17 @@ body {
     }
 }
 
-/* ========== MARCADORES ESTÁTICOS ========== */
+/* ========== MARCADORES COM IMAGEM ========== */
 .marker {
     position: absolute;
-    width: 42px;
-    height: 42px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.85));
     border: 3px solid rgba(255, 255, 255, 0.95);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 21px;
     cursor: pointer;
     transform: translate(-50%, -50%);
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -105,6 +104,20 @@ body {
     box-shadow: 
         0 4px 15px rgba(0, 0, 0, 0.6),
         0 0 20px rgba(59, 130, 246, 0.4);
+    overflow: hidden;
+}
+
+/* Imagem dentro do marcador */
+.marker-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Emoji fallback se não houver imagem */
+.marker-emoji {
+    font-size: 22px;
 }
 
 .marker::before {
@@ -115,10 +128,11 @@ body {
     background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%);
     opacity: 0;
     transition: opacity 0.3s ease;
+    z-index: -1;
 }
 
 .marker:hover {
-    transform: translate(-50%, -50%) scale(1.35);
+    transform: translate(-50%, -50%) scale(1.4);
     box-shadow: 
         0 6px 25px rgba(0, 0, 0, 0.8),
         0 0 35px rgba(59, 130, 246, 0.7),
@@ -145,7 +159,7 @@ body {
 .marker.active {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.9));
     border-color: rgba(255, 255, 255, 1);
-    transform: translate(-50%, -50%) scale(1.25);
+    transform: translate(-50%, -50%) scale(1.3);
     box-shadow: 
         0 6px 25px rgba(0, 0, 0, 0.8),
         0 0 30px rgba(239, 68, 68, 0.8),
@@ -279,6 +293,8 @@ body {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
 }
 
 .bairro-item::before {
@@ -315,16 +331,28 @@ body {
     width: 4px;
 }
 
+.bairro-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    margin-right: 12px;
+    object-fit: cover;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    flex-shrink: 0;
+}
+
 .bairro-icon {
     font-size: 19px;
     margin-right: 11px;
     display: inline-block;
+    flex-shrink: 0;
 }
 
 .bairro-nome {
     font-size: 13px;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.95);
+    flex: 1;
 }
 
 #sidebar::-webkit-scrollbar {
@@ -351,7 +379,7 @@ body {
     position: fixed;
     bottom: 32px;
     right: 32px;
-    width: 370px;
+    width: 420px;
     padding: 0;
     display: none;
     z-index: 1000;
@@ -411,14 +439,23 @@ body {
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
+/* Imagem principal do card */
+.card-image {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Fallback gradient se não houver imagem */
 .card-icon {
     width: 100%;
-    height: 150px;
+    height: 240px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 68px;
+    font-size: 72px;
     position: relative;
     overflow: hidden;
 }
@@ -528,6 +565,35 @@ body {
     transform: scale(1.05);
 }
 
+/* ========== TOGGLE DE MODO ========== */
+#mode-toggle {
+    position: fixed;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    animation: slideInDown 0.6s ease;
+}
+
+.toggle-btn {
+    padding: 10px 20px;
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.toggle-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #fff;
+}
+
 /* ========== RESPONSIVO ========== */
 @media (max-width: 768px) {
     #sidebar {
@@ -556,6 +622,12 @@ body {
     #svg-container {
         height: 75vh;
     }
+
+    #mode-toggle {
+        top: auto;
+        bottom: 100px;
+        left: 50%;
+    }
 }
 </style>
 </head>
@@ -565,7 +637,14 @@ body {
 <!-- HEADER -->
 <div id="header" class="glass">
     <h2>🗺️ Hortolândia</h2>
-    <p>Mapa Interativo Premium</p>
+    <p>Mapa com Fotos</p>
+</div>
+
+<!-- TOGGLE DE MODO -->
+<div id="mode-toggle">
+    <button class="toggle-btn" onclick="toggleMarkerMode()">
+        <span id="mode-text">📸 Modo: Imagens</span>
+    </button>
 </div>
 
 <!-- CONTAINER DO MAPA -->
@@ -588,7 +667,7 @@ body {
         <h3 id="card-title">Localidade</h3>
         <button class="close-btn" onclick="fecharCard()">×</button>
     </div>
-    <div class="card-icon" id="card-icon">🏛️</div>
+    <div id="card-media-container"></div>
     <div class="card-content">
         <p id="card-description">Informações da localidade</p>
         <button class="ver-dados-btn" onclick="verDados()">VER DADOS COMPLETOS</button>
@@ -604,6 +683,21 @@ body {
 
 <script>
 // ============================================
+// CONFIGURAÇÃO DE MODO
+// ============================================
+let useImageMarkers = true; // true = usa imagens, false = usa emojis
+
+function toggleMarkerMode() {
+    useImageMarkers = !useImageMarkers;
+    document.getElementById('mode-text').textContent = 
+        useImageMarkers ? '📸 Modo: Imagens' : '🏛️ Modo: Emojis';
+    
+    // Recriar marcadores
+    document.querySelectorAll('.marker').forEach(m => m.remove());
+    criarMarcadores();
+}
+
+// ============================================
 // CARREGAR E ANIMAR SVG
 // ============================================
 fetch('assets/hortolandia-roads.svg')
@@ -613,9 +707,8 @@ fetch('assets/hortolandia-roads.svg')
         const svgElement = document.querySelector('#svg-container svg');
         if (svgElement) {
             svgElement.id = "city-map";
-            console.log('✅ SVG carregado - animação de cores ativada');
+            console.log('✅ SVG carregado');
         }
-        // Criar marcadores após SVG carregar
         criarMarcadores();
     })
     .catch(error => {
@@ -623,47 +716,47 @@ fetch('assets/hortolandia-roads.svg')
     });
 
 // ============================================
-// DADOS DAS 38 LOCALIDADES
+// DADOS DAS 38 LOCALIDADES COM IMAGENS
 // ============================================
 const bairros = [
-    {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", x: 680, y: 441},
-    {nome: "Jardim Terras de Santo Antônio", descricao: "Bairro residencial com boa infraestrutura.", x: 735, y: 402},
-    {nome: "Jardim Adelaide", descricao: "Região tranquila e bem localizada.", x: 778, y: 464},
-    {nome: "Jardim Santa Izabel", descricao: "Bairro em desenvolvimento constante.", x: 809, y: 389},
-    {nome: "Jardim Novo Ângulo", descricao: "Área residencial moderna.", x: 805, y: 276},
-    {nome: "Vila Inema", descricao: "Comunidade tradicional da cidade.", x: 771, y: 326},
-    {nome: "Jardim Santa Clara", descricao: "Bairro com forte identidade local.", x: 679, y: 341},
-    {nome: "Jardim Mirante", descricao: "Região com boa vista panorâmica.", x: 644, y: 306},
-    {nome: "Jardim do Bosque", descricao: "Área arborizada e residencial.", x: 681, y: 288},
-    {nome: "Jardim Santana", descricao: "Bairro familiar consolidado.", x: 600, y: 245},
-    {nome: "Amanda I", descricao: "Primeira fase do conjunto Amanda.", x: 480, y: 365},
-    {nome: "Amanda II", descricao: "Segunda fase do conjunto Amanda.", x: 450, y: 437},
-    {nome: "Amanda III", descricao: "Terceira fase do conjunto Amanda.", x: 411, y: 372},
-    {nome: "Amanda IV", descricao: "Quarta fase do conjunto Amanda.", x: 447, y: 332},
-    {nome: "Chácaras Recreio 2000", descricao: "Área de chácaras e lazer.", x: 349, y: 384},
-    {nome: "Jardim das Colinas", descricao: "Bairro planejado em região elevada.", x: 517, y: 136},
-    {nome: "Parque do Horto", descricao: "Região com áreas verdes preservadas.", x: 610, y: 93},
-    {nome: "Parque Orestes Ôngaro", descricao: "Bairro homenagem ao pioneiro local.", x: 546, y: 59},
-    {nome: "Terras de Santa Maria", descricao: "Loteamento moderno e planejado.", x: 510, y: 116},
-    {nome: "Recanto do Sol", descricao: "Área residencial tranquila.", x: 651, y: 142},
-    {nome: "Jardim São Jorge", descricao: "Comunidade tradicional da região.", x: 647, y: 177},
-    {nome: "Nova Hortolândia", descricao: "Área de expansão urbana.", x: 615, y: 144},
-    {nome: "Jardim Santa Luzia", descricao: "Bairro com forte presença comunitária.", x: 676, y: 213},
-    {nome: "Jardim Nova Europa", descricao: "Região em crescimento populacional.", x: 777, y: 181},
-    {nome: "Vila Real", descricao: "Comunidade estabelecida há décadas.", x: 567, y: 129},
-    {nome: "Jardim Novo Cambuí", descricao: "Bairro planejado e moderno.", x: 558, y: 297},
-    {nome: "Residencial BellaVille", descricao: "Condomínio residencial de alto padrão.", x: 525, y: 35},
-    {nome: "Jardim São Pedro", descricao: "Área residencial consolidada.", x: 605, y: 427},
-    {nome: "Residencial João Luiz", descricao: "Conjunto habitacional popular.", x: 679, y: 391},
-    {nome: "Jardim Aline", descricao: "Bairro familiar em crescimento.", x: 877, y: 180},
-    {nome: "Jardim São Sebastião", descricao: "Região com infraestrutura completa.", x: 576, y: 370},
-    {nome: "Jardim Auxiliadora", descricao: "Comunidade tradicional da cidade.", x: 629, y: 121},
-    {nome: "Residencial Firenze", descricao: "Condomínio moderno e planejado.", x: 456, y: 248},
-    {nome: "Jardim Novo Horizonte", descricao: "Área em expansão urbana.", x: 342, y: 279},
-    {nome: "Jardim Interlagos", descricao: "Bairro próximo a áreas de lazer.", x: 606, y: 350},
-    {nome: "Jardim Boa Vista/Stella", descricao: "Região elevada com boa vista.", x: 566, y: 469},
-    {nome: "Jardim Nova América", descricao: "Bairro residencial em desenvolvimento.", x: 833, y: 317},
-    {nome: "Estrada do Furlan, 1121", descricao: "Região rural em transição urbana.", x: 746, y: 274}
+    {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", x: 680, y: 441, imagem: "assets/fotos/jardim-santa-esmeralda.png"},
+    {nome: "Jardim Terras de Santo Antônio", descricao: "Bairro residencial com boa infraestrutura.", x: 735, y: 402, imagem: "assets/fotos/terras-santo-antonio.png"},
+    {nome: "Jardim Adelaide", descricao: "Região tranquila e bem localizada.", x: 778, y: 464, imagem: "assets/fotos/jardim-adelaide.png"},
+    {nome: "Jardim Santa Izabel", descricao: "Bairro em desenvolvimento constante.", x: 809, y: 389, imagem: "assets/fotos/jardim-santa-izabel.png"},
+    {nome: "Jardim Novo Ângulo", descricao: "Área residencial moderna.", x: 805, y: 276, imagem: "assets/fotos/jardim-novo-angulo.png"},
+    {nome: "Vila Inema", descricao: "Comunidade tradicional da cidade.", x: 771, y: 326, imagem: "assets/fotos/vila-inema.png"},
+    {nome: "Jardim Santa Clara", descricao: "Bairro com forte identidade local.", x: 679, y: 341, imagem: "assets/fotos/jardim-santa-clara.png"},
+    {nome: "Jardim Mirante", descricao: "Região com boa vista panorâmica.", x: 644, y: 306, imagem: "assets/fotos/jardim-mirante.png"},
+    {nome: "Jardim do Bosque", descricao: "Área arborizada e residencial.", x: 681, y: 288, imagem: "assets/fotos/jardim-do-bosque.png"},
+    {nome: "Jardim Santana", descricao: "Bairro familiar consolidado.", x: 600, y: 245, imagem: "assets/fotos/jardim-santana.png"},
+    {nome: "Amanda I", descricao: "Primeira fase do conjunto Amanda.", x: 480, y: 365, imagem: "assets/fotos/amanda-1.png"},
+    {nome: "Amanda II", descricao: "Segunda fase do conjunto Amanda.", x: 450, y: 437, imagem: "assets/fotos/amanda-2.png"},
+    {nome: "Amanda III", descricao: "Terceira fase do conjunto Amanda.", x: 411, y: 372, imagem: "assets/fotos/amanda-3.png"},
+    {nome: "Amanda IV", descricao: "Quarta fase do conjunto Amanda.", x: 447, y: 332, imagem: "assets/fotos/amanda-4.png"},
+    {nome: "Chácaras Recreio 2000", descricao: "Área de chácaras e lazer.", x: 349, y: 384, imagem: "assets/fotos/chacaras-recreio-2000.png"},
+    {nome: "Jardim das Colinas", descricao: "Bairro planejado em região elevada.", x: 517, y: 136, imagem: "assets/fotos/jardim-das-colinas.png"},
+    {nome: "Parque do Horto", descricao: "Região com áreas verdes preservadas.", x: 610, y: 93, imagem: "assets/fotos/parque-do-horto.png"},
+    {nome: "Parque Orestes Ôngaro", descricao: "Bairro homenagem ao pioneiro local.", x: 546, y: 59, imagem: "assets/fotos/parque-orestes-ongaro.png"},
+    {nome: "Terras de Santa Maria", descricao: "Loteamento moderno e planejado.", x: 510, y: 116, imagem: "assets/fotos/terras-santa-maria.png"},
+    {nome: "Recanto do Sol", descricao: "Área residencial tranquila.", x: 651, y: 142, imagem: "assets/fotos/recanto-do-sol.png"},
+    {nome: "Jardim São Jorge", descricao: "Comunidade tradicional da região.", x: 647, y: 177, imagem: "assets/fotos/jardim-sao-jorge.png"},
+    {nome: "Nova Hortolândia", descricao: "Área de expansão urbana.", x: 615, y: 144, imagem: "assets/fotos/nova-hortolandia.png"},
+    {nome: "Jardim Santa Luzia", descricao: "Bairro com forte presença comunitária.", x: 676, y: 213, imagem: "assets/fotos/jardim-santa-luzia.png"},
+    {nome: "Jardim Nova Europa", descricao: "Região em crescimento populacional.", x: 777, y: 181, imagem: "assets/fotos/jardim-nova-europa.png"},
+    {nome: "Vila Real", descricao: "Comunidade estabelecida há décadas.", x: 567, y: 129, imagem: "assets/fotos/vila-real.png"},
+    {nome: "Jardim Novo Cambuí", descricao: "Bairro planejado e moderno.", x: 558, y: 297, imagem: "assets/fotos/jardim-novo-cambui.png"},
+    {nome: "Residencial BellaVille", descricao: "Condomínio residencial de alto padrão.", x: 525, y: 35, imagem: "assets/fotos/residencial-bellaville.png"},
+    {nome: "Jardim São Pedro", descricao: "Área residencial consolidada.", x: 605, y: 427, imagem: "assets/fotos/jardim-sao-pedro.png"},
+    {nome: "Residencial João Luiz", descricao: "Conjunto habitacional popular.", x: 679, y: 391, imagem: "assets/fotos/residencial-joao-luiz.png"},
+    {nome: "Jardim Aline", descricao: "Bairro familiar em crescimento.", x: 877, y: 180, imagem: "assets/fotos/jardim-aline.png"},
+    {nome: "Jardim São Sebastião", descricao: "Região com infraestrutura completa.", x: 576, y: 370, imagem: "assets/fotos/jardim-sao-sebastiao.png"},
+    {nome: "Jardim Auxiliadora", descricao: "Comunidade tradicional da cidade.", x: 629, y: 121, imagem: "assets/fotos/jardim-auxiliadora.png"},
+    {nome: "Residencial Firenze", descricao: "Condomínio moderno e planejado.", x: 456, y: 248, imagem: "assets/fotos/residencial-firenze.png"},
+    {nome: "Jardim Novo Horizonte", descricao: "Área em expansão urbana.", x: 342, y: 279, imagem: "assets/fotos/jardim-novo-horizonte.png"},
+    {nome: "Jardim Interlagos", descricao: "Bairro próximo a áreas de lazer.", x: 606, y: 350, imagem: "assets/fotos/jardim-interlagos.png"},
+    {nome: "Jardim Boa Vista/Stella", descricao: "Região elevada com boa vista.", x: 566, y: 469, imagem: "assets/fotos/jardim-boa-vista-stella.png"},
+    {nome: "Jardim Nova América", descricao: "Bairro residencial em desenvolvimento.", x: 833, y: 317, imagem: "assets/fotos/jardim-nova-america.png"},
+    {nome: "Estrada do Furlan, 1121", descricao: "Região rural em transição urbana.", x: 746, y: 274, imagem: "assets/fotos/estrada-furlan.png"}
 ];
 
 // ============================================
@@ -686,10 +779,21 @@ function renderizarLista() {
     bairros.forEach((bairro, index) => {
         const item = document.createElement("div");
         item.className = "bairro-item";
-        item.innerHTML = `
-            <span class="bairro-icon">🏛️</span>
-            <span class="bairro-nome">${bairro.nome}</span>
-        `;
+        
+        if (useImageMarkers && bairro.imagem) {
+            item.innerHTML = `
+                <img src="${bairro.imagem}" alt="${bairro.nome}" class="bairro-thumb" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                <span class="bairro-icon" style="display: none;">🏛️</span>
+                <span class="bairro-nome">${bairro.nome}</span>
+            `;
+        } else {
+            item.innerHTML = `
+                <span class="bairro-icon">🏛️</span>
+                <span class="bairro-nome">${bairro.nome}</span>
+            `;
+        }
+        
         item.onclick = () => focarBairro(index);
         lista.appendChild(item);
     });
@@ -705,13 +809,37 @@ function criarMarcadores() {
         const marker = document.createElement("div");
         marker.className = "marker";
         marker.id = `marker-${index}`;
-        marker.textContent = "🏛️";
         marker.style.left = `${bairro.x}px`;
         marker.style.top = `${bairro.y}px`;
+        
+        if (useImageMarkers && bairro.imagem) {
+            // Usar imagem como marcador
+            const img = document.createElement("img");
+            img.src = bairro.imagem;
+            img.alt = bairro.nome;
+            img.className = "marker-image";
+            img.onerror = function() {
+                // Se a imagem falhar, usar emoji
+                this.remove();
+                const emoji = document.createElement("span");
+                emoji.className = "marker-emoji";
+                emoji.textContent = "🏛️";
+                marker.appendChild(emoji);
+            };
+            marker.appendChild(img);
+        } else {
+            // Usar emoji
+            const emoji = document.createElement("span");
+            emoji.className = "marker-emoji";
+            emoji.textContent = "🏛️";
+            marker.appendChild(emoji);
+        }
+        
         marker.onclick = (e) => {
             e.stopPropagation();
             focarBairro(index);
         };
+        
         document.getElementById("map-wrapper").appendChild(marker);
     });
 }
@@ -722,11 +850,9 @@ function criarMarcadores() {
 function focarBairro(index) {
     const bairro = bairros[index];
     
-    // Remover active
     document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
     document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
     
-    // Adicionar active
     const marker = document.getElementById(`marker-${index}`);
     if (marker) marker.classList.add('active');
     
@@ -736,7 +862,6 @@ function focarBairro(index) {
         items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     
-    // Zoom suave
     const wrapper = document.getElementById("map-wrapper");
     wrapper.classList.add('zooming');
     
@@ -748,19 +873,31 @@ function focarBairro(index) {
     
     setTimeout(() => wrapper.classList.remove('zooming'), 1000);
     
-    // Mostrar card
     mostrarCard(bairro);
     bairroAtivo = bairro;
 }
 
 // ============================================
-// CARD
+// CARD COM IMAGEM
 // ============================================
 function mostrarCard(bairro) {
     const card = document.getElementById("info-card");
+    const mediaContainer = document.getElementById("card-media-container");
+    
     document.getElementById("card-title").textContent = bairro.nome;
-    document.getElementById("card-icon").textContent = "🏛️";
     document.getElementById("card-description").textContent = bairro.descricao;
+    
+    // Mostrar imagem ou emoji
+    if (bairro.imagem) {
+        mediaContainer.innerHTML = `
+            <img src="${bairro.imagem}" alt="${bairro.nome}" class="card-image"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="card-icon" style="display: none;">🏛️</div>
+        `;
+    } else {
+        mediaContainer.innerHTML = `<div class="card-icon">🏛️</div>`;
+    }
+    
     card.classList.add("visible");
 }
 
@@ -831,7 +968,7 @@ document.addEventListener("mouseup", () => {
 });
 
 // ============================================
-// ZOOM COM SCROLL DO MOUSE
+// ZOOM COM SCROLL
 // ============================================
 mapWrapper.addEventListener("wheel", (e) => {
     e.preventDefault();
@@ -857,7 +994,7 @@ mapWrapper.addEventListener("wheel", (e) => {
 }, { passive: false });
 
 // ============================================
-// TOUCH SUPPORT (MOBILE)
+// TOUCH SUPPORT
 // ============================================
 let touchStartDistance = 0;
 let touchStartScale = 1;
@@ -905,9 +1042,9 @@ mapWrapper.addEventListener("touchend", () => {
 // ============================================
 window.onload = () => {
     renderizarLista();
-    console.log('🗺️ Hortolândia Premium carregado!');
+    console.log('🗺️ Hortolândia com Fotos carregado!');
     console.log(`📍 ${bairros.length} localidades mapeadas`);
-    console.log('✨ Animação de cores nas estradas ativada');
+    console.log('📸 Sistema de imagens configurado');
 };
 </script>
 
