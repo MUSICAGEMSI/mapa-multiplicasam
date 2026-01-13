@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hortolândia – Mapa Interativo</title>
+<title>Hortolândia – Ultra Cinema Experience</title>
 
 <style>
 * {
@@ -14,13 +14,13 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0a0a0a;
+    background: #000;
     color: #fff;
     overflow: hidden;
     height: 100vh;
 }
 
-/* ========== FUNDO ========== */
+/* ========== FUNDO ANIMADO DINÂMICO ========== */
 #map-container {
     position: relative;
     width: 100vw;
@@ -28,7 +28,63 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0a0a0a;
+    background: radial-gradient(ellipse at center, #0a0a0a 0%, #000 100%);
+    animation: bgPulse 45s ease-in-out infinite;
+}
+
+@keyframes bgPulse {
+    0%, 100% { background: radial-gradient(ellipse at 50% 50%, #0a0a0a 0%, #000 100%); }
+    25% { background: radial-gradient(ellipse at 30% 40%, #0d1117 0%, #000 100%); }
+    50% { background: radial-gradient(ellipse at 70% 60%, #0a0a14 0%, #000 100%); }
+    75% { background: radial-gradient(ellipse at 40% 70%, #0f0a14 0%, #000 100%); }
+}
+
+/* ========== CAMADAS DE LUZ ATMOSFÉRICA ========== */
+#map-container::before {
+    content: "";
+    position: absolute;
+    inset: -100%;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(44, 108, 255, 0.18), transparent 35%),
+        radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.22), transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.12), transparent 50%);
+    animation: aurora 60s linear infinite, rotate 120s linear infinite;
+    filter: blur(40px);
+    opacity: 0.8;
+}
+
+@keyframes aurora {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(30%, 25%) rotate(360deg); }
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ========== LAYER DE NÉVOA ========== */
+#map-container::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: 
+        linear-gradient(45deg, rgba(0,0,0,0.3) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
+    animation: fog 35s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes fog {
+    0% { opacity: 0.2; }
+    100% { opacity: 0.6; }
+}
+
+/* ========== PARTÍCULAS CANVAS ========== */
+canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
 }
 
 /* ========== WRAPPER DO MAPA ========== */
@@ -36,7 +92,8 @@ body {
     position: relative;
     z-index: 10;
     cursor: grab;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 50px rgba(255, 255, 255, 0.1));
 }
 
 #map-wrapper:active {
@@ -44,172 +101,300 @@ body {
 }
 
 #map-wrapper.zooming {
-    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ========== SVG ========== */
+/* ========== SVG CINEMATOGRÁFICO ========== */
 #city-map {
-    height: 80vh;
-    opacity: 0.95;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.15));
+    height: 85vh;
+    opacity: 0.98;
+    animation: svgGlow 12s ease-in-out infinite;
+    transition: filter 0.6s ease;
 }
 
-/* ========== MARCADORES ========== */
+@keyframes svgGlow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4))
+                drop-shadow(0 0 30px rgba(44, 108, 255, 0.2)); 
+    }
+    33% { 
+        filter: drop-shadow(0 0 25px rgba(44, 108, 255, 0.6))
+                drop-shadow(0 0 40px rgba(138, 43, 226, 0.3)); 
+    }
+    66% { 
+        filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5))
+                drop-shadow(0 0 35px rgba(255, 105, 180, 0.3)); 
+    }
+}
+
+/* ========== MARCADORES ULTRA ========== */
 .marker {
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: rgba(59, 130, 246, 0.9);
-    border: 3px solid white;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(44, 108, 255, 0.8));
+    border: 3px solid rgba(255, 255, 255, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
     transform: translate(-50%, -50%);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: 
+        0 0 20px rgba(59, 130, 246, 0.6),
+        0 4px 15px rgba(0, 0, 0, 0.8);
+    animation: markerFloat 3s ease-in-out infinite;
+}
+
+@keyframes markerFloat {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50% { transform: translate(-50%, -50%) translateY(-4px); }
 }
 
 .marker:hover {
-    transform: translate(-50%, -50%) scale(1.3);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+    transform: translate(-50%, -50%) scale(1.5) rotate(10deg);
+    box-shadow: 
+        0 0 40px rgba(59, 130, 246, 1),
+        0 0 60px rgba(44, 108, 255, 0.8),
+        0 8px 25px rgba(0, 0, 0, 0.9);
+    z-index: 200;
 }
 
 .marker.active {
-    background: rgba(239, 68, 68, 0.9);
-    border-color: #fff;
-    transform: translate(-50%, -50%) scale(1.2);
-    animation: pulse 1.5s infinite;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.9));
+    border-color: rgba(255, 255, 255, 1);
+    animation: activePulse 1.8s infinite, markerFloat 3s ease-in-out infinite;
+    transform: translate(-50%, -50%) scale(1.3);
+    box-shadow: 
+        0 0 30px rgba(239, 68, 68, 0.9),
+        0 0 50px rgba(220, 38, 38, 0.7),
+        0 6px 30px rgba(0, 0, 0, 0.9);
+    z-index: 150;
 }
 
-@keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+@keyframes activePulse {
+    0%, 100% { 
+        box-shadow: 
+            0 0 0 0 rgba(239, 68, 68, 0.9),
+            0 0 30px rgba(239, 68, 68, 0.9),
+            0 6px 30px rgba(0, 0, 0, 0.9); 
+    }
+    50% { 
+        box-shadow: 
+            0 0 0 25px rgba(239, 68, 68, 0),
+            0 0 50px rgba(239, 68, 68, 0.9),
+            0 8px 40px rgba(0, 0, 0, 0.9); 
+    }
 }
 
-/* ========== GLASS UI ========== */
+/* ========== GLASS MORPHISM UI ========== */
 .glass {
-    background: rgba(15, 15, 15, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    background: rgba(15, 15, 15, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border-radius: 18px;
+    box-shadow: 
+        0 12px 50px rgba(0, 0, 0, 0.9),
+        inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
 /* ========== HEADER ========== */
 #header {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 16px 24px;
+    top: 25px;
+    right: 25px;
+    padding: 18px 28px;
     z-index: 1000;
+    animation: fadeInDown 0.8s ease;
 }
 
 #header h2 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     margin-bottom: 4px;
+    background: linear-gradient(135deg, #d4af37, #c0c0c0, #2c6cff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 #header p {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.5);
-    letter-spacing: 1px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ========== SIDEBAR ========== */
 #sidebar {
     position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 300px;
-    max-height: calc(100vh - 40px);
-    padding: 20px;
+    top: 25px;
+    left: 25px;
+    width: 320px;
+    max-height: calc(100vh - 50px);
+    padding: 24px;
     overflow-y: auto;
     z-index: 1000;
+    animation: fadeInLeft 0.8s ease;
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 #sidebar h3 {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    color: #fff;
 }
 
 .total-count {
     display: inline-block;
-    background: rgba(59, 130, 246, 0.2);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(44, 108, 255, 0.2));
     border: 1px solid rgba(59, 130, 246, 0.4);
     color: #60a5fa;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
 }
 
 .bairro-item {
-    padding: 12px 14px;
-    margin-bottom: 6px;
-    background: rgba(255, 255, 255, 0.03);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.bairro-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, #2c6cff, #8a2be2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .bairro-item:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(59, 130, 246, 0.4);
-    transform: translateX(5px);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateX(8px);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+}
+
+.bairro-item:hover::before {
+    opacity: 1;
 }
 
 .bairro-item.active {
-    background: rgba(59, 130, 246, 0.2);
-    border-color: rgba(59, 130, 246, 0.6);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(44, 108, 255, 0.15));
+    border-color: rgba(59, 130, 246, 0.7);
+    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.3);
+}
+
+.bairro-item.active::before {
+    opacity: 1;
+    background: linear-gradient(180deg, #d4af37, #2c6cff);
 }
 
 .bairro-icon {
-    font-size: 18px;
-    margin-right: 10px;
+    font-size: 20px;
+    margin-right: 12px;
+    display: inline-block;
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
 .bairro-nome {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
 }
 
 #sidebar::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 #sidebar::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
 }
 
 #sidebar::-webkit-scrollbar-thumb {
     background: rgba(59, 130, 246, 0.3);
-    border-radius: 3px;
+    border-radius: 4px;
+    transition: background 0.3s;
 }
 
-/* ========== CARD ========== */
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.5);
+}
+
+/* ========== CARD DE INFORMAÇÕES ========== */
 #info-card {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 360px;
+    bottom: 35px;
+    right: 35px;
+    width: 380px;
     padding: 0;
     display: none;
     z-index: 1000;
-    animation: slideUp 0.4s ease;
+    animation: slideUpCard 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
 
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes slideUpCard {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 #info-card.visible {
@@ -217,29 +402,31 @@ body {
 }
 
 .card-header {
-    padding: 18px 22px;
+    padding: 22px 26px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(59, 130, 246, 0.1);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(44, 108, 255, 0.08));
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 #card-title {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .close-btn {
     background: rgba(255, 255, 255, 0.08);
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     color: #fff;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -247,104 +434,180 @@ body {
 
 .close-btn:hover {
     background: rgba(239, 68, 68, 0.8);
+    border-color: rgba(239, 68, 68, 1);
     transform: rotate(90deg);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);
 }
 
 .card-icon {
     width: 100%;
-    height: 140px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 160px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8a2be2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 64px;
+    font-size: 72px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-icon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { transform: scale(1); opacity: 0; }
+    50% { transform: scale(1.5); opacity: 0.3; }
 }
 
 .card-content {
-    padding: 20px 22px;
+    padding: 24px 26px;
 }
 
 #card-description {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.8;
     color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .ver-dados-btn {
     width: 100%;
-    padding: 14px;
-    background: rgba(59, 130, 246, 0.9);
+    padding: 16px;
+    background: linear-gradient(135deg, #2c6cff, #8a2be2);
     color: #fff;
     border: none;
-    border-radius: 10px;
-    font-size: 14px;
+    border-radius: 12px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(44, 108, 255, 0.4);
+    letter-spacing: 1px;
 }
 
 .ver-dados-btn:hover {
-    background: rgba(59, 130, 246, 1);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #1e5aff, #7820d6);
+    transform: translateY(-3px);
+    box-shadow: 
+        0 8px 30px rgba(44, 108, 255, 0.6),
+        0 0 40px rgba(138, 43, 226, 0.4);
 }
 
-/* ========== CONTROLES ========== */
+.ver-dados-btn:active {
+    transform: translateY(-1px);
+}
+
+/* ========== CONTROLES DE ZOOM ========== */
 #zoom-controls {
     position: fixed;
-    bottom: 30px;
-    left: 30px;
+    bottom: 35px;
+    left: 35px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     z-index: 1000;
+    animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .zoom-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(15, 15, 15, 0.85);
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 15, 15, 0.8);
     backdrop-filter: blur(20px);
     color: #fff;
-    font-size: 22px;
+    font-size: 24px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
 }
 
 .zoom-btn:hover {
     background: rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.5);
-    transform: scale(1.1);
+    border-color: rgba(59, 130, 246, 0.6);
+    transform: scale(1.15);
+    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+}
+
+.zoom-btn:active {
+    transform: scale(1.05);
+}
+
+/* ========== LOADING PLACEHOLDER ========== */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 999;
+    padding: 40px;
+    background: rgba(15, 15, 15, 0.9);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loading-title {
+    font-size: 28px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #d4af37, #2c6cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.loading-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    margin-bottom: 24px;
 }
 
 /* ========== RESPONSIVO ========== */
 @media (max-width: 768px) {
     #sidebar {
-        width: 260px;
-        left: 10px;
-        top: 10px;
+        width: 280px;
+        left: 15px;
+        top: 15px;
     }
 
     #header {
-        right: 10px;
-        top: 10px;
+        right: 15px;
+        top: 15px;
     }
 
     #info-card {
-        width: calc(100% - 20px);
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
+        width: calc(100% - 30px);
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
     }
 
     #zoom-controls {
-        left: 10px;
-        bottom: 10px;
+        left: 15px;
+        bottom: 15px;
+    }
+
+    #city-map {
+        height: 70vh;
     }
 }
 </style>
@@ -352,16 +615,25 @@ body {
 
 <body>
 
+<!-- PARTÍCULAS ANIMADAS -->
+<canvas id="particles"></canvas>
+
 <!-- HEADER -->
 <div id="header" class="glass">
-    <h2>🗺️ Hortolândia</h2>
-    <p>Mapa Interativo</p>
+    <h2>🗺️ HORTOLÂNDIA</h2>
+    <p>Ultra Cinema Experience</p>
 </div>
 
 <!-- CONTAINER DO MAPA -->
 <div id="map-container">
     <div id="map-wrapper">
-        <img id="city-map" src="assets/hortolandia-roads.svg" alt="Mapa de Hortolândia">
+        <div id="svg-container"></div>
+    </div>
+
+    <!-- PLACEHOLDER -->
+    <div class="loading" id="loading-placeholder" style="display: none;">
+        <div class="loading-title">🗺️ Hortolândia</div>
+        <div class="loading-subtitle">Carregando experiência cinematográfica...</div>
     </div>
 </div>
 
@@ -372,7 +644,7 @@ body {
     <div id="bairros-list"></div>
 </div>
 
-<!-- CARD -->
+<!-- CARD DE INFORMAÇÕES -->
 <div id="info-card" class="glass">
     <div class="card-header">
         <h3 id="card-title">Localidade</h3>
@@ -385,56 +657,220 @@ body {
     </div>
 </div>
 
-<!-- CONTROLES -->
+<!-- CONTROLES DE ZOOM -->
 <div id="zoom-controls">
-    <button class="zoom-btn" onclick="zoom(1.3)">+</button>
-    <button class="zoom-btn" onclick="zoom(0.77)">−</button>
-    <button class="zoom-btn" onclick="resetZoom()">⟲</button>
+    <button class="zoom-btn" onclick="zoom(1.3)" title="Zoom In">+</button>
+    <button class="zoom-btn" onclick="zoom(0.77)" title="Zoom Out">−</button>
+    <button class="zoom-btn" onclick="resetZoom()" title="Reset">⟲</button>
 </div>
 
 <script>
 // ============================================
+// CARREGAR E ESTILIZAR SVG
+// ============================================
+fetch('assets/hortolandia-roads.svg')
+    .then(response => response.text())
+    .then(svgText => {
+        document.getElementById('svg-container').innerHTML = svgText;
+        const svgElement = document.querySelector('#svg-container svg');
+        if (svgElement) {
+            svgElement.id = "city-map";
+            aplicarEfeitosCinematicos();
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao carregar SVG:', error);
+        document.getElementById('loading-placeholder').style.display = 'block';
+    });
+
+function aplicarEfeitosCinematicos() {
+    const svg = document.getElementById('city-map');
+    if (!svg) return;
+
+    // Criar gradientes animados
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    
+    defs.innerHTML = `
+        <linearGradient id="gradCinema" gradientUnits="userSpaceOnUse">
+            <stop offset="0%">
+                <animate attributeName="stop-color"
+                    values="#d4af37;#c0c0c0;#2c6cff;#8a2be2;#d4af37"
+                    dur="25s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="50%">
+                <animate attributeName="stop-color"
+                    values="#ffffff;#aaaaaa;#88aaff;#bb88ff;#ffffff"
+                    dur="25s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="100%">
+                <animate attributeName="stop-color"
+                    values="#2c6cff;#d4af37;#8a2be2;#c0c0c0;#2c6cff"
+                    dur="25s" repeatCount="indefinite"/>
+            </stop>
+        </linearGradient>
+        
+        <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    `;
+
+    svg.prepend(defs);
+
+    // Aplicar estilo às ruas
+    svg.querySelectorAll('path').forEach(path => {
+        path.style.stroke = "url(#gradCinema)";
+        path.style.strokeWidth = "1.4";
+        path.style.filter = "url(#glow)";
+        path.style.opacity = "0.95";
+    });
+}
+
+// ============================================
+// SISTEMA DE PARTÍCULAS
+// ============================================
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let width, height;
+let particles = [];
+
+function resizeCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// Criar partículas
+for (let i = 0; i < 150; i++) {
+    particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 2.5 + 0.5,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        opacity: Math.random() * 0.5 + 0.2
+    });
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, width, height);
+    
+    particles.forEach(particle => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        if (particle.x < 0 || particle.x > width) particle.vx *= -1;
+        if (particle.y < 0 || particle.y > height) particle.vy *= -1;
+
+        // Desenhar partícula
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+        ctx.fill();
+
+        // Conexões entre partículas próximas
+        particles.forEach(other => {
+            const dx = particle.x - other.x;
+            const dy = particle.y - other.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 120) {
+                ctx.beginPath();
+                ctx.moveTo(particle.x, particle.y);
+                ctx.lineTo(other.x, other.y);
+                ctx.strokeStyle = `rgba(59, 130, 246, ${0.15 * (1 - distance / 120)})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        });
+    });
+
+    requestAnimationFrame(animateParticles);
+}
+
+animateParticles();
+
+// ============================================
+// PARALLAX NO MOUSE
+// ============================================
+let mouseX = 0, mouseY = 0;
+let targetX = 0, targetY = 0;
+
+document.addEventListener("mousemove", (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 40;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 40;
+});
+
+function updateParallax() {
+    targetX += (mouseX - targetX) * 0.05;
+    targetY += (mouseY - targetY) * 0.05;
+    
+    const wrapper = document.getElementById("map-wrapper");
+    if (wrapper && !isDragging) {
+        wrapper.style.transform = `translate(${translateX + targetX}px, ${translateY + targetY}px) scale(${scale})`;
+    }
+    
+    requestAnimationFrame(updateParallax);
+}
+
+updateParallax();
+
+// ============================================
 // DADOS DAS 38 LOCALIDADES
 // ============================================
 const bairros = [
-    {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", x: 680, y: 441},
-    {nome: "Jardim Terras de Santo Antônio", descricao: "Bairro residencial com boa infraestrutura.", x: 735, y: 402},
-    {nome: "Jardim Adelaide", descricao: "Região tranquila e bem localizada.", x: 778, y: 464},
-    {nome: "Jardim Santa Izabel", descricao: "Bairro em desenvolvimento constante.", x: 809, y: 389},
-    {nome: "Jardim Novo Ângulo", descricao: "Área residencial moderna.", x: 805, y: 276},
-    {nome: "Vila Inema", descricao: "Comunidade tradicional da cidade.", x: 771, y: 326},
-    {nome: "Jardim Santa Clara", descricao: "Bairro com forte identidade local.", x: 679, y: 341},
-    {nome: "Jardim Mirante", descricao: "Região com boa vista panorâmica.", x: 644, y: 306},
-    {nome: "Jardim do Bosque", descricao: "Área arborizada e residencial.", x: 681, y: 288},
-    {nome: "Jardim Santana", descricao: "Bairro familiar consolidado.", x: 600, y: 245},
-    {nome: "Amanda I", descricao: "Primeira fase do conjunto Amanda.", x: 480, y: 365},
-    {nome: "Amanda II", descricao: "Segunda fase do conjunto Amanda.", x: 450, y: 437},
-    {nome: "Amanda III", descricao: "Terceira fase do conjunto Amanda.", x: 411, y: 372},
-    {nome: "Amanda IV", descricao: "Quarta fase do conjunto Amanda.", x: 447, y: 332},
-    {nome: "Chácaras Recreio 2000", descricao: "Área de chácaras e lazer.", x: 349, y: 384},
-    {nome: "Jardim das Colinas", descricao: "Bairro planejado em região elevada.", x: 517, y: 136},
-    {nome: "Parque do Horto", descricao: "Região com áreas verdes preservadas.", x: 610, y: 93},
-    {nome: "Parque Orestes Ôngaro", descricao: "Bairro homenagem ao pioneiro local.", x: 546, y: 59},
-    {nome: "Terras de Santa Maria", descricao: "Loteamento moderno e planejado.", x: 510, y: 116},
-    {nome: "Recanto do Sol", descricao: "Área residencial tranquila.", x: 651, y: 142},
-    {nome: "Jardim São Jorge", descricao: "Comunidade tradicional da região.", x: 647, y: 177},
-    {nome: "Nova Hortolândia", descricao: "Área de expansão urbana.", x: 615, y: 144},
-    {nome: "Jardim Santa Luzia", descricao: "Bairro com forte presença comunitária.", x: 676, y: 213},
-    {nome: "Jardim Nova Europa", descricao: "Região em crescimento populacional.", x: 777, y: 181},
-    {nome: "Vila Real", descricao: "Comunidade estabelecida há décadas.", x: 567, y: 129},
-    {nome: "Jardim Novo Cambuí", descricao: "Bairro planejado e moderno.", x: 558, y: 297},
-    {nome: "Residencial BellaVille", descricao: "Condomínio residencial de alto padrão.", x: 525, y: 35},
-    {nome: "Jardim São Pedro", descricao: "Área residencial consolidada.", x: 605, y: 427},
-    {nome: "Residencial João Luiz", descricao: "Conjunto habitacional popular.", x: 679, y: 391},
-    {nome: "Jardim Aline", descricao: "Bairro familiar em crescimento.", x: 877, y: 180},
-    {nome: "Jardim São Sebastião", descricao: "Região com infraestrutura completa.", x: 576, y: 370},
-    {nome: "Jardim Auxiliadora", descricao: "Comunidade tradicional da cidade.", x: 629, y: 121},
-    {nome: "Residencial Firenze", descricao: "Condomínio moderno e planejado.", x: 456, y: 248},
-    {nome: "Jardim Novo Horizonte", descricao: "Área em expansão urbana.", x: 342, y: 279},
-    {nome: "Jardim Interlagos", descricao: "Bairro próximo a áreas de lazer.", x: 606, y: 350},
-    {nome: "Jardim Boa Vista/Stella", descricao: "Região elevada com boa vista.", x: 566, y: 469},
-    {nome: "Jardim Nova América", descricao: "Bairro residencial em desenvolvimento.", x: 833, y: 317},
-    {nome: "Estrada do Furlan, 1121", descricao: "Região rural em transição urbana.", x: 746, y: 274}
+    // GRUPO 1
+    {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", icone: "🏛️", x: 680, y: 441},
+    {nome: "Jardim Terras de Santo Antônio", descricao: "Bairro residencial com boa infraestrutura.", icone: "🏛️", x: 735, y: 402},
+    {nome: "Jardim Adelaide", descricao: "Região tranquila e bem localizada.", icone: "🏛️", x: 778, y: 464},
+    {nome: "Jardim Santa Izabel", descricao: "Bairro em desenvolvimento constante.", icone: "🏛️", x: 809, y: 389},
+    {nome: "Jardim Novo Ângulo", descricao: "Área residencial moderna.", icone: "🏛️", x: 805, y: 276},
+    {nome: "Vila Inema", descricao: "Comunidade tradicional da cidade.", icone: "🏛️", x: 771, y: 326},
+    {nome: "Jardim Santa Clara", descricao: "Bairro com forte identidade local.", icone: "🏛️", x: 679, y: 341},
+    {nome: "Jardim Mirante", descricao: "Região com boa vista panorâmica.", icone: "🏛️", x: 644, y: 306},
+    
+    // GRUPO 2
+    {nome: "Jardim do Bosque", descricao: "Área arborizada e residencial.", icone: "🏛️", x: 681, y: 288},
+    {nome: "Jardim Santana", descricao: "Bairro familiar consolidado.", icone: "🏛️", x: 600, y: 245},
+    {nome: "Amanda I", descricao: "Primeira fase do conjunto Amanda.", icone: "🏛️", x: 480, y: 365},
+    {nome: "Amanda II", descricao: "Segunda fase do conjunto Amanda.", icone: "🏛️", x: 450, y: 437},
+    {nome: "Amanda III", descricao: "Terceira fase do conjunto Amanda.", icone: "🏛️", x: 411, y: 372},
+    {nome: "Amanda IV", descricao: "Quarta fase do conjunto Amanda.", icone: "🏛️", x: 447, y: 332},
+    {nome: "Chácaras Recreio 2000", descricao: "Área de chácaras e lazer.", icone: "🏛️", x: 349, y: 384},
+    {nome: "Jardim das Colinas", descricao: "Bairro planejado em região elevada.", icone: "🏛️", x: 517, y: 136},
+    
+    // GRUPO 3
+    {nome: "Parque do Horto", descricao: "Região com áreas verdes preservadas.", icone: "🏛️", x: 610, y: 93},
+    {nome: "Parque Orestes Ôngaro", descricao: "Bairro homenagem ao pioneiro local.", icone: "🏛️", x: 546, y: 59},
+    {nome: "Terras de Santa Maria", descricao: "Loteamento moderno e planejado.", icone: "🏛️", x: 510, y: 116},
+    {nome: "Recanto do Sol", descricao: "Área residencial tranquila.", icone: "🏛️", x: 651, y: 142},
+    {nome: "Jardim São Jorge", descricao: "Comunidade tradicional da região.", icone: "🏛️", x: 647, y: 177},
+    {nome: "Nova Hortolândia", descricao: "Área de expansão urbana.", icone: "🏛️", x: 615, y: 144},
+    {nome: "Jardim Santa Luzia", descricao: "Bairro com forte presença comunitária.", icone: "🏛️", x: 676, y: 213},
+    {nome: "Jardim Nova Europa", descricao: "Região em crescimento populacional.", icone: "🏛️", x: 777, y: 181},
+    
+    // GRUPO 4
+    {nome: "Vila Real", descricao: "Comunidade estabelecida há décadas.", icone: "🏛️", x: 567, y: 129},
+    {nome: "Jardim Novo Cambuí", descricao: "Bairro planejado e moderno.", icone: "🏛️", x: 558, y: 297},
+    {nome: "Residencial BellaVille", descricao: "Condomínio residencial de alto padrão.", icone: "🏛️", x: 525, y: 35},
+    {nome: "Jardim São Pedro", descricao: "Área residencial consolidada.", icone: "🏛️", x: 605, y: 427},
+    {nome: "Residencial João Luiz", descricao: "Conjunto habitacional popular.", icone: "🏛️", x: 679, y: 391},
+    {nome: "Jardim Aline", descricao: "Bairro familiar em crescimento.", icone: "🏛️", x: 877, y: 180},
+    {nome: "Jardim São Sebastião", descricao: "Região com infraestrutura completa.", icone: "🏛️", x: 576, y: 370},
+    {nome: "Jardim Auxiliadora", descricao: "Comunidade tradicional da cidade.", icone: "🏛️", x: 629, y: 121},
+    
+    // GRUPO 5
+    {nome: "Residencial Firenze", descricao: "Condomínio moderno e planejado.", icone: "🏛️", x: 456, y: 248},
+    {nome: "Jardim Novo Horizonte", descricao: "Área em expansão urbana.", icone: "🏛️", x: 342, y: 279},
+    {nome: "Jardim Interlagos", descricao: "Bairro próximo a áreas de lazer.", icone: "🏛️", x: 606, y: 350},
+    {nome: "Jardim Boa Vista/Stella", descricao: "Região elevada com boa vista.", icone: "🏛️", x: 566, y: 469},
+    {nome: "Jardim Nova América", descricao: "Bairro residencial em desenvolvimento.", icone: "🏛️", x: 833, y: 317},
+    {nome: "Estrada do Furlan, 1121", descricao: "Região rural em transição urbana.", icone: "🏛️", x: 746, y: 274}
 ];
 
 // ============================================
@@ -448,7 +884,7 @@ let isDragging = false;
 let startX, startY;
 
 // ============================================
-// RENDERIZAR LISTA
+// RENDERIZAR LISTA (COM EMOJI CORRETO)
 // ============================================
 function renderizarLista() {
     const lista = document.getElementById("bairros-list");
@@ -469,14 +905,14 @@ function renderizarLista() {
 }
 
 // ============================================
-// CRIAR MARCADORES
+// CRIAR MARCADORES (COM EMOJI CORRETO)
 // ============================================
 function criarMarcadores() {
     bairros.forEach((bairro, index) => {
         const marker = document.createElement("div");
         marker.className = "marker";
         marker.id = `marker-${index}`;
-        marker.textContent = "🏛️";
+        marker.textContent = "🏛️"; // Emoji fixo para todas as localidades
         marker.style.left = `${bairro.x}px`;
         marker.style.top = `${bairro.y}px`;
         marker.onclick = (e) => {
@@ -504,17 +940,17 @@ function focarBairro(index) {
     const items = document.querySelectorAll('.bairro-item');
     if (items[index]) items[index].classList.add('active');
     
-    // Zoom
+    // Zoom cinematográfico
     const wrapper = document.getElementById("map-wrapper");
     wrapper.classList.add('zooming');
     
-    scale = 1.6;
+    scale = 1.8;
     translateX = (window.innerWidth / 2) - (bairro.x * scale);
     translateY = (window.innerHeight / 2) - (bairro.y * scale);
     
     updateTransform();
     
-    setTimeout(() => wrapper.classList.remove('zooming'), 1000);
+    setTimeout(() => wrapper.classList.remove('zooming'), 1200);
     
     // Mostrar card
     mostrarCard(bairro);
@@ -522,12 +958,12 @@ function focarBairro(index) {
 }
 
 // ============================================
-// CARD
+// CARD (COM EMOJI CORRETO)
 // ============================================
 function mostrarCard(bairro) {
     const card = document.getElementById("info-card");
     document.getElementById("card-title").textContent = bairro.nome;
-    document.getElementById("card-icon").textContent = "🏛️";
+    document.getElementById("card-icon").textContent = "🏛️"; // Emoji fixo
     document.getElementById("card-description").textContent = bairro.descricao;
     card.classList.add("visible");
 }
@@ -550,7 +986,7 @@ function verDados() {
 // ============================================
 function zoom(factor) {
     scale *= factor;
-    scale = Math.max(0.5, Math.min(scale, 3));
+    scale = Math.max(0.5, Math.min(scale, 3.5));
     updateTransform();
 }
 
@@ -570,10 +1006,9 @@ function updateTransform() {
 // PAN (ARRASTAR)
 // ============================================
 const mapWrapper = document.getElementById("map-wrapper");
-const cityMap = document.getElementById("city-map");
 
 mapWrapper.addEventListener("mousedown", (e) => {
-    if (e.target === cityMap) {
+    if (e.target.id === "city-map" || e.target.id === "svg-container") {
         isDragging = true;
         startX = e.clientX - translateX;
         startY = e.clientY - translateY;
@@ -599,9 +1034,16 @@ document.addEventListener("mouseup", () => {
 // ============================================
 window.onload = () => {
     renderizarLista();
-    criarMarcadores();
-    console.log('🗺️ Hortolândia carregado!');
-    console.log(`📍 ${bairros.length} localidades`);
+    
+    // Aguardar SVG carregar antes de criar marcadores
+    const checkSVG = setInterval(() => {
+        if (document.getElementById('city-map')) {
+            criarMarcadores();
+            clearInterval(checkSVG);
+            console.log('🎬 Hortolândia Ultra Cinema carregado!');
+            console.log(`📍 ${bairros.length} localidades mapeadas`);
+        }
+    }, 100);
 };
 </script>
 
