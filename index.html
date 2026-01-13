@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hortolândia – Ultra Cinema Experience</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* ========== FUNDO CINEMATOGRÁFICO OTIMIZADO ========== */
+#map-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at center, #0a0a0a 0%, #000 100%);
+}
+
+/* Camada de luz (GPU accelerated) */
+#map-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(44, 108, 255, 0.15), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.18), transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1), transparent 50%);
+    animation: lightShift 30s ease-in-out infinite alternate;
+    will-change: opacity;
+}
+
+@keyframes lightShift {
+    0% { opacity: 0.4; }
+    100% { opacity: 0.7; }
+}
+
+/* Partículas CSS (20 elementos leves) */
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.particle:nth-child(1) { left: 10%; top: 20%; animation: float1 18s infinite ease-in-out; }
+.particle:nth-child(2) { left: 20%; top: 80%; animation: float2 22s infinite ease-in-out; }
+.particle:nth-child(3) { left: 30%; top: 40%; animation: float1 25s infinite ease-in-out; }
+.particle:nth-child(4) { left: 40%; top: 60%; animation: float2 20s infinite ease-in-out; }
+.particle:nth-child(5) { left: 50%; top: 30%; animation: float1 24s infinite ease-in-out; }
+.particle:nth-child(6) { left: 60%; top: 70%; animation: float2 21s infinite ease-in-out; }
+.particle:nth-child(7) { left: 70%; top: 50%; animation: float1 26s infinite ease-in-out; }
+.particle:nth-child(8) { left: 80%; top: 25%; animation: float2 23s infinite ease-in-out; }
+.particle:nth-child(9) { left: 90%; top: 65%; animation: float1 19s infinite ease-in-out; }
+.particle:nth-child(10) { left: 15%; top: 45%; animation: float2 25s infinite ease-in-out; }
+
+@keyframes float1 {
+    0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+    50% { transform: translate(30px, -50px); opacity: 0.8; }
+}
+
+@keyframes float2 {
+    0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+    50% { transform: translate(-30px, -50px); opacity: 0.8; }
+}
+
+/* ========== WRAPPER DO MAPA ========== */
+#map-wrapper {
+    position: relative;
+    z-index: 10;
+    cursor: grab;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.1));
+    will-change: transform;
+}
+
+#map-wrapper:active {
+    cursor: grabbing;
+}
+
+#map-wrapper.zooming {
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== SVG CINEMATOGRÁFICO ========== */
+#city-map {
+    display: block;
+    max-width: 90vw;
+    max-height: 85vh;
+    opacity: 0.95;
+    filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.3))
+            drop-shadow(0 0 25px rgba(44, 108, 255, 0.2));
+}
+
+/* ========== MARCADORES ULTRA ========== */
+.marker {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(44, 108, 255, 0.8));
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.6), 0 4px 12px rgba(0, 0, 0, 0.8);
+    animation: markerFloat 3s ease-in-out infinite;
+    will-change: transform;
+}
+
+@keyframes markerFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.marker:hover {
+    transform: scale(1.4) rotate(8deg) translateY(0);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.9), 0 6px 20px rgba(0, 0, 0, 0.9);
+    z-index: 200;
+    animation: none;
+}
+
+.marker.active {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.9));
+    border-color: rgba(255, 255, 255, 1);
+    animation: activePulse 1.5s infinite;
+    transform: scale(1.25);
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.9), 0 6px 25px rgba(0, 0, 0, 0.9);
+    z-index: 150;
+}
+
+@keyframes activePulse {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8),
+                    0 0 25px rgba(239, 68, 68, 0.9); 
+    }
+    50% { 
+        box-shadow: 0 0 0 20px rgba(239, 68, 68, 0),
+                    0 0 35px rgba(239, 68, 68, 1); 
+    }
+}
+
+/* ========== GLASS MORPHISM ========== */
+.glass {
+    background: rgba(15, 15, 15, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+/* ========== HEADER ========== */
+#header {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    padding: 18px 28px;
+    z-index: 1000;
+    animation: fadeInDown 0.8s ease;
+}
+
+#header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    background: linear-gradient(135deg, #d4af37, #c0c0c0, #2c6cff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+#header p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== SIDEBAR ========== */
+#sidebar {
+    position: fixed;
+    top: 25px;
+    left: 25px;
+    width: 320px;
+    max-height: calc(100vh - 50px);
+    padding: 24px;
+    overflow-y: auto;
+    z-index: 1000;
+    animation: fadeInLeft 0.8s ease;
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+#sidebar h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.total-count {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(44, 108, 255, 0.2));
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: #60a5fa;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+}
+
+.bairro-item {
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.bairro-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, #2c6cff, #8a2be2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.bairro-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateX(6px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+.bairro-item:hover::before {
+    opacity: 1;
+}
+
+.bairro-item.active {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(44, 108, 255, 0.15));
+    border-color: rgba(59, 130, 246, 0.7);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+.bairro-item.active::before {
+    opacity: 1;
+    background: linear-gradient(180deg, #d4af37, #2c6cff);
+}
+
+.bairro-icon {
+    font-size: 20px;
+    margin-right: 12px;
+    display: inline-block;
+}
+
+.bairro-nome {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+#sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+#sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.3);
+    border-radius: 4px;
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.5);
+}
+
+/* ========== CARD ========== */
+#info-card {
+    position: fixed;
+    bottom: 35px;
+    right: 35px;
+    width: 380px;
+    padding: 0;
+    display: none;
+    z-index: 1000;
+    animation: slideUpCard 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+@keyframes slideUpCard {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+#info-card.visible {
+    display: block;
+}
+
+.card-header {
+    padding: 22px 26px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(44, 108, 255, 0.08));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#card-title {
+    font-size: 22px;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    background: rgba(239, 68, 68, 0.8);
+    border-color: rgba(239, 68, 68, 1);
+    transform: rotate(90deg);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);
+}
+
+.card-icon {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8a2be2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+
+.card-content {
+    padding: 24px 26px;
+}
+
+#card-description {
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 20px;
+}
+
+.ver-dados-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #2c6cff, #8a2be2);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(44, 108, 255, 0.4);
+    letter-spacing: 1px;
+}
+
+.ver-dados-btn:hover {
+    background: linear-gradient(135deg, #1e5aff, #7820d6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(44, 108, 255, 0.6);
+}
+
+/* ========== CONTROLES DE ZOOM ========== */
+#zoom-controls {
+    position: fixed;
+    bottom: 35px;
+    left: 35px;
+    display: flex;
+    gap: 12px;
+    z-index: 1000;
+    animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.zoom-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 15, 15, 0.8);
+    backdrop-filter: blur(20px);
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+}
+
+.zoom-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.6);
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+}
+
+/* ========== PAINEL DE AJUSTE (MODO CALIBRAÇÃO) ========== */
+#calibration-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    padding: 30px;
+    z-index: 2000;
+    display: none;
+}
+
+#calibration-panel.active {
+    display: block;
+}
+
+.calibration-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.calibration-control {
+    margin-bottom: 20px;
+}
+
+.calibration-control label {
+    display: block;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 8px;
+}
+
+.calibration-control input {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.calibration-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.calibration-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.calibration-btn.primary {
+    background: linear-gradient(135deg, #2c6cff, #8a2be2);
+    color: #fff;
+}
+
+.calibration-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(44, 108, 255, 0.4);
+}
+
+.calibration-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.calibration-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Atalho para ativar calibração */
+#calibration-trigger {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background: rgba(59, 130, 246, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1500;
+    transition: all 0.2s ease;
+}
+
+#calibration-trigger:hover {
+    background: rgba(59, 130, 246, 0.5);
+    transform: scale(1.1);
+}
+
+/* ========== LOADING ========== */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 999;
+    padding: 40px;
+    background: rgba(15, 15, 15, 0.9);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loading-title {
+    font-size: 28px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #d4af37, #2c6cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.loading-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+}
+
+/* ========== RESPONSIVO ========== */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 280px;
+        left: 15px;
+        top: 15px;
+    }
+
+    #header {
+        right: 15px;
+        top: 15px;
+    }
+
+    #info-card {
+        width: calc(100% - 30px);
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+    }
+
+    #zoom-controls {
+        left: 15px;
+        bottom: 15px;
+    }
+
+    #calibration-panel {
+        width: calc(100% - 30px);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- PARTÍCULAS (10 elementos) -->
+<div id="particles-container">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+</div>
+
+<!-- HEADER -->
+<div id="header" class="glass">
+    <h2>🗺️ HORTOLÂNDIA</h2>
+    <p>Ultra Cinema Experience</p>
+</div>
+
+<!-- CONTAINER DO MAPA -->
+<div id="map-container">
+    <div id="map-wrapper">
+        <div id="svg-container"></div>
+    </div>
+
+    <!-- PLACEHOLDER -->
+    <div class="loading" id="loading-placeholder" style="display: none;">
+        <div class="loading-title">🗺️ Hortolândia</div>
+        <div class="loading-subtitle">Carregando experiência cinematográfica...</div>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar" class="glass">
+    <h3>📍 Localidades</h3>
+    <div class="total-count" id="total-count">38 localidades</div>
+    <div id="bairros-list"></div>
+</div>
+
+<!-- CARD -->
+<div id="info-card" class="glass">
+    <div class="card-header">
+        <h3 id="card-title">Localidade</h3>
+        <button class="close-btn" onclick="fecharCard()">×</button>
+    </div>
+    <div class="card-icon" id="card-icon">🏛️</div>
+    <div class="card-content">
+        <p id="card-description">Informações da localidade</p>
+        <button class="ver-dados-btn" onclick="verDados()">VER DADOS COMPLETOS</button>
+    </div>
+</div>
+
+<!-- CONTROLES DE ZOOM -->
+<div id="zoom-controls">
+    <button class="zoom-btn" onclick="zoom(1.3)" title="Zoom In">+</button>
+    <button class="zoom-btn" onclick="zoom(0.77)" title="Zoom Out">−</button>
+    <button class="zoom-btn" onclick="resetZoom()" title="Reset">⟲</button>
+</div>
+
+<!-- PAINEL DE CALIBRAÇÃO -->
+<div id="calibration-panel" class="glass">
+    <div class="calibration-title">⚙️ Ajustar Posições</div>
+    
+    <div class="calibration-control">
+        <label>Deslocamento Horizontal (X)</label>
+        <input type="number" id="offset-x" value="0" step="1">
+    </div>
+    
+    <div class="calibration-control">
+        <label>Deslocamento Vertical (Y)</label>
+        <input type="number" id="offset-y" value="0" step="1">
+    </div>
+    
+    <div class="calibration-control">
+        <label>Escala (%)</label>
+        <input type="number" id="coord-scale" value="100" step="1" min="50" max="200">
+    </div>
+    
+    <div class="calibration-buttons">
+        <button class="calibration-btn primary" onclick="aplicarCalibração()">✓ Aplicar</button>
+        <button class="calibration-btn secondary" onclick="fecharCalibração()">✕ Fechar</button>
+    </div>
+</div>
+
+<!-- BOTÃO PARA ABRIR CALIBRAÇÃO -->
+<div id="calibration-trigger" onclick="abrirCalibração()" title="Ajustar Posições">⚙️</div>
+
+<script>
+// ============================================
+// CONFIGURAÇÃO
+// ============================================
+const CONFIG = {
+    svgPath: 'assets/hortolandia-roads.svg',
+    coordOffset: { x: 0, y: 0 },
+    coordScale: 1
+};
+
+// ============================================
+// DADOS DAS 38 LOCALIDADES
+// ============================================
+const bairros = [
+    {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", x: 680, y: 441},
+    {nome: "Jardim Terras de Santo Antônio", descricao: "Bairro residencial com boa infraestrutura.", x: 735, y: 402},
+    {nome: "Jardim Adelaide", descricao: "Região tranquila e bem localizada.", x: 778, y: 464},
+    {nome: "Jardim Santa Izabel", descricao: "Bairro em desenvolvimento constante.", x: 809, y: 389},
+    {nome: "Jardim Novo Ângulo", descricao: "Área residencial moderna.", x: 805, y: 276},
+    {nome: "Vila Inema", descricao: "Comunidade tradicional da cidade.", x: 771, y: 326},
+    {nome: "Jardim Santa Clara", descricao: "Bairro com forte identidade local.", x: 679, y: 341},
+    {nome: "Jardim Mirante", descricao: "Região com boa vista panorâmica.", x: 644, y: 306},
+    {nome: "Jardim do Bosque", descricao: "Área arborizada e residencial.", x: 681, y: 288},
+    {nome: "Jardim Santana", descricao: "Bairro familiar consolidado.", x: 600, y: 245},
+    {nome: "Amanda I", descricao: "Primeira fase do conjunto Amanda.", x: 480, y: 365},
+    {nome: "Amanda II", descricao: "Segunda fase do conjunto Amanda.", x: 450, y: 437},
+    {nome: "Amanda III", descricao: "Terceira fase do conjunto Amanda.", x: 411, y: 372},
+    {nome: "Amanda IV", descricao: "Quarta fase do conjunto Amanda.", x: 447, y: 332},
+    {nome: "Chácaras Recreio 2000", descricao: "Área de chácaras e lazer.", x: 349, y: 384},
+    {nome: "Jardim das Colinas", descricao: "Bairro planejado em região elevada.", x: 517, y: 136},
+    {nome: "Parque do Horto", descricao: "Região com áreas verdes preservadas.", x: 610, y: 93},
+    {nome: "Parque Orestes Ôngaro", descricao: "Bairro homenagem ao pioneiro local.", x: 546, y: 59},
+    {nome: "Terras de Santa Maria", descricao: "Loteamento moderno e planejado.", x: 510, y: 116},
+    {nome: "Recanto do Sol", descricao: "Área residencial tranquila.", x: 651, y: 142},
+    {nome: "Jardim São Jorge", descricao: "Comunidade tradicional da região.", x: 647, y: 177},
+    {nome: "Nova Hortolândia", descricao: "Área de expansão urbana.", x: 615, y: 144},
+    {nome: "Jardim Santa Luzia", descricao: "Bairro com forte presença comunitária.", x: 676, y: 213},
+    {nome: "Jardim Nova Europa", descricao: "Região em crescimento populacional.", x: 777, y: 181},
+    {nome: "Vila Real", descricao: "Comunidade estabelecida há décadas.", x: 567, y: 129},
+    {nome: "Jardim Novo Cambuí", descricao: "Bairro planejado e moderno.", x: 558, y: 297},
+    {nome: "Residencial BellaVille", descricao: "Condomínio residencial de alto padrão.", x: 525, y: 35},
+    {nome: "Jardim São Pedro", descricao: "Área residencial consolidada.", x: 605, y: 427},
+    {nome: "Residencial João Luiz", descricao: "Conjunto habitacional popular.", x: 679, y: 391},
+    {nome: "Jardim Aline", descricao: "Bairro familiar em crescimento.", x: 877, y: 180},
+    {nome: "Jardim São Sebastião", descricao: "Região com infraestrutura completa.", x: 576, y: 370},
+    {nome: "Jardim Auxiliadora", descricao: "Comunidade tradicional da cidade.", x: 629, y: 121},
+    {nome: "Residencial Firenze", descricao: "Condomínio moderno e planejado.", x: 456, y: 248},
+    {nome: "Jardim Novo Horizonte", descricao: "Área em expansão urbana.", x: 342, y: 279},
+    {nome: "Jardim Interlagos", descricao: "Bairro próximo a áreas de lazer.", x: 606, y: 350},
+    {nome: "Jardim Boa Vista/Stella", descricao: "Região elevada com boa vista.", x: 566, y: 469},
+    {nome: "Jardim Nova América", descricao: "Bairro residencial em desenvolvimento.", x: 833, y: 317},
+    {nome: "Estrada do Furlan, 1121", descricao: "Região rural em transição urbana.", x: 746, y: 274}
+];
+
+// ============================================
+// VARIÁVEIS GLOBAIS
+// ============================================
+let bairroAtivo = null;
+let scale = 1;
+let translateX = 0;
+let translateY = 0;
+let isDragging = false;
+let startX, startY;
+let svgElement = null;
+
+// ============================================
+// CARREGAR SVG
+// ============================================
+fetch(CONFIG.svgPath)
+    .then(response => response.text())
+    .then(svgText => {
+        document.getElementById('svg-container').innerHTML = svgText;
+        svgElement = document.querySelector('#svg-container svg');
+        if (svgElement) {
+            svgElement.id = "city-map";
+            aplicarEfeitosSVG();
+            
+            setTimeout(() => {
+                criarMarcadores();
+            }, 100);
+        }
+    })
+    .catch(error => {
+        console.error('❌ Erro ao carregar SVG:', error);
+        document.getElementById('loading-placeholder').style.display = 'block';
+    });
+
+// ============================================
+// APLICAR EFEITOS NO SVG
+// ============================================
+function aplicarEfeitosSVG() {
+    const svg = document.getElementById('city-map');
+    if (!svg) return;
+
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    
+    defs.innerHTML = `
+        <linearGradient id="gradCinema" gradientUnits="userSpaceOnUse">
+            <stop offset="0%">
+                <animate attributeName="stop-color"
+                    values="#d4af37;#c0c0c0;#2c6cff;#8a2be2;#d4af37"
+                    dur="20s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="50%">
+                <animate attributeName="stop-color"
+                    values="#ffffff;#aaaaaa;#88aaff;#bb88ff;#ffffff"
+                    dur="20s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="100%">
+                <animate attributeName="stop-color"
+                    values="#2c6cff;#d4af37;#8a2be2;#c0c0c0;#2c6cff"
+                    dur="20s" repeatCount="indefinite"/>
+            </stop>
+        </linearGradient>
+        
+        <filter id="glow">
+            <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    `;
+
+    svg.prepend(defs);
+
+    svg.querySelectorAll('path').forEach(path => {
+        path.style.stroke = "url(#gradCinema)";
+        path.style.strokeWidth = "1.4";
+        path.style.filter = "url(#glow)";
+        path.style.opacity = "0.95";
+    });
+}
+
+// ============================================
+// RENDERIZAR LISTA
+// ============================================
+function renderizarLista() {
+    const lista = document.getElementById("bairros-list");
+    lista.innerHTML = "";
+
+    bairros.forEach((bairro, index) => {
+        const item = document.createElement("div");
+        item.className = "bairro-item";
+        item.innerHTML = `
+            <span class="bairro-icon">🏛️</span>
+            <span class="bairro-nome">${bairro.nome}</span>
+        `;
+        item.onclick = () => focarBairro(index);
+        lista.appendChild(item);
+    });
+
+    document.getElementById('total-count').textContent = `${bairros.length} localidades`;
+}
+
+// ============================================
+// CRIAR MARCADORES
+// ============================================
+function criarMarcadores() {
+    const wrapper = document.getElementById("map-wrapper");
+    
+    // Limpar marcadores existentes
+    document.querySelectorAll('.marker').forEach(m => m.remove());
+    
+    bairros.forEach((bairro, index) => {
+        const marker = document.createElement("div");
+        marker.className = "marker";
+        marker.id = `marker-${index}`;
+        marker.textContent = "🏛️";
+        
+        // Aplicar offset e escala
+        const adjustedX = (bairro.x * CONFIG.coordScale) + CONFIG.coordOffset.x;
+        const adjustedY = (bairro.y * CONFIG.coordScale) + CONFIG.coordOffset.y;
+        
+        marker.style.left = `${adjustedX}px`;
+        marker.style.top = `${adjustedY}px`;
+        
+        marker.onclick = (e) => {
+            e.stopPropagation();
+            focarBairro(index);
+        };
+        
+        wrapper.appendChild(marker);
+    });
+
+    console.log(`✅ ${bairros.length} marcadores criados`);
+}
+
+// ============================================
+// FOCAR EM BAIRRO
+// ============================================
+function focarBairro(index) {
+    const bairro = bairros[index];
+    
+    // Remover active
+    document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
+    
+    // Adicionar active
+    const marker = document.getElementById(`marker-${index}`);
+    if (marker) marker.classList.add('active');
+    
+    const items = document.querySelectorAll('.bairro-item');
+    if (items[index]) items[index].classList.add('active');
+    
+    // Zoom cinematográfico
+    const wrapper = document.getElementById("map-wrapper");
+    wrapper.classList.add('zooming');
+    
+    scale = 1.8;
+    const adjustedX = (bairro.x * CONFIG.coordScale) + CONFIG.coordOffset.x;
+    const adjustedY = (bairro.y * CONFIG.coordScale) + CONFIG.coordOffset.y;
+    
+    translateX = (window.innerWidth / 2) - (adjustedX * scale);
+    translateY = (window.innerHeight / 2) - (adjustedY * scale);
+    
+    updateTransform();
+    
+    setTimeout(() => wrapper.classList.remove('zooming'), 1000);
+    
+    // Mostrar card
+    mostrarCard(bairro);
+    bairroAtivo = bairro;
+}
+
+// ============================================
+// CARD
+// ============================================
+function mostrarCard(bairro) {
+    const card = document.getElementById("info-card");
+    document.getElementById("card-title").textContent = bairro.nome;
+    document.getElementById("card-icon").textContent = "🏛️";
+    document.getElementById("card-description").textContent = bairro.descricao;
+    card.classList.add("visible");
+}
+
+function fecharCard() {
+    document.getElementById("info-card").classList.remove("visible");
+    document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
+    bairroAtivo = null;
+}
+
+function verDados() {
+    if (bairroAtivo) {
+        alert(`🚧 Funcionalidade em desenvolvimento!\n\nEm breve: dados completos sobre ${bairroAtivo.nome}`);
+    }
+}
+
+// ============================================
+// ZOOM
+// ============================================
+function zoom(factor) {
+    scale *= factor;
+    scale = Math.max(0.5, Math.min(scale, 3.5));
+    updateTransform();
+}
+
+function resetZoom() {
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+}
+
+function updateTransform() {
+    const wrapper = document.getElementById("map-wrapper");
+    wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+}
+
+// ============================================
+// PAN (ARRASTAR)
+// ============================================
+const mapWrapper = document.getElementById("map-wrapper");
+
+mapWrapper.addEventListener("mousedown", (e) => {
+    if (e.target.closest('svg') || e.target.id === "svg-container") {
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        mapWrapper.style.cursor = "grabbing";
+    }
+});
+
+document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        updateTransform();
+    }
+});
+
+document.addEventListener("mouseup", () => {
+    isDragging = false;
+    mapWrapper.style.cursor = "grab";
+});
+
+// ============================================
+// SISTEMA DE CALIBRAÇÃO VISUAL
+// ============================================
+function abrirCalibração() {
+    const panel = document.getElementById('calibration-panel');
+    panel.classList.add('active');
+    
+    // Preencher valores atuais
+    document.getElementById('offset-x').value = CONFIG.coordOffset.x;
+    document.getElementById('offset-y').value = CONFIG.coordOffset.y;
+    document.getElementById('coord-scale').value = Math.round(CONFIG.coordScale * 100);
+}
+
+function fecharCalibração() {
+    document.getElementById('calibration-panel').classList.remove('active');
+}
+
+function aplicarCalibração() {
+    // Pegar valores dos inputs
+    CONFIG.coordOffset.x = parseFloat(document.getElementById('offset-x').value) || 0;
+    CONFIG.coordOffset.y = parseFloat(document.getElementById('offset-y').value) || 0;
+    CONFIG.coordScale = parseFloat(document.getElementById('coord-scale').value) / 100 || 1;
+    
+    // Recriar marcadores com novos valores
+    criarMarcadores();
+    
+    // Mostrar valores no console para copiar
+    console.log('📋 COPIE ESTES VALORES:');
+    console.log(`coordOffset: { x: ${CONFIG.coordOffset.x}, y: ${CONFIG.coordOffset.y} }`);
+    console.log(`coordScale: ${CONFIG.coordScale}`);
+    
+    alert(`✅ Ajustes aplicados!\n\nVeja o console para copiar os valores.\n\nOffset X: ${CONFIG.coordOffset.x}\nOffset Y: ${CONFIG.coordOffset.y}\nEscala: ${CONFIG.coordScale}`);
+    
+    fecharCalibração();
+}
+
+// Atalho: pressione 'C' para abrir calibração
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'c' || e.key === 'C') {
+        if (document.getElementById('calibration-panel').classList.contains('active')) {
+            fecharCalibração();
+        } else {
+            abrirCalibração();
+        }
+    }
+});
+
+// ============================================
+// INICIALIZAÇÃO
+// ============================================
+renderizarLista();
+
+console.log('🎬 Hortolândia Ultra Cinema Experience');
+console.log(`📍 ${bairros.length} localidades mapeadas`);
+console.log('⚙️ Pressione C ou clique no botão ⚙️ para ajustar posições');
+console.log('⚡ Performance otimizada para Vercel/GitHub Pages');
+</script>
+
+</body>
+</html>
