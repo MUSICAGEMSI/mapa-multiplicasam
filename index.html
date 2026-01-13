@@ -70,19 +70,19 @@ body {
 
 @keyframes roadColors {
     0% {
-        stroke: rgba(212, 175, 55, 0.85);  /* Ouro */
+        stroke: rgba(212, 175, 55, 0.85);
     }
     25% {
-        stroke: rgba(192, 192, 192, 0.85); /* Prata */
+        stroke: rgba(192, 192, 192, 0.85);
     }
     50% {
-        stroke: rgba(59, 130, 246, 0.85);  /* Azul */
+        stroke: rgba(59, 130, 246, 0.85);
     }
     75% {
-        stroke: rgba(255, 255, 255, 0.75); /* Branco */
+        stroke: rgba(255, 255, 255, 0.75);
     }
     100% {
-        stroke: rgba(212, 175, 55, 0.85);  /* Ouro */
+        stroke: rgba(212, 175, 55, 0.85);
     }
 }
 
@@ -107,7 +107,6 @@ body {
     overflow: hidden;
 }
 
-/* Imagem dentro do marcador */
 .marker-image {
     width: 100%;
     height: 100%;
@@ -115,7 +114,6 @@ body {
     border-radius: 50%;
 }
 
-/* Emoji fallback se não houver imagem */
 .marker-emoji {
     font-size: 22px;
 }
@@ -374,7 +372,7 @@ body {
     background: rgba(59, 130, 246, 0.55);
 }
 
-/* ========== CARD DE INFORMAÇÕES (SEM IMAGEM) ========== */
+/* ========== CARD DE INFORMAÇÕES ========== */
 #info-card {
     position: fixed;
     bottom: 32px;
@@ -629,7 +627,7 @@ body {
     <div id="bairros-list"></div>
 </div>
 
-<!-- CARD (SEM IMAGEM GRANDE) -->
+<!-- CARD -->
 <div id="info-card" class="glass">
     <div class="card-header">
         <h3 id="card-title">Localidade</h3>
@@ -659,6 +657,8 @@ function toggleMarkerMode() {
     document.getElementById('mode-text').textContent = 
         useImageMarkers ? '📸 Modo: Imagens' : '🏛️ Modo: Emojis';
     
+    console.log('🔄 Modo alterado:', useImageMarkers ? 'Imagens' : 'Emojis');
+    
     document.querySelectorAll('.marker').forEach(m => m.remove());
     criarMarcadores();
     renderizarLista();
@@ -674,16 +674,16 @@ fetch('assets/hortolandia-roads.svg')
         const svgElement = document.querySelector('#svg-container svg');
         if (svgElement) {
             svgElement.id = "city-map";
-            console.log('✅ SVG carregado');
+            console.log('✅ SVG carregado com sucesso');
         }
         criarMarcadores();
     })
     .catch(error => {
-        console.error('Erro ao carregar SVG:', error);
+        console.error('❌ Erro ao carregar SVG:', error);
     });
 
 // ============================================
-// DADOS DAS 38 LOCALIDADES (ORDEM CUSTOMIZADA)
+// DADOS DAS 38 LOCALIDADES
 // ============================================
 const bairros = [
     {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, imagem: "assets/fotos/jardim-santana.jpg"},
@@ -750,7 +750,7 @@ function renderizarLista() {
         if (useImageMarkers && bairro.imagem) {
             item.innerHTML = `
                 <img src="${bairro.imagem}" alt="${bairro.nome}" class="bairro-thumb" 
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                     onerror="console.warn('⚠️ Imagem não encontrada:', '${bairro.imagem}'); this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
                 <span class="bairro-icon" style="display: none;">🏛️</span>
                 <span class="bairro-nome">${bairro.nome}</span>
             `;
@@ -772,6 +772,8 @@ function renderizarLista() {
 // CRIAR MARCADORES
 // ============================================
 function criarMarcadores() {
+    console.log('🎯 Criando marcadores... Modo:', useImageMarkers ? 'Imagens' : 'Emojis');
+    
     bairros.forEach((bairro, index) => {
         const marker = document.createElement("div");
         marker.className = "marker";
@@ -780,11 +782,16 @@ function criarMarcadores() {
         marker.style.top = `${bairro.y}px`;
         
         if (useImageMarkers && bairro.imagem) {
+            console.log(`📸 Tentando carregar imagem: ${bairro.imagem}`);
             const img = document.createElement("img");
             img.src = bairro.imagem;
             img.alt = bairro.nome;
             img.className = "marker-image";
+            img.onload = function() {
+                console.log(`✅ Imagem carregada: ${bairro.nome}`);
+            };
             img.onerror = function() {
+                console.warn(`⚠️ Falha ao carregar: ${bairro.imagem}`);
                 this.remove();
                 const emoji = document.createElement("span");
                 emoji.className = "marker-emoji";
@@ -806,6 +813,8 @@ function criarMarcadores() {
         
         document.getElementById("map-wrapper").appendChild(marker);
     });
+    
+    console.log(`✅ ${bairros.length} marcadores criados`);
 }
 
 // ============================================
@@ -842,7 +851,7 @@ function focarBairro(index) {
 }
 
 // ============================================
-// CARD (SEM IMAGEM GRANDE)
+// CARD
 // ============================================
 function mostrarCard(bairro) {
     const card = document.getElementById("info-card");
@@ -994,9 +1003,14 @@ mapWrapper.addEventListener("touchend", () => {
 // ============================================
 window.onload = () => {
     renderizarLista();
-    console.log('🗺️ Hortolândia com Fotos carregado!');
-    console.log(`📍 ${bairros.length} localidades mapeadas`);
-    console.log('📸 Lista ordenada conforme especificado');
+    console.log('🗺️ Hortolândia SAM carregado!');
+    console.log(`📍 ${bairros.length} localidades configuradas`);
+    console.log('📸 Modo inicial:', useImageMarkers ? 'Imagens' : 'Emojis');
+    console.log('');
+    console.log('💡 INSTRUÇÕES:');
+    console.log('1. As fotos devem estar em: assets/fotos/');
+    console.log('2. Veja o console para erros de carregamento');
+    console.log('3. Use o botão no topo para alternar entre Imagens/Emojis');
 };
 </script>
 
