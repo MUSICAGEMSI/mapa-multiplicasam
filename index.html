@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hortolândia – Mapa Interativo com Fotos</title>
+<title>Hortolândia – Mapa Interativo Premium</title>
 
 <style>
 * {
@@ -374,12 +374,12 @@ body {
     background: rgba(59, 130, 246, 0.55);
 }
 
-/* ========== CARD DE INFORMAÇÕES ========== */
+/* ========== CARD DE INFORMAÇÕES (SEM IMAGEM) ========== */
 #info-card {
     position: fixed;
     bottom: 32px;
     right: 32px;
-    width: 420px;
+    width: 370px;
     padding: 0;
     display: none;
     z-index: 1000;
@@ -437,46 +437,6 @@ body {
     border-color: rgba(239, 68, 68, 1);
     transform: rotate(90deg);
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-}
-
-/* Imagem principal do card */
-.card-image {
-    width: 100%;
-    height: 240px;
-    object-fit: cover;
-    display: block;
-}
-
-/* Fallback gradient se não houver imagem */
-.card-icon {
-    width: 100%;
-    height: 240px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 72px;
-    position: relative;
-    overflow: hidden;
-}
-
-.card-icon::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), transparent 60%);
-    animation: shine 4s ease-in-out infinite;
-}
-
-@keyframes shine {
-    0%, 100% { 
-        transform: translate(-20%, -20%) scale(1);
-        opacity: 0;
-    }
-    50% { 
-        transform: translate(0%, 0%) scale(1.5);
-        opacity: 1;
-    }
 }
 
 .card-content {
@@ -661,13 +621,12 @@ body {
     <div id="bairros-list"></div>
 </div>
 
-<!-- CARD -->
+<!-- CARD (SEM IMAGEM GRANDE) -->
 <div id="info-card" class="glass">
     <div class="card-header">
         <h3 id="card-title">Localidade</h3>
         <button class="close-btn" onclick="fecharCard()">×</button>
     </div>
-    <div id="card-media-container"></div>
     <div class="card-content">
         <p id="card-description">Informações da localidade</p>
         <button class="ver-dados-btn" onclick="verDados()">VER DADOS COMPLETOS</button>
@@ -685,16 +644,16 @@ body {
 // ============================================
 // CONFIGURAÇÃO DE MODO
 // ============================================
-let useImageMarkers = true; // true = usa imagens, false = usa emojis
+let useImageMarkers = true;
 
 function toggleMarkerMode() {
     useImageMarkers = !useImageMarkers;
     document.getElementById('mode-text').textContent = 
         useImageMarkers ? '📸 Modo: Imagens' : '🏛️ Modo: Emojis';
     
-    // Recriar marcadores
     document.querySelectorAll('.marker').forEach(m => m.remove());
     criarMarcadores();
+    renderizarLista();
 }
 
 // ============================================
@@ -716,47 +675,47 @@ fetch('assets/hortolandia-roads.svg')
     });
 
 // ============================================
-// DADOS DAS 38 LOCALIDADES COM IMAGENS
+// DADOS DAS 38 LOCALIDADES (ORDEM CUSTOMIZADA)
 // ============================================
 const bairros = [
-    {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", x: 680, y: 441, imagem: "assets/fotos/jardim-santa-esmeralda.png"},
-    {nome: "Jardim Terras de Santo Antônio", descricao: "Bairro residencial com boa infraestrutura.", x: 735, y: 402, imagem: "assets/fotos/terras-santo-antonio.png"},
-    {nome: "Jardim Adelaide", descricao: "Região tranquila e bem localizada.", x: 778, y: 464, imagem: "assets/fotos/jardim-adelaide.png"},
-    {nome: "Jardim Santa Izabel", descricao: "Bairro em desenvolvimento constante.", x: 809, y: 389, imagem: "assets/fotos/jardim-santa-izabel.png"},
-    {nome: "Jardim Novo Ângulo", descricao: "Área residencial moderna.", x: 805, y: 276, imagem: "assets/fotos/jardim-novo-angulo.png"},
-    {nome: "Vila Inema", descricao: "Comunidade tradicional da cidade.", x: 771, y: 326, imagem: "assets/fotos/vila-inema.png"},
-    {nome: "Jardim Santa Clara", descricao: "Bairro com forte identidade local.", x: 679, y: 341, imagem: "assets/fotos/jardim-santa-clara.png"},
-    {nome: "Jardim Mirante", descricao: "Região com boa vista panorâmica.", x: 644, y: 306, imagem: "assets/fotos/jardim-mirante.png"},
-    {nome: "Jardim do Bosque", descricao: "Área arborizada e residencial.", x: 681, y: 288, imagem: "assets/fotos/jardim-do-bosque.png"},
-    {nome: "Jardim Santana", descricao: "Bairro familiar consolidado.", x: 600, y: 245, imagem: "assets/fotos/jardim-santana.png"},
-    {nome: "Amanda I", descricao: "Primeira fase do conjunto Amanda.", x: 480, y: 365, imagem: "assets/fotos/amanda-1.png"},
-    {nome: "Amanda II", descricao: "Segunda fase do conjunto Amanda.", x: 450, y: 437, imagem: "assets/fotos/amanda-2.png"},
-    {nome: "Amanda III", descricao: "Terceira fase do conjunto Amanda.", x: 411, y: 372, imagem: "assets/fotos/amanda-3.png"},
-    {nome: "Amanda IV", descricao: "Quarta fase do conjunto Amanda.", x: 447, y: 332, imagem: "assets/fotos/amanda-4.png"},
-    {nome: "Chácaras Recreio 2000", descricao: "Área de chácaras e lazer.", x: 349, y: 384, imagem: "assets/fotos/chacaras-recreio-2000.png"},
-    {nome: "Jardim das Colinas", descricao: "Bairro planejado em região elevada.", x: 517, y: 136, imagem: "assets/fotos/jardim-das-colinas.png"},
-    {nome: "Parque do Horto", descricao: "Região com áreas verdes preservadas.", x: 610, y: 93, imagem: "assets/fotos/parque-do-horto.png"},
-    {nome: "Parque Orestes Ôngaro", descricao: "Bairro homenagem ao pioneiro local.", x: 546, y: 59, imagem: "assets/fotos/parque-orestes-ongaro.png"},
-    {nome: "Terras de Santa Maria", descricao: "Loteamento moderno e planejado.", x: 510, y: 116, imagem: "assets/fotos/terras-santa-maria.png"},
-    {nome: "Recanto do Sol", descricao: "Área residencial tranquila.", x: 651, y: 142, imagem: "assets/fotos/recanto-do-sol.png"},
-    {nome: "Jardim São Jorge", descricao: "Comunidade tradicional da região.", x: 647, y: 177, imagem: "assets/fotos/jardim-sao-jorge.png"},
-    {nome: "Nova Hortolândia", descricao: "Área de expansão urbana.", x: 615, y: 144, imagem: "assets/fotos/nova-hortolandia.png"},
-    {nome: "Jardim Santa Luzia", descricao: "Bairro com forte presença comunitária.", x: 676, y: 213, imagem: "assets/fotos/jardim-santa-luzia.png"},
-    {nome: "Jardim Nova Europa", descricao: "Região em crescimento populacional.", x: 777, y: 181, imagem: "assets/fotos/jardim-nova-europa.png"},
-    {nome: "Vila Real", descricao: "Comunidade estabelecida há décadas.", x: 567, y: 129, imagem: "assets/fotos/vila-real.png"},
-    {nome: "Jardim Novo Cambuí", descricao: "Bairro planejado e moderno.", x: 558, y: 297, imagem: "assets/fotos/jardim-novo-cambui.png"},
-    {nome: "Residencial BellaVille", descricao: "Condomínio residencial de alto padrão.", x: 525, y: 35, imagem: "assets/fotos/residencial-bellaville.png"},
-    {nome: "Jardim São Pedro", descricao: "Área residencial consolidada.", x: 605, y: 427, imagem: "assets/fotos/jardim-sao-pedro.png"},
-    {nome: "Residencial João Luiz", descricao: "Conjunto habitacional popular.", x: 679, y: 391, imagem: "assets/fotos/residencial-joao-luiz.png"},
-    {nome: "Jardim Aline", descricao: "Bairro familiar em crescimento.", x: 877, y: 180, imagem: "assets/fotos/jardim-aline.png"},
-    {nome: "Jardim São Sebastião", descricao: "Região com infraestrutura completa.", x: 576, y: 370, imagem: "assets/fotos/jardim-sao-sebastiao.png"},
-    {nome: "Jardim Auxiliadora", descricao: "Comunidade tradicional da cidade.", x: 629, y: 121, imagem: "assets/fotos/jardim-auxiliadora.png"},
-    {nome: "Residencial Firenze", descricao: "Condomínio moderno e planejado.", x: 456, y: 248, imagem: "assets/fotos/residencial-firenze.png"},
-    {nome: "Jardim Novo Horizonte", descricao: "Área em expansão urbana.", x: 342, y: 279, imagem: "assets/fotos/jardim-novo-horizonte.png"},
-    {nome: "Jardim Interlagos", descricao: "Bairro próximo a áreas de lazer.", x: 606, y: 350, imagem: "assets/fotos/jardim-interlagos.png"},
-    {nome: "Jardim Boa Vista/Stella", descricao: "Região elevada com boa vista.", x: 566, y: 469, imagem: "assets/fotos/jardim-boa-vista-stella.png"},
-    {nome: "Jardim Nova América", descricao: "Bairro residencial em desenvolvimento.", x: 833, y: 317, imagem: "assets/fotos/jardim-nova-america.png"},
-    {nome: "Estrada do Furlan, 1121", descricao: "Região rural em transição urbana.", x: 746, y: 274, imagem: "assets/fotos/estrada-furlan.png"}
+    {nome: "Jardim Santana", descricao: "Bairro familiar consolidado - Central.", x: 600, y: 245, imagem: "assets/fotos/jardim-santana.jpg"},
+    {nome: "Jardim Santa Izabel", descricao: "Bairro em desenvolvimento constante.", x: 809, y: 389, imagem: "assets/fotos/jardim-santa-izabel.jpg"},
+    {nome: "Jardim São Pedro", descricao: "Área residencial consolidada.", x: 605, y: 427, imagem: "assets/fotos/jardim-sao-pedro.jpg"},
+    {nome: "Jardim Mirante", descricao: "Região com boa vista panorâmica.", x: 644, y: 306, imagem: "assets/fotos/jardim-mirante.jpg"},
+    {nome: "Jardim Novo Ângulo", descricao: "Área residencial moderna.", x: 805, y: 276, imagem: "assets/fotos/jardim-novo-angulo.jpg"},
+    {nome: "Vila Real", descricao: "Comunidade estabelecida há décadas.", x: 567, y: 129, imagem: "assets/fotos/vila-real.jpg"},
+    {nome: "Amanda I", descricao: "Primeira fase do conjunto Amanda.", x: 480, y: 365, imagem: "assets/fotos/amanda-1.jpg"},
+    {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", x: 680, y: 441, imagem: "assets/fotos/jardim-santa-esmeralda.jpg"},
+    {nome: "Jardim Santa Luzia", descricao: "Bairro com forte presença comunitária.", x: 676, y: 213, imagem: "assets/fotos/jardim-santa-luzia.jpg"},
+    {nome: "Parque do Horto", descricao: "Região com áreas verdes preservadas.", x: 610, y: 93, imagem: "assets/fotos/parque-do-horto.jpg"},
+    {nome: "Jardim Santa Clara", descricao: "Bairro com forte identidade local.", x: 679, y: 341, imagem: "assets/fotos/jardim-santa-clara.jpg"},
+    {nome: "Amanda II", descricao: "Segunda fase do conjunto Amanda.", x: 450, y: 437, imagem: "assets/fotos/amanda-2.jpg"},
+    {nome: "Jardim Adelaide", descricao: "Região tranquila e bem localizada.", x: 778, y: 464, imagem: "assets/fotos/jardim-adelaide.jpg"},
+    {nome: "Parque Orestes Ôngaro", descricao: "Bairro homenagem ao pioneiro local.", x: 546, y: 59, imagem: "assets/fotos/parque-orestes-ongaro.jpg"},
+    {nome: "Jardim São Jorge", descricao: "Comunidade tradicional da região.", x: 647, y: 177, imagem: "assets/fotos/jardim-sao-jorge.jpg"},
+    {nome: "Jardim São Sebastião", descricao: "Região com infraestrutura completa.", x: 576, y: 370, imagem: "assets/fotos/jardim-sao-sebastiao.jpg"},
+    {nome: "Jardim do Bosque", descricao: "Área arborizada e residencial.", x: 681, y: 288, imagem: "assets/fotos/jardim-do-bosque.jpg"},
+    {nome: "Vila Inema", descricao: "Comunidade tradicional da cidade.", x: 771, y: 326, imagem: "assets/fotos/vila-inema.jpg"},
+    {nome: "Jardim Aline", descricao: "Bairro familiar em crescimento.", x: 877, y: 180, imagem: "assets/fotos/jardim-aline.jpg"},
+    {nome: "Amanda III", descricao: "Terceira fase do conjunto Amanda.", x: 411, y: 372, imagem: "assets/fotos/amanda-3.jpg"},
+    {nome: "Chácaras Recreio 2000", descricao: "Área de chácaras e lazer.", x: 349, y: 384, imagem: "assets/fotos/chacaras-recreio-2000.jpg"},
+    {nome: "Jardim Nova Europa", descricao: "Região em crescimento populacional.", x: 777, y: 181, imagem: "assets/fotos/jardim-nova-europa.jpg"},
+    {nome: "Jardim das Colinas", descricao: "Bairro planejado em região elevada.", x: 517, y: 136, imagem: "assets/fotos/jardim-das-colinas.jpg"},
+    {nome: "Residencial João Luiz", descricao: "Conjunto habitacional popular.", x: 679, y: 391, imagem: "assets/fotos/residencial-joao-luiz.jpg"},
+    {nome: "Jardim Auxiliadora", descricao: "Comunidade tradicional da cidade.", x: 629, y: 121, imagem: "assets/fotos/jardim-auxiliadora.jpg"},
+    {nome: "Jardim Novo Horizonte", descricao: "Área em expansão urbana.", x: 342, y: 279, imagem: "assets/fotos/jardim-novo-horizonte.jpg"},
+    {nome: "Jardim Nova América", descricao: "Bairro residencial em desenvolvimento.", x: 833, y: 317, imagem: "assets/fotos/jardim-nova-america.jpg"},
+    {nome: "Jardim Interlagos", descricao: "Bairro próximo a áreas de lazer.", x: 606, y: 350, imagem: "assets/fotos/jardim-interlagos.jpg"},
+    {nome: "Jardim Terras de Santo Antônio", descricao: "Bairro residencial com boa infraestrutura.", x: 735, y: 402, imagem: "assets/fotos/terras-santo-antonio.jpg"},
+    {nome: "Residencial Firenze", descricao: "Condomínio moderno e planejado.", x: 456, y: 248, imagem: "assets/fotos/residencial-firenze.jpg"},
+    {nome: "Jardim Boa Vista", descricao: "Região elevada com boa vista.", x: 566, y: 469, imagem: "assets/fotos/jardim-boa-vista-stella.jpg"},
+    {nome: "Estrada do Furlan", descricao: "Região rural em transição urbana.", x: 746, y: 274, imagem: "assets/fotos/estrada-furlan.jpg"},
+    {nome: "Recanto do Sol", descricao: "Área residencial tranquila.", x: 651, y: 142, imagem: "assets/fotos/recanto-do-sol.jpg"},
+    {nome: "Amanda IV", descricao: "Quarta fase do conjunto Amanda.", x: 447, y: 332, imagem: "assets/fotos/amanda-4.jpg"},
+    {nome: "Residencial BellaVille", descricao: "Condomínio residencial de alto padrão.", x: 525, y: 35, imagem: "assets/fotos/residencial-bellaville.jpg"},
+    {nome: "Nova Hortolândia", descricao: "Área de expansão urbana.", x: 615, y: 144, imagem: "assets/fotos/nova-hortolandia.jpg"},
+    {nome: "Jardim Novo Cambuí", descricao: "Bairro planejado e moderno.", x: 558, y: 297, imagem: "assets/fotos/jardim-novo-cambui.jpg"},
+    {nome: "Terras de Santa Maria", descricao: "Loteamento moderno e planejado.", x: 510, y: 116, imagem: "assets/fotos/terras-santa-maria.jpg"}
 ];
 
 // ============================================
@@ -813,13 +772,11 @@ function criarMarcadores() {
         marker.style.top = `${bairro.y}px`;
         
         if (useImageMarkers && bairro.imagem) {
-            // Usar imagem como marcador
             const img = document.createElement("img");
             img.src = bairro.imagem;
             img.alt = bairro.nome;
             img.className = "marker-image";
             img.onerror = function() {
-                // Se a imagem falhar, usar emoji
                 this.remove();
                 const emoji = document.createElement("span");
                 emoji.className = "marker-emoji";
@@ -828,7 +785,6 @@ function criarMarcadores() {
             };
             marker.appendChild(img);
         } else {
-            // Usar emoji
             const emoji = document.createElement("span");
             emoji.className = "marker-emoji";
             emoji.textContent = "🏛️";
@@ -878,25 +834,13 @@ function focarBairro(index) {
 }
 
 // ============================================
-// CARD COM IMAGEM
+// CARD (SEM IMAGEM GRANDE)
 // ============================================
 function mostrarCard(bairro) {
     const card = document.getElementById("info-card");
-    const mediaContainer = document.getElementById("card-media-container");
     
     document.getElementById("card-title").textContent = bairro.nome;
     document.getElementById("card-description").textContent = bairro.descricao;
-    
-    // Mostrar imagem ou emoji
-    if (bairro.imagem) {
-        mediaContainer.innerHTML = `
-            <img src="${bairro.imagem}" alt="${bairro.nome}" class="card-image"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="card-icon" style="display: none;">🏛️</div>
-        `;
-    } else {
-        mediaContainer.innerHTML = `<div class="card-icon">🏛️</div>`;
-    }
     
     card.classList.add("visible");
 }
@@ -1044,7 +988,7 @@ window.onload = () => {
     renderizarLista();
     console.log('🗺️ Hortolândia com Fotos carregado!');
     console.log(`📍 ${bairros.length} localidades mapeadas`);
-    console.log('📸 Sistema de imagens configurado');
+    console.log('📸 Lista ordenada conforme especificado');
 };
 </script>
 
