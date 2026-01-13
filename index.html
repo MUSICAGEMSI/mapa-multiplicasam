@@ -20,7 +20,7 @@ body {
     height: 100vh;
 }
 
-/* ========== FUNDO MINIMALISTA ========== */
+/* ========== FUNDO ========== */
 #map-container {
     position: relative;
     width: 100vw;
@@ -28,7 +28,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+    background: #0a0a0a;
 }
 
 /* ========== WRAPPER DO MAPA ========== */
@@ -44,60 +44,57 @@ body {
 }
 
 #map-wrapper.zooming {
-    transition: transform 0.6s ease;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ========== SVG ========== */
 #city-map {
-    display: block;
-    max-width: 90vw;
-    max-height: 85vh;
-    opacity: 0.9;
+    height: 80vh;
+    opacity: 0.95;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.15));
 }
 
-/* ========== MARCADORES SISTEMA RELATIVO ========== */
+/* ========== MARCADORES ========== */
 .marker {
     position: absolute;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border: 2px solid rgba(255, 255, 255, 0.9);
+    background: rgba(59, 130, 246, 0.9);
+    border: 3px solid white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
     z-index: 100;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
-    pointer-events: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .marker:hover {
-    transform: scale(1.3);
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.8);
-    z-index: 200;
+    transform: translate(-50%, -50%) scale(1.3);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
 }
 
 .marker.active {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    transform: scale(1.2);
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
-    z-index: 150;
+    background: rgba(239, 68, 68, 0.9);
+    border-color: #fff;
+    transform: translate(-50%, -50%) scale(1.2);
     animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
-    50% { box-shadow: 0 0 30px rgba(239, 68, 68, 1); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
 }
 
 /* ========== GLASS UI ========== */
 .glass {
-    background: rgba(15, 15, 15, 0.8);
+    background: rgba(15, 15, 15, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
 }
@@ -115,17 +112,12 @@ body {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 4px;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 #header p {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.5);
     letter-spacing: 1px;
-    text-transform: uppercase;
 }
 
 /* ========== SIDEBAR ========== */
@@ -149,7 +141,7 @@ body {
 .total-count {
     display: inline-block;
     background: rgba(59, 130, 246, 0.2);
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.4);
     color: #60a5fa;
     padding: 4px 12px;
     border-radius: 6px;
@@ -161,7 +153,7 @@ body {
 .bairro-item {
     padding: 12px 14px;
     margin-bottom: 6px;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 10px;
     cursor: pointer;
@@ -170,8 +162,8 @@ body {
 
 .bairro-item:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(59, 130, 246, 0.5);
-    transform: translateX(4px);
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateX(5px);
 }
 
 .bairro-item.active {
@@ -180,14 +172,13 @@ body {
 }
 
 .bairro-icon {
-    font-size: 16px;
+    font-size: 18px;
     margin-right: 10px;
 }
 
 .bairro-nome {
     font-size: 13px;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
 }
 
 #sidebar::-webkit-scrollbar {
@@ -209,13 +200,15 @@ body {
     bottom: 30px;
     right: 30px;
     width: 360px;
+    padding: 0;
     display: none;
     z-index: 1000;
-    animation: slideUp 0.3s ease;
+    animation: slideUp 0.4s ease;
+    overflow: hidden;
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -239,14 +232,14 @@ body {
 
 .close-btn {
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: none;
     color: #fff;
     width: 32px;
     height: 32px;
     border-radius: 50%;
     font-size: 20px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -275,23 +268,24 @@ body {
     font-size: 14px;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 
 .ver-dados-btn {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    background: rgba(59, 130, 246, 0.9);
     color: #fff;
     border: none;
     border-radius: 10px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .ver-dados-btn:hover {
+    background: rgba(59, 130, 246, 1);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
@@ -311,12 +305,12 @@ body {
     height: 48px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(15, 15, 15, 0.8);
-    backdrop-filter: blur(10px);
+    background: rgba(15, 15, 15, 0.85);
+    backdrop-filter: blur(20px);
     color: #fff;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -324,47 +318,8 @@ body {
 
 .zoom-btn:hover {
     background: rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.6);
+    border-color: rgba(59, 130, 246, 0.5);
     transform: scale(1.1);
-}
-
-/* ========== DEBUG INFO ========== */
-#debug-info {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(239, 68, 68, 0.9);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 12px;
-    z-index: 2000;
-    display: none;
-}
-
-/* ========== LOADING ========== */
-.loading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 999;
-    padding: 30px;
-    background: rgba(15, 15, 15, 0.9);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.loading-title {
-    font-size: 24px;
-    margin-bottom: 12px;
-}
-
-.loading-subtitle {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 13px;
 }
 
 /* ========== RESPONSIVO ========== */
@@ -397,25 +352,16 @@ body {
 
 <body>
 
-<!-- DEBUG INFO -->
-<div id="debug-info"></div>
-
 <!-- HEADER -->
 <div id="header" class="glass">
-    <h2>🗺️ HORTOLÂNDIA</h2>
+    <h2>🗺️ Hortolândia</h2>
     <p>Mapa Interativo</p>
 </div>
 
 <!-- CONTAINER DO MAPA -->
 <div id="map-container">
     <div id="map-wrapper">
-        <div id="svg-container"></div>
-    </div>
-
-    <!-- PLACEHOLDER -->
-    <div class="loading" id="loading-placeholder" style="display: none;">
-        <div class="loading-title">🗺️ Hortolândia</div>
-        <div class="loading-subtitle">Carregando mapa...</div>
+        <img id="city-map" src="assets/hortolandia-roads.svg" alt="Mapa de Hortolândia">
     </div>
 </div>
 
@@ -441,26 +387,12 @@ body {
 
 <!-- CONTROLES -->
 <div id="zoom-controls">
-    <button class="zoom-btn" onclick="zoom(1.3)" title="Zoom In">+</button>
-    <button class="zoom-btn" onclick="zoom(0.77)" title="Zoom Out">−</button>
-    <button class="zoom-btn" onclick="resetZoom()" title="Reset">⟲</button>
+    <button class="zoom-btn" onclick="zoom(1.3)">+</button>
+    <button class="zoom-btn" onclick="zoom(0.77)">−</button>
+    <button class="zoom-btn" onclick="resetZoom()">⟲</button>
 </div>
 
 <script>
-// ============================================
-// CONFIGURAÇÃO - AJUSTE AQUI!
-// ============================================
-const CONFIG = {
-    svgPath: 'assets/hortolandia-roads.svg',
-    // Calibração de coordenadas (ajuste esses valores se necessário)
-    coordOffset: {
-        x: 0,  // Mova todos os marcadores horizontalmente
-        y: 0   // Mova todos os marcadores verticalmente
-    },
-    coordScale: 1, // Escala das coordenadas (1 = 100%)
-    debugMode: false // true para mostrar coordenadas no console
-};
-
 // ============================================
 // DADOS DAS 38 LOCALIDADES
 // ============================================
@@ -514,35 +446,6 @@ let translateX = 0;
 let translateY = 0;
 let isDragging = false;
 let startX, startY;
-let svgElement = null;
-let svgBounds = null;
-
-// ============================================
-// CARREGAR SVG
-// ============================================
-fetch(CONFIG.svgPath)
-    .then(response => response.text())
-    .then(svgText => {
-        document.getElementById('svg-container').innerHTML = svgText;
-        svgElement = document.querySelector('#svg-container svg');
-        if (svgElement) {
-            svgElement.id = "city-map";
-            
-            // Aguardar o SVG renderizar para pegar dimensões corretas
-            setTimeout(() => {
-                svgBounds = svgElement.getBoundingClientRect();
-                if (CONFIG.debugMode) {
-                    console.log('📐 Dimensões do SVG:', svgBounds);
-                }
-                criarMarcadores();
-            }, 100);
-        }
-    })
-    .catch(error => {
-        console.error('❌ Erro ao carregar SVG:', error);
-        document.getElementById('loading-placeholder').style.display = 'block';
-        showDebug('Erro ao carregar SVG: ' + CONFIG.svgPath);
-    });
 
 // ============================================
 // RENDERIZAR LISTA
@@ -566,43 +469,22 @@ function renderizarLista() {
 }
 
 // ============================================
-// CRIAR MARCADORES COM POSICIONAMENTO RELATIVO
+// CRIAR MARCADORES
 // ============================================
 function criarMarcadores() {
-    if (!svgElement || !svgBounds) {
-        console.error('❌ SVG não carregado corretamente');
-        return;
-    }
-
-    const wrapper = document.getElementById("map-wrapper");
-    
     bairros.forEach((bairro, index) => {
         const marker = document.createElement("div");
         marker.className = "marker";
         marker.id = `marker-${index}`;
         marker.textContent = "🏛️";
-        
-        // Coordenadas ajustadas
-        const adjustedX = (bairro.x * CONFIG.coordScale) + CONFIG.coordOffset.x;
-        const adjustedY = (bairro.y * CONFIG.coordScale) + CONFIG.coordOffset.y;
-        
-        // Posicionar relativo ao SVG
-        marker.style.left = `${adjustedX}px`;
-        marker.style.top = `${adjustedY}px`;
-        
-        if (CONFIG.debugMode) {
-            console.log(`📍 ${bairro.nome}: x=${adjustedX}, y=${adjustedY}`);
-        }
-        
+        marker.style.left = `${bairro.x}px`;
+        marker.style.top = `${bairro.y}px`;
         marker.onclick = (e) => {
             e.stopPropagation();
             focarBairro(index);
         };
-        
-        wrapper.appendChild(marker);
+        document.getElementById("map-wrapper").appendChild(marker);
     });
-
-    console.log(`✅ ${bairros.length} marcadores criados`);
 }
 
 // ============================================
@@ -626,16 +508,13 @@ function focarBairro(index) {
     const wrapper = document.getElementById("map-wrapper");
     wrapper.classList.add('zooming');
     
-    scale = 1.8;
-    const adjustedX = (bairro.x * CONFIG.coordScale) + CONFIG.coordOffset.x;
-    const adjustedY = (bairro.y * CONFIG.coordScale) + CONFIG.coordOffset.y;
-    
-    translateX = (window.innerWidth / 2) - (adjustedX * scale);
-    translateY = (window.innerHeight / 2) - (adjustedY * scale);
+    scale = 1.6;
+    translateX = (window.innerWidth / 2) - (bairro.x * scale);
+    translateY = (window.innerHeight / 2) - (bairro.y * scale);
     
     updateTransform();
     
-    setTimeout(() => wrapper.classList.remove('zooming'), 600);
+    setTimeout(() => wrapper.classList.remove('zooming'), 1000);
     
     // Mostrar card
     mostrarCard(bairro);
@@ -671,7 +550,7 @@ function verDados() {
 // ============================================
 function zoom(factor) {
     scale *= factor;
-    scale = Math.max(0.5, Math.min(scale, 3.5));
+    scale = Math.max(0.5, Math.min(scale, 3));
     updateTransform();
 }
 
@@ -691,9 +570,10 @@ function updateTransform() {
 // PAN (ARRASTAR)
 // ============================================
 const mapWrapper = document.getElementById("map-wrapper");
+const cityMap = document.getElementById("city-map");
 
 mapWrapper.addEventListener("mousedown", (e) => {
-    if (e.target.closest('svg') || e.target.id === "svg-container") {
+    if (e.target === cityMap) {
         isDragging = true;
         startX = e.clientX - translateX;
         startY = e.clientY - translateY;
@@ -715,38 +595,14 @@ document.addEventListener("mouseup", () => {
 });
 
 // ============================================
-// DEBUG
-// ============================================
-function showDebug(message) {
-    const debug = document.getElementById('debug-info');
-    debug.textContent = message;
-    debug.style.display = 'block';
-    setTimeout(() => {
-        debug.style.display = 'none';
-    }, 5000);
-}
-
-// Clique no SVG para pegar coordenadas (para calibração)
-if (CONFIG.debugMode) {
-    document.addEventListener('click', (e) => {
-        if (e.target.closest('svg')) {
-            const rect = svgElement.getBoundingClientRect();
-            const x = Math.round(e.clientX - rect.left);
-            const y = Math.round(e.clientY - rect.top);
-            console.log(`🎯 Coordenadas clicadas: x=${x}, y=${y}`);
-            showDebug(`Coordenadas: x=${x}, y=${y}`);
-        }
-    });
-}
-
-// ============================================
 // INICIALIZAÇÃO
 // ============================================
-renderizarLista();
-
-console.log('✅ Hortolândia Mapa Otimizado');
-console.log(`📍 ${bairros.length} localidades`);
-console.log('⚙️ Para calibrar coordenadas, ajuste CONFIG.coordOffset');
+window.onload = () => {
+    renderizarLista();
+    criarMarcadores();
+    console.log('🗺️ Hortolândia carregado!');
+    console.log(`📍 ${bairros.length} localidades`);
+};
 </script>
 
 </body>
