@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hortolândia – Premium Experience</title>
+<title>Hortolândia – Mapa Interativo Premium</title>
 
 <style>
 * {
@@ -14,13 +14,13 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #000;
+    background: #0a0a0a;
     color: #fff;
     overflow: hidden;
     height: 100vh;
 }
 
-/* ========== FUNDO GRADIENTE ANIMADO (LEVE) ========== */
+/* ========== FUNDO ========== */
 #map-container {
     position: relative;
     width: 100vw;
@@ -28,26 +28,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: 
-        radial-gradient(ellipse at 20% 30%, rgba(30, 58, 138, 0.15), transparent 50%),
-        radial-gradient(ellipse at 80% 70%, rgba(109, 40, 217, 0.12), transparent 50%),
-        #0a0a0a;
-    animation: bgShift 30s ease-in-out infinite alternate;
-}
-
-@keyframes bgShift {
-    0% { 
-        background: 
-            radial-gradient(ellipse at 20% 30%, rgba(30, 58, 138, 0.15), transparent 50%),
-            radial-gradient(ellipse at 80% 70%, rgba(109, 40, 217, 0.12), transparent 50%),
-            #0a0a0a;
-    }
-    100% { 
-        background: 
-            radial-gradient(ellipse at 70% 60%, rgba(30, 58, 138, 0.18), transparent 50%),
-            radial-gradient(ellipse at 30% 40%, rgba(109, 40, 217, 0.15), transparent 50%),
-            #0a0a0a;
-    }
+    background: radial-gradient(ellipse at center, #0d0d0d 0%, #000 100%);
 }
 
 /* ========== WRAPPER DO MAPA ========== */
@@ -66,19 +47,46 @@ body {
     transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ========== SVG COM EFEITO PREMIUM ========== */
-#city-map {
+/* ========== SVG CONTAINER ========== */
+#svg-container {
     height: 80vh;
-    opacity: 0.96;
-    filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.2));
-    transition: filter 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#city-map:hover {
-    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.3));
+#city-map {
+    height: 100%;
+    width: auto;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
 }
 
-/* ========== MARCADORES PREMIUM ========== */
+/* Animação das estradas SVG */
+#city-map path {
+    stroke-width: 1.2;
+    fill: none;
+    animation: roadColors 20s ease-in-out infinite;
+}
+
+@keyframes roadColors {
+    0% {
+        stroke: rgba(212, 175, 55, 0.85);  /* Ouro */
+    }
+    25% {
+        stroke: rgba(192, 192, 192, 0.85); /* Prata */
+    }
+    50% {
+        stroke: rgba(59, 130, 246, 0.85);  /* Azul */
+    }
+    75% {
+        stroke: rgba(255, 255, 255, 0.75); /* Branco */
+    }
+    100% {
+        stroke: rgba(212, 175, 55, 0.85);  /* Ouro */
+    }
+}
+
+/* ========== MARCADORES ESTÁTICOS ========== */
 .marker {
     position: absolute;
     width: 42px;
@@ -97,12 +105,6 @@ body {
     box-shadow: 
         0 4px 15px rgba(0, 0, 0, 0.6),
         0 0 20px rgba(59, 130, 246, 0.4);
-    animation: markerFloat 3.5s ease-in-out infinite;
-}
-
-@keyframes markerFloat {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-    50% { transform: translate(-50%, -50%) translateY(-5px); }
 }
 
 .marker::before {
@@ -122,7 +124,6 @@ body {
         0 0 35px rgba(59, 130, 246, 0.7),
         0 0 50px rgba(59, 130, 246, 0.4);
     z-index: 200;
-    animation: none;
 }
 
 .marker:hover::before {
@@ -145,24 +146,22 @@ body {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.9));
     border-color: rgba(255, 255, 255, 1);
     transform: translate(-50%, -50%) scale(1.25);
-    animation: activePulse 2s ease-in-out infinite;
     box-shadow: 
         0 6px 25px rgba(0, 0, 0, 0.8),
         0 0 30px rgba(239, 68, 68, 0.8),
         0 0 45px rgba(239, 68, 68, 0.5);
     z-index: 150;
+    animation: activePulse 2s ease-in-out infinite;
 }
 
 @keyframes activePulse {
     0%, 100% { 
-        transform: translate(-50%, -50%) scale(1.25);
         box-shadow: 
             0 6px 25px rgba(0, 0, 0, 0.8),
             0 0 30px rgba(239, 68, 68, 0.8),
             0 0 45px rgba(239, 68, 68, 0.5);
     }
     50% { 
-        transform: translate(-50%, -50%) scale(1.3);
         box-shadow: 
             0 8px 30px rgba(0, 0, 0, 0.9),
             0 0 40px rgba(239, 68, 68, 1),
@@ -554,7 +553,7 @@ body {
         bottom: 12px;
     }
 
-    #city-map {
+    #svg-container {
         height: 75vh;
     }
 }
@@ -566,13 +565,13 @@ body {
 <!-- HEADER -->
 <div id="header" class="glass">
     <h2>🗺️ Hortolândia</h2>
-    <p>Premium Experience</p>
+    <p>Mapa Interativo Premium</p>
 </div>
 
 <!-- CONTAINER DO MAPA -->
 <div id="map-container">
     <div id="map-wrapper">
-        <img id="city-map" src="assets/hortolandia-roads.svg" alt="Mapa de Hortolândia">
+        <div id="svg-container"></div>
     </div>
 </div>
 
@@ -605,7 +604,26 @@ body {
 
 <script>
 // ============================================
-// DADOS DAS 38 LOCALIDADES (POSIÇÕES EXATAS)
+// CARREGAR E ANIMAR SVG
+// ============================================
+fetch('assets/hortolandia-roads.svg')
+    .then(response => response.text())
+    .then(svgText => {
+        document.getElementById('svg-container').innerHTML = svgText;
+        const svgElement = document.querySelector('#svg-container svg');
+        if (svgElement) {
+            svgElement.id = "city-map";
+            console.log('✅ SVG carregado - animação de cores ativada');
+        }
+        // Criar marcadores após SVG carregar
+        criarMarcadores();
+    })
+    .catch(error => {
+        console.error('Erro ao carregar SVG:', error);
+    });
+
+// ============================================
+// DADOS DAS 38 LOCALIDADES
 // ============================================
 const bairros = [
     {nome: "Jardim Santa Esmeralda", descricao: "Comunidade com forte presença religiosa e comunitária.", x: 680, y: 441},
@@ -715,7 +733,6 @@ function focarBairro(index) {
     const items = document.querySelectorAll('.bairro-item');
     if (items[index]) {
         items[index].classList.add('active');
-        // Scroll suave até o item
         items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     
@@ -775,7 +792,6 @@ function resetZoom() {
     translateY = 0;
     updateTransform();
     
-    // Limpar seleção
     document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
     document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
     fecharCard();
@@ -790,10 +806,10 @@ function updateTransform() {
 // PAN (ARRASTAR)
 // ============================================
 const mapWrapper = document.getElementById("map-wrapper");
-const cityMap = document.getElementById("city-map");
 
 mapWrapper.addEventListener("mousedown", (e) => {
-    if (e.target === cityMap) {
+    const svg = document.getElementById("city-map");
+    if (e.target === svg || e.target.tagName === 'path' || e.target.id === 'svg-container') {
         isDragging = true;
         startX = e.clientX - translateX;
         startY = e.clientY - translateY;
@@ -824,7 +840,6 @@ mapWrapper.addEventListener("wheel", (e) => {
     const newScale = scale * delta;
     
     if (newScale >= 0.5 && newScale <= 3) {
-        // Zoom em direção ao cursor
         const rect = mapWrapper.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -890,19 +905,10 @@ mapWrapper.addEventListener("touchend", () => {
 // ============================================
 window.onload = () => {
     renderizarLista();
-    criarMarcadores();
     console.log('🗺️ Hortolândia Premium carregado!');
     console.log(`📍 ${bairros.length} localidades mapeadas`);
-    console.log('✨ Experiência otimizada e responsiva');
+    console.log('✨ Animação de cores nas estradas ativada');
 };
-
-// ============================================
-// ANIMAÇÃO SUAVE DO SVG (OPCIONAL)
-// ============================================
-const svgImg = document.getElementById('city-map');
-svgImg.addEventListener('load', () => {
-    console.log('✅ Mapa SVG carregado com sucesso');
-});
 </script>
 
 </body>
