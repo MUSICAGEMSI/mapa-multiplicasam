@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hortolândia – Mapa Interativo Premium</title>
 
 <style>
@@ -10,7 +10,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -19,7 +18,6 @@ body {
     color: #fff;
     overflow: hidden;
     height: 100vh;
-    touch-action: none;
 }
 
 /* ========== FUNDO ========== */
@@ -31,7 +29,6 @@ body {
     align-items: center;
     justify-content: center;
     background: radial-gradient(ellipse at center, #0d0d0d 0%, #000 100%);
-    overflow: hidden;
 }
 
 /* ========== WRAPPER DO MAPA ========== */
@@ -39,8 +36,7 @@ body {
     position: relative;
     z-index: 10;
     cursor: grab;
-    transition: none;
-    will-change: transform;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #map-wrapper:active {
@@ -48,7 +44,7 @@ body {
 }
 
 #map-wrapper.zooming {
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ========== SVG CONTAINER ========== */
@@ -57,14 +53,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: none;
 }
 
 #city-map {
     height: 100%;
     width: auto;
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
-    pointer-events: none;
 }
 
 /* Animação das estradas SVG */
@@ -111,7 +105,6 @@ body {
         0 4px 15px rgba(0, 0, 0, 0.6),
         0 0 20px rgba(59, 130, 246, 0.4);
     overflow: hidden;
-    pointer-events: auto;
 }
 
 .marker-image {
@@ -208,7 +201,6 @@ body {
     padding: 18px 26px;
     z-index: 1000;
     animation: slideInDown 0.6s ease;
-    pointer-events: auto;
 }
 
 @keyframes slideInDown {
@@ -256,7 +248,6 @@ body {
     overflow-y: auto;
     z-index: 1000;
     animation: slideInLeft 0.6s ease;
-    pointer-events: auto;
 }
 
 @keyframes slideInLeft {
@@ -392,7 +383,6 @@ body {
     z-index: 1000;
     animation: slideUpSmooth 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
-    pointer-events: auto;
 }
 
 @keyframes slideUpSmooth {
@@ -500,7 +490,6 @@ body {
     gap: 11px;
     z-index: 1000;
     animation: slideInUp 0.6s ease;
-    pointer-events: auto;
 }
 
 @keyframes slideInUp {
@@ -550,7 +539,6 @@ body {
     transform: translateX(-50%);
     z-index: 1000;
     animation: slideInDown 0.6s ease;
-    pointer-events: auto;
 }
 
 .toggle-btn {
@@ -578,21 +566,11 @@ body {
         width: 270px;
         left: 12px;
         top: 12px;
-        max-height: calc(100vh - 180px);
     }
 
     #header {
         right: 12px;
         top: 12px;
-        padding: 14px 20px;
-    }
-
-    #header h2 {
-        font-size: 16px;
-    }
-
-    #header p {
-        font-size: 9px;
     }
 
     #info-card {
@@ -607,45 +585,14 @@ body {
         bottom: 12px;
     }
 
-    .zoom-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 20px;
-    }
-
     #svg-container {
-        height: 70vh;
+        height: 75vh;
     }
 
     #mode-toggle {
         top: auto;
-        bottom: 80px;
+        bottom: 100px;
         left: 50%;
-    }
-
-    .toggle-btn {
-        padding: 8px 16px;
-        font-size: 11px;
-    }
-
-    .marker {
-        width: 40px;
-        height: 40px;
-    }
-
-    .marker:hover {
-        transform: translate(-50%, -50%) scale(1.25);
-    }
-}
-
-@media (max-width: 480px) {
-    #sidebar {
-        width: calc(100% - 24px);
-        max-height: 35vh;
-    }
-
-    #mode-toggle {
-        bottom: 70px;
     }
 }
 </style>
@@ -736,7 +683,7 @@ fetch('assets/hortolandia-roads.svg')
     });
 
 // ============================================
-// DADOS DAS 38 LOCALIDADES (AGORA COM PNG)
+// DADOS DAS 38 LOCALIDADES
 // ============================================
 const bairros = [
     {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, imagem: "assets/fotos/jardim-santana.png"},
@@ -778,3 +725,294 @@ const bairros = [
     {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, imagem: "assets/fotos/jardim-novo-cambui.png"},
     {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, imagem: "assets/fotos/terras-santa-maria.png"}
 ];
+
+// ============================================
+// VARIÁVEIS GLOBAIS
+// ============================================
+let bairroAtivo = null;
+let scale = 1;
+let translateX = 0;
+let translateY = 0;
+let isDragging = false;
+let startX, startY;
+
+// ============================================
+// RENDERIZAR LISTA
+// ============================================
+function renderizarLista() {
+    const lista = document.getElementById("bairros-list");
+    lista.innerHTML = "";
+
+    bairros.forEach((bairro, index) => {
+        const item = document.createElement("div");
+        item.className = "bairro-item";
+        
+        if (useImageMarkers && bairro.imagem) {
+            item.innerHTML = `
+                <img src="${bairro.imagem}" alt="${bairro.nome}" class="bairro-thumb" 
+                     onerror="console.warn('⚠️ Imagem não encontrada:', '${bairro.imagem}'); this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                <span class="bairro-icon" style="display: none;">🏛️</span>
+                <span class="bairro-nome">${bairro.nome}</span>
+            `;
+        } else {
+            item.innerHTML = `
+                <span class="bairro-icon">🏛️</span>
+                <span class="bairro-nome">${bairro.nome}</span>
+            `;
+        }
+        
+        item.onclick = () => focarBairro(index);
+        lista.appendChild(item);
+    });
+
+    document.getElementById('total-count').textContent = `${bairros.length} localidades`;
+}
+
+// ============================================
+// CRIAR MARCADORES
+// ============================================
+function criarMarcadores() {
+    console.log('🎯 Criando marcadores... Modo:', useImageMarkers ? 'Imagens' : 'Emojis');
+    
+    bairros.forEach((bairro, index) => {
+        const marker = document.createElement("div");
+        marker.className = "marker";
+        marker.id = `marker-${index}`;
+        marker.style.left = `${bairro.x}px`;
+        marker.style.top = `${bairro.y}px`;
+        
+        if (useImageMarkers && bairro.imagem) {
+            console.log(`📸 Tentando carregar imagem: ${bairro.imagem}`);
+            const img = document.createElement("img");
+            img.src = bairro.imagem;
+            img.alt = bairro.nome;
+            img.className = "marker-image";
+            img.onload = function() {
+                console.log(`✅ Imagem carregada: ${bairro.nome}`);
+            };
+            img.onerror = function() {
+                console.warn(`⚠️ Falha ao carregar: ${bairro.imagem}`);
+                this.remove();
+                const emoji = document.createElement("span");
+                emoji.className = "marker-emoji";
+                emoji.textContent = "🏛️";
+                marker.appendChild(emoji);
+            };
+            marker.appendChild(img);
+        } else {
+            const emoji = document.createElement("span");
+            emoji.className = "marker-emoji";
+            emoji.textContent = "🏛️";
+            marker.appendChild(emoji);
+        }
+        
+        marker.onclick = (e) => {
+            e.stopPropagation();
+            focarBairro(index);
+        };
+        
+        document.getElementById("map-wrapper").appendChild(marker);
+    });
+    
+    console.log(`✅ ${bairros.length} marcadores criados`);
+}
+
+// ============================================
+// FOCAR EM BAIRRO
+// ============================================
+function focarBairro(index) {
+    const bairro = bairros[index];
+    
+    document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
+    
+    const marker = document.getElementById(`marker-${index}`);
+    if (marker) marker.classList.add('active');
+    
+    const items = document.querySelectorAll('.bairro-item');
+    if (items[index]) {
+        items[index].classList.add('active');
+        items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    const wrapper = document.getElementById("map-wrapper");
+    wrapper.classList.add('zooming');
+    
+    scale = 1.7;
+    translateX = (window.innerWidth / 2) - (bairro.x * scale);
+    translateY = (window.innerHeight / 2) - (bairro.y * scale);
+    
+    updateTransform();
+    
+    setTimeout(() => wrapper.classList.remove('zooming'), 1000);
+    
+    mostrarCard(bairro);
+    bairroAtivo = bairro;
+}
+
+// ============================================
+// CARD
+// ============================================
+function mostrarCard(bairro) {
+    const card = document.getElementById("info-card");
+    
+    document.getElementById("card-title").textContent = bairro.nome;
+    document.getElementById("card-description").textContent = bairro.codigo;
+    
+    card.classList.add("visible");
+}
+
+function fecharCard() {
+    document.getElementById("info-card").classList.remove("visible");
+    document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
+    bairroAtivo = null;
+}
+
+function verDados() {
+    if (bairroAtivo) {
+        alert(`🚧 Funcionalidade em desenvolvimento!\n\nEm breve: dados completos sobre ${bairroAtivo.nome}`);
+    }
+}
+
+// ============================================
+// ZOOM
+// ============================================
+function zoom(factor) {
+    scale *= factor;
+    scale = Math.max(0.5, Math.min(scale, 3));
+    updateTransform();
+}
+
+function resetZoom() {
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+    
+    document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
+    fecharCard();
+}
+
+function updateTransform() {
+    const wrapper = document.getElementById("map-wrapper");
+    wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+}
+
+// ============================================
+// PAN (ARRASTAR)
+// ============================================
+const mapWrapper = document.getElementById("map-wrapper");
+
+mapWrapper.addEventListener("mousedown", (e) => {
+    const svg = document.getElementById("city-map");
+    if (e.target === svg || e.target.tagName === 'path' || e.target.id === 'svg-container') {
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        mapWrapper.style.cursor = "grabbing";
+    }
+});
+
+document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        updateTransform();
+    }
+});
+
+document.addEventListener("mouseup", () => {
+    isDragging = false;
+    mapWrapper.style.cursor = "grab";
+});
+
+// ============================================
+// ZOOM COM SCROLL
+// ============================================
+mapWrapper.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    const newScale = scale * delta;
+    
+    if (newScale >= 0.5 && newScale <= 3) {
+        const rect = mapWrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const xs = (x - translateX) / scale;
+        const ys = (y - translateY) / scale;
+        
+        scale = newScale;
+        
+        translateX = x - xs * scale;
+        translateY = y - ys * scale;
+        
+        updateTransform();
+    }
+}, { passive: false });
+
+// ============================================
+// TOUCH SUPPORT
+// ============================================
+let touchStartDistance = 0;
+let touchStartScale = 1;
+
+mapWrapper.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) {
+        touchStartDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        touchStartScale = scale;
+    } else if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - translateX;
+        startY = e.touches[0].clientY - translateY;
+    }
+});
+
+mapWrapper.addEventListener("touchmove", (e) => {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        const distance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        const newScale = touchStartScale * (distance / touchStartDistance);
+        if (newScale >= 0.5 && newScale <= 3) {
+            scale = newScale;
+            updateTransform();
+        }
+    } else if (isDragging && e.touches.length === 1) {
+        e.preventDefault();
+        translateX = e.touches[0].clientX - startX;
+        translateY = e.touches[0].clientY - startY;
+        updateTransform();
+    }
+}, { passive: false });
+
+mapWrapper.addEventListener("touchend", () => {
+    isDragging = false;
+});
+
+// ============================================
+// INICIALIZAÇÃO
+// ============================================
+window.onload = () => {
+    renderizarLista();
+    console.log('🗺️ Hortolândia SAM carregado!');
+    console.log(`📍 ${bairros.length} localidades configuradas`);
+    console.log('📸 Modo inicial:', useImageMarkers ? 'Imagens' : 'Emojis');
+    console.log('');
+    console.log('💡 INSTRUÇÕES:');
+    console.log('1. As fotos devem estar em: assets/fotos/');
+    console.log('2. Veja o console para erros de carregamento');
+    console.log('3. Use o botão no topo para alternar entre Imagens/Emojis');
+};
+</script>
+
+</body>
+</html>
