@@ -86,7 +86,7 @@ body {
     }
 }
 
-/* ========== MARCADORES COM DUPLA IMAGEM ========== */
+/* ========== MARCADORES COM IMAGEM ========== */
 .marker {
     position: absolute;
     width: 46px;
@@ -105,53 +105,17 @@ body {
         0 4px 15px rgba(0, 0, 0, 0.6),
         0 0 20px rgba(59, 130, 246, 0.4);
     overflow: hidden;
-    position: relative;
 }
 
-/* Container para as duas imagens */
-.marker-images {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-}
-
-/* Imagem de desenho (sempre visível inicialmente) */
-.marker-image-desenho {
-    position: absolute;
+.marker-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
-    opacity: 1;
-    transition: opacity 1.2s ease-in-out;
-    z-index: 2;
-}
-
-/* Imagem realista (fica por baixo) */
-.marker-image-real {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 1.2s ease-in-out;
-    z-index: 1;
-}
-
-/* Quando ativo, mostra a foto real */
-.marker.active .marker-image-desenho {
-    opacity: 0;
-}
-
-.marker.active .marker-image-real {
-    opacity: 1;
 }
 
 .marker-emoji {
     font-size: 22px;
-    z-index: 3;
 }
 
 .marker::before {
@@ -271,35 +235,6 @@ body {
     color: rgba(255, 255, 255, 0.5);
     letter-spacing: 1.5px;
     text-transform: uppercase;
-}
-
-/* ========== TOGGLE DE MODO ========== */
-#mode-toggle {
-    position: fixed;
-    top: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    animation: slideInDown 0.6s ease;
-}
-
-.toggle-btn {
-    padding: 10px 20px;
-    background: rgba(15, 15, 15, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(20px);
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.toggle-btn:hover {
-    background: rgba(59, 130, 246, 0.2);
-    border-color: rgba(59, 130, 246, 0.4);
-    color: #fff;
 }
 
 /* ========== SIDEBAR ========== */
@@ -596,6 +531,35 @@ body {
     transform: scale(1.05);
 }
 
+/* ========== TOGGLE DE MODO ========== */
+#mode-toggle {
+    position: fixed;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    animation: slideInDown 0.6s ease;
+}
+
+.toggle-btn {
+    padding: 10px 20px;
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.toggle-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #fff;
+}
+
 /* ========== RESPONSIVO ========== */
 @media (max-width: 768px) {
     #sidebar {
@@ -639,13 +603,13 @@ body {
 <!-- HEADER -->
 <div id="header" class="glass">
     <h2>🗺️ SAM - Hortolândia</h2>
-    <p>v.02/2026 • DUAL IMAGE</p>
+    <p>v.01/2026</p>
 </div>
 
 <!-- TOGGLE DE MODO -->
 <div id="mode-toggle">
     <button class="toggle-btn" onclick="toggleMarkerMode()">
-        <span id="mode-text">🎨 Modo: Dupla Imagem</span>
+        <span id="mode-text">📸 Modo: Imagens</span>
     </button>
 </div>
 
@@ -659,7 +623,7 @@ body {
 <!-- SIDEBAR -->
 <div id="sidebar" class="glass">
     <h3>📍 Localidades</h3>
-    <div class="total-count" id="total-count">35 localidades</div>
+    <div class="total-count" id="total-count">38 localidades</div>
     <div id="bairros-list"></div>
 </div>
 
@@ -691,9 +655,9 @@ let useImageMarkers = true;
 function toggleMarkerMode() {
     useImageMarkers = !useImageMarkers;
     document.getElementById('mode-text').textContent = 
-        useImageMarkers ? '🎨 Modo: Dupla Imagem' : '🏛️ Modo: Emojis';
+        useImageMarkers ? '📸 Modo: Imagens' : '🏛️ Modo: Emojis';
     
-    console.log('🔄 Modo alterado:', useImageMarkers ? 'Dupla Imagem' : 'Emojis');
+    console.log('🔄 Modo alterado:', useImageMarkers ? 'Imagens' : 'Emojis');
     
     document.querySelectorAll('.marker').forEach(m => m.remove());
     criarMarcadores();
@@ -719,45 +683,47 @@ fetch('assets/hortolandia-roads.svg')
     });
 
 // ============================================
-// DADOS DAS 35 LOCALIDADES (COM DUPLA IMAGEM)
-// Usando as pastas: assets/fotos/ e assets/fotosreal/
+// DADOS DAS 38 LOCALIDADES
 // ============================================
 const bairros = [
-    {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, img: "jardim-santana"},
-    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, img: "jardim-santa-izabel"},
-    {nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, img: "jardim-sao-pedro"},
-    {nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, img: "jardim-mirante"},
-    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, img: "jardim-novo-angulo"},
-    {nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, img: "vila-real"},
-    {nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, img: "amanda-1"},
-    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, img: "jardim-santa-esmeralda"},
-    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, img: "jardim-santa-luzia"},
-    {nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, img: "parque-do-horto"},
-    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, img: "jardim-santa-clara"},
-    {nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, img: "amanda-2"},
-    {nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, img: "jardim-adelaide"},
-    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, img: "parque-orestes-ongaro"},
-    {nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, img: "jardim-sao-jorge"},
-    {nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, img: "jardim-sao-sebastiao"},
-    {nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, img: "jardim-do-bosque"},
-    {nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, img: "vila-inema"},
-    {nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, img: "jardim-aline"},
-    {nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, img: "amanda-3"},
-    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, img: "chacaras-recreio-2000"},
-    {nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, img: "jardim-nova-europa"},
-    {nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, img: "jardim-das-colinas"},
-    {nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, img: "residencial-joao-luiz"},
-    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, img: "jardim-auxiliadora"},
-    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, img: "jardim-novo-horizonte"},
-    {nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, img: "jardim-nova-america"},
-    {nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, img: "jardim-interlagos"},
-    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, img: "terras-santo-antonio"},
-    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, img: "residencial-firenze"},
-    {nome: "Nova Hortolandia", codigo: "BR-22-5421", x: 615, y: 144, img: "nova-hortolandia"},
-    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, img: "jardim-novo-cambui"},
-    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, img: "terras-santa-maria"},
-    {nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, img: "amanda-4"},
-    {nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, img: "recanto-do-sol"}
+    {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, imagem: "assets/fotos/jardim-santana.png"},
+    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, imagem: "assets/fotos/jardim-santa-izabel.png"},
+    {nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, imagem: "assets/fotos/jardim-sao-pedro.png"},
+    {nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, imagem: "assets/fotos/jardim-mirante.png"},
+    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, imagem: "assets/fotos/jardim-novo-angulo.png"},
+    {nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, imagem: "assets/fotos/vila-real.png"},
+    {nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, imagem: "assets/fotos/amanda-1.png"},
+    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, imagem: "assets/fotos/jardim-santa-esmeralda.png"},
+    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, imagem: "assets/fotos/jardim-santa-luzia.png"},
+    {nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, imagem: "assets/fotos/parque-do-horto.png"},
+    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, imagem: "assets/fotos/jardim-santa-clara.png"},
+    {nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, imagem: "assets/fotos/amanda-2.png"},
+    {nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, imagem: "assets/fotos/jardim-adelaide.png"},
+    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, imagem: "assets/fotos/parque-orestes-ongaro.png"},
+    {nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, imagem: "assets/fotos/jardim-sao-jorge.png"},
+    {nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, imagem: "assets/fotos/jardim-sao-sebastiao.png"},
+    {nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, imagem: "assets/fotos/jardim-do-bosque.png"},
+    {nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, imagem: "assets/fotos/vila-inema.png"},
+    {nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, imagem: "assets/fotos/jardim-aline.png"},
+    {nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, imagem: "assets/fotos/amanda-3.png"},
+    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, imagem: "assets/fotos/chacaras-recreio-2000.png"},
+    {nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, imagem: "assets/fotos/jardim-nova-europa.png"},
+    {nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, imagem: "assets/fotos/jardim-das-colinas.png"},
+    {nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, imagem: "assets/fotos/residencial-joao-luiz.png"},
+    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, imagem: "assets/fotos/jardim-auxiliadora.png"},
+    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, imagem: "assets/fotos/jardim-novo-horizonte.png"},
+    {nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, imagem: "assets/fotos/jardim-nova-america.png"},
+    {nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, imagem: "assets/fotos/jardim-interlagos.png"},
+    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, imagem: "assets/fotos/terras-santo-antonio.png"},
+    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, imagem: "assets/fotos/residencial-firenze.png"},
+    {nome: "Jardim Boa Vista", codigo: "BR-22-4424", x: 566, y: 469, imagem: "assets/fotos/jardim-boa-vista-stella.png"},
+    {nome: "Estrada do Furlan", codigo: "BR-22-4933", x: 746, y: 274, imagem: "assets/fotos/estrada-furlan.png"},
+    {nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, imagem: "assets/fotos/recanto-do-sol.png"},
+    {nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, imagem: "assets/fotos/amanda-4.png"},
+    {nome: "Residencial Bellaville", codigo: "BR-22-5420", x: 525, y: 35, imagem: "assets/fotos/residencial-bellaville.png"},
+    {nome: "Nova Hortolandia", codigo: "BR-22-5421", x: 615, y: 144, imagem: "assets/fotos/nova-hortolandia.png"},
+    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, imagem: "assets/fotos/jardim-novo-cambui.png"},
+    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, imagem: "assets/fotos/terras-santa-maria.png"}
 ];
 
 // ============================================
@@ -781,11 +747,10 @@ function renderizarLista() {
         const item = document.createElement("div");
         item.className = "bairro-item";
         
-        if (useImageMarkers && bairro.img) {
-            const imgPath = `assets/fotos/${bairro.img}.png`;
+        if (useImageMarkers && bairro.imagem) {
             item.innerHTML = `
-                <img src="${imgPath}" alt="${bairro.nome}" class="bairro-thumb" 
-                     onerror="console.warn('⚠️ Imagem não encontrada:', '${imgPath}'); this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                <img src="${bairro.imagem}" alt="${bairro.nome}" class="bairro-thumb" 
+                     onerror="console.warn('⚠️ Imagem não encontrada:', '${bairro.imagem}'); this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
                 <span class="bairro-icon" style="display: none;">🏛️</span>
                 <span class="bairro-nome">${bairro.nome}</span>
             `;
@@ -804,12 +769,10 @@ function renderizarLista() {
 }
 
 // ============================================
-// CRIAR MARCADORES COM DUPLA IMAGEM
+// CRIAR MARCADORES
 // ============================================
 function criarMarcadores() {
-    console.log('🎯 Criando marcadores com dupla imagem...');
-    console.log('📂 Pasta desenhos: assets/fotos/');
-    console.log('📂 Pasta reais: assets/fotosreal/');
+    console.log('🎯 Criando marcadores... Modo:', useImageMarkers ? 'Imagens' : 'Emojis');
     
     bairros.forEach((bairro, index) => {
         const marker = document.createElement("div");
@@ -818,43 +781,25 @@ function criarMarcadores() {
         marker.style.left = `${bairro.x}px`;
         marker.style.top = `${bairro.y}px`;
         
-        if (useImageMarkers && bairro.img) {
-            const imgDesenho = `assets/fotos/${bairro.img}.png`;
-            const imgReal = `assets/fotosreal/${bairro.img}.jpg`;
-            
-            // Container para as duas imagens
-            const imagesContainer = document.createElement("div");
-            imagesContainer.className = "marker-images";
-            
-            // Imagem de desenho (visível inicialmente)
-            const desenho = document.createElement("img");
-            desenho.src = imgDesenho;
-            desenho.alt = `${bairro.nome} - Desenho`;
-            desenho.className = "marker-image-desenho";
-            desenho.onload = function() {
-                console.log(`✅ Desenho: ${bairro.img}.png`);
+        if (useImageMarkers && bairro.imagem) {
+            console.log(`📸 Tentando carregar imagem: ${bairro.imagem}`);
+            const img = document.createElement("img");
+            img.src = bairro.imagem;
+            img.alt = bairro.nome;
+            img.className = "marker-image";
+            img.onload = function() {
+                console.log(`✅ Imagem carregada: ${bairro.nome}`);
             };
-            desenho.onerror = function() {
-                console.warn(`⚠️ Desenho não encontrado: ${imgDesenho}`);
+            img.onerror = function() {
+                console.warn(`⚠️ Falha ao carregar: ${bairro.imagem}`);
+                this.remove();
+                const emoji = document.createElement("span");
+                emoji.className = "marker-emoji";
+                emoji.textContent = "🏛️";
+                marker.appendChild(emoji);
             };
-            
-            // Imagem realista (fica por baixo, aparece no zoom)
-            const real = document.createElement("img");
-            real.src = imgReal;
-            real.alt = `${bairro.nome} - Real`;
-            real.className = "marker-image-real";
-            real.onload = function() {
-                console.log(`✅ Foto real: ${bairro.img}.jpg`);
-            };
-            real.onerror = function() {
-                console.warn(`⚠️ Foto real não encontrada: ${imgReal}`);
-            };
-            
-            imagesContainer.appendChild(real);
-            imagesContainer.appendChild(desenho);
-            marker.appendChild(imagesContainer);
+            marker.appendChild(img);
         } else {
-            // Fallback para emoji
             const emoji = document.createElement("span");
             emoji.className = "marker-emoji";
             emoji.textContent = "🏛️";
@@ -878,11 +823,9 @@ function criarMarcadores() {
 function focarBairro(index) {
     const bairro = bairros[index];
     
-    // Remove active de todos
     document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
     document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
     
-    // Adiciona active no selecionado (isso vai acionar a transição CSS)
     const marker = document.getElementById(`marker-${index}`);
     if (marker) marker.classList.add('active');
     
@@ -892,7 +835,6 @@ function focarBairro(index) {
         items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     
-    // Zoom suave
     const wrapper = document.getElementById("map-wrapper");
     wrapper.classList.add('zooming');
     
@@ -1061,18 +1003,14 @@ mapWrapper.addEventListener("touchend", () => {
 // ============================================
 window.onload = () => {
     renderizarLista();
-    console.log('🗺️ Hortolândia SAM v2 - DUAL IMAGE carregado!');
+    console.log('🗺️ Hortolândia SAM carregado!');
     console.log(`📍 ${bairros.length} localidades configuradas`);
+    console.log('📸 Modo inicial:', useImageMarkers ? 'Imagens' : 'Emojis');
     console.log('');
-    console.log('📂 ESTRUTURA DE PASTAS ATUAL:');
-    console.log('assets/');
-    console.log('  ├── fotos/       ← Desenhos (.png)');
-    console.log('  └── fotosreal/   ← Fotos reais (.jpg)');
-    console.log('');
-    console.log('🎨 TRANSIÇÃO:');
-    console.log('• Estado normal: Mostra o desenho (.png)');
-    console.log('• Ao clicar: Fade suave para foto real (.jpg) - 1.2s');
-    console.log('• Ao desfocar: Volta para o desenho');
+    console.log('💡 INSTRUÇÕES:');
+    console.log('1. As fotos devem estar em: assets/fotos/');
+    console.log('2. Veja o console para erros de carregamento');
+    console.log('3. Use o botão no topo para alternar entre Imagens/Emojis');
 };
 </script>
 
