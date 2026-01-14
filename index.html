@@ -773,8 +773,19 @@ function criarMarcadores() {
     let imagensDesenhOk = 0;
     let imagensRealOk = 0;
     
-    const svg = document.getElementById('city-map');
-    const container = svg ? svg : document.getElementById('svg-container');
+    // Criar container de marcadores FORA do SVG
+    let markersContainer = document.getElementById('markers-overlay');
+    if (!markersContainer) {
+        markersContainer = document.createElement('div');
+        markersContainer.id = 'markers-overlay';
+        markersContainer.style.position = 'absolute';
+        markersContainer.style.top = '0';
+        markersContainer.style.left = '0';
+        markersContainer.style.width = '100%';
+        markersContainer.style.height = '100%';
+        markersContainer.style.pointerEvents = 'none';
+        document.getElementById('map-wrapper').appendChild(markersContainer);
+    }
     
     bairros.forEach((bairro, index) => {
         const marker = document.createElement("div");
@@ -782,6 +793,7 @@ function criarMarcadores() {
         marker.id = `marker-${index}`;
         marker.style.left = `${bairro.x}px`;
         marker.style.top = `${bairro.y}px`;
+        marker.style.pointerEvents = 'auto';
         
         const imgDesenho = `assets/fotos/${bairro.img}.png`;
         const imgReal = `assets/fotosreal/${bairro.img}.jpg`;
@@ -830,7 +842,7 @@ function criarMarcadores() {
             focarBairro(index);
         };
         
-        container.appendChild(marker);
+        markersContainer.appendChild(marker);
         marcadoresOk++;
     });
     
@@ -852,7 +864,6 @@ function criarMarcadores() {
         }
     }, 3000);
 }
-
 // ============================================
 // FOCAR EM BAIRRO
 // ============================================
