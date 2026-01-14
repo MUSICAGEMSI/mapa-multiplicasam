@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hortolândia – Mapa Interativo Premium</title>
+<title>Hortolândia – Mapa Interativo</title>
 
 <style>
 * {
@@ -31,12 +31,17 @@ body {
     background: radial-gradient(ellipse at center, #0d0d0d 0%, #000 100%);
 }
 
-/* ========== WRAPPER DO MAPA ========== */
+/* ========== ÁREA DO MAPA ========== */
 #map-wrapper {
     position: relative;
-    z-index: 10;
+    width: 900px;
+    height: 500px;
+    background: rgba(20, 20, 20, 0.5);
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-radius: 20px;
     cursor: grab;
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
 #map-wrapper:active {
@@ -49,44 +54,24 @@ body {
 
 /* ========== SVG CONTAINER ========== */
 #svg-container {
-    height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
 #city-map {
+    width: 100%;
     height: 100%;
-    width: auto;
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
 }
 
-/* Animação das estradas SVG */
 #city-map path {
     stroke-width: 1.2;
     fill: none;
-    animation: roadColors 20s ease-in-out infinite;
+    stroke: rgba(59, 130, 246, 0.6);
 }
 
-@keyframes roadColors {
-    0% {
-        stroke: rgba(212, 175, 55, 0.85);
-    }
-    25% {
-        stroke: rgba(192, 192, 192, 0.85);
-    }
-    50% {
-        stroke: rgba(59, 130, 246, 0.85);
-    }
-    75% {
-        stroke: rgba(255, 255, 255, 0.75);
-    }
-    100% {
-        stroke: rgba(212, 175, 55, 0.85);
-    }
-}
-
-/* ========== MARCADORES COM IMAGEM ========== */
+/* ========== MARCADORES ========== */
 .marker {
     position: absolute;
     width: 46px;
@@ -107,77 +92,72 @@ body {
     overflow: hidden;
 }
 
-.marker-image {
+.marker-images {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.marker-image-desenho {
+    position: absolute;
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
+    opacity: 1;
+    transition: opacity 1.2s ease-in-out;
+    z-index: 2;
+}
+
+.marker-image-real {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+    z-index: 1;
+}
+
+.marker.active .marker-image-desenho {
+    opacity: 0;
+}
+
+.marker.active .marker-image-real {
+    opacity: 1;
 }
 
 .marker-emoji {
     font-size: 22px;
-}
-
-.marker::before {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+    z-index: 3;
 }
 
 .marker:hover {
     transform: translate(-50%, -50%) scale(1.4);
     box-shadow: 
         0 6px 25px rgba(0, 0, 0, 0.8),
-        0 0 35px rgba(59, 130, 246, 0.7),
-        0 0 50px rgba(59, 130, 246, 0.4);
+        0 0 35px rgba(59, 130, 246, 0.7);
     z-index: 200;
-}
-
-.marker:hover::before {
-    opacity: 1;
-    animation: ripple 1.5s ease-out infinite;
-}
-
-@keyframes ripple {
-    0% {
-        inset: -8px;
-        opacity: 0.5;
-    }
-    100% {
-        inset: -25px;
-        opacity: 0;
-    }
 }
 
 .marker.active {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.9));
-    border-color: rgba(255, 255, 255, 1);
     transform: translate(-50%, -50%) scale(1.3);
     box-shadow: 
         0 6px 25px rgba(0, 0, 0, 0.8),
-        0 0 30px rgba(239, 68, 68, 0.8),
-        0 0 45px rgba(239, 68, 68, 0.5);
+        0 0 30px rgba(239, 68, 68, 0.8);
     z-index: 150;
     animation: activePulse 2s ease-in-out infinite;
 }
 
 @keyframes activePulse {
     0%, 100% { 
-        box-shadow: 
-            0 6px 25px rgba(0, 0, 0, 0.8),
-            0 0 30px rgba(239, 68, 68, 0.8),
-            0 0 45px rgba(239, 68, 68, 0.5);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.8);
     }
     50% { 
-        box-shadow: 
-            0 8px 30px rgba(0, 0, 0, 0.9),
-            0 0 40px rgba(239, 68, 68, 1),
-            0 0 60px rgba(239, 68, 68, 0.6);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9), 0 0 40px rgba(239, 68, 68, 1);
     }
 }
 
@@ -200,18 +180,6 @@ body {
     right: 22px;
     padding: 18px 26px;
     z-index: 1000;
-    animation: slideInDown 0.6s ease;
-}
-
-@keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 #header h2 {
@@ -222,12 +190,6 @@ body {
     background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: gradientFlow 6s ease infinite;
-}
-
-@keyframes gradientFlow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
 }
 
 #header p {
@@ -247,18 +209,6 @@ body {
     padding: 22px;
     overflow-y: auto;
     z-index: 1000;
-    animation: slideInLeft 0.6s ease;
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
 }
 
 #sidebar h3 {
@@ -290,43 +240,19 @@ body {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    overflow: hidden;
     display: flex;
     align-items: center;
-}
-
-.bairro-item::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: linear-gradient(180deg, #3b82f6, #6366f1);
-    opacity: 0;
-    transition: opacity 0.3s ease;
 }
 
 .bairro-item:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(59, 130, 246, 0.5);
     transform: translateX(6px);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
-}
-
-.bairro-item:hover::before {
-    opacity: 1;
 }
 
 .bairro-item.active {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.12));
     border-color: rgba(59, 130, 246, 0.6);
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
-}
-
-.bairro-item.active::before {
-    opacity: 1;
-    width: 4px;
 }
 
 .bairro-thumb {
@@ -353,26 +279,7 @@ body {
     flex: 1;
 }
 
-#sidebar::-webkit-scrollbar {
-    width: 7px;
-}
-
-#sidebar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 4px;
-}
-
-#sidebar::-webkit-scrollbar-thumb {
-    background: rgba(59, 130, 246, 0.35);
-    border-radius: 4px;
-    transition: background 0.3s;
-}
-
-#sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(59, 130, 246, 0.55);
-}
-
-/* ========== CARD DE INFORMAÇÕES ========== */
+/* ========== CARD ========== */
 #info-card {
     position: fixed;
     bottom: 32px;
@@ -381,19 +288,6 @@ body {
     padding: 0;
     display: none;
     z-index: 1000;
-    animation: slideUpSmooth 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-}
-
-@keyframes slideUpSmooth {
-    from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.96);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
 }
 
 #info-card.visible {
@@ -432,9 +326,7 @@ body {
 
 .close-btn:hover {
     background: rgba(239, 68, 68, 0.85);
-    border-color: rgba(239, 68, 68, 1);
     transform: rotate(90deg);
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
 .card-content {
@@ -447,12 +339,10 @@ body {
     color: #60a5fa;
     font-weight: 600;
     font-family: 'Courier New', monospace;
-    letter-spacing: 1px;
     text-align: center;
     padding: 12px;
     background: rgba(59, 130, 246, 0.1);
     border-radius: 8px;
-    border: 1px solid rgba(59, 130, 246, 0.3);
     margin-bottom: 18px;
 }
 
@@ -466,22 +356,15 @@ body {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-    letter-spacing: 0.5px;
+    transition: all 0.35s ease;
 }
 
 .ver-dados-btn:hover {
     background: linear-gradient(135deg, #2563eb, #4f46e5);
     transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.5);
 }
 
-.ver-dados-btn:active {
-    transform: translateY(0);
-}
-
-/* ========== CONTROLES DE ZOOM ========== */
+/* ========== CONTROLES ========== */
 #zoom-controls {
     position: fixed;
     bottom: 32px;
@@ -489,18 +372,6 @@ body {
     display: flex;
     gap: 11px;
     z-index: 1000;
-    animation: slideInUp 0.6s ease;
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .zoom-btn {
@@ -513,104 +384,50 @@ body {
     color: #fff;
     font-size: 23px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
 }
 
 .zoom-btn:hover {
     background: rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.6);
     transform: scale(1.12);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
 }
 
-.zoom-btn:active {
-    transform: scale(1.05);
-}
-
-/* ========== TOGGLE DE MODO ========== */
-#mode-toggle {
+/* Status de carregamento */
+#loading-status {
     position: fixed;
-    top: 22px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    animation: slideInDown 0.6s ease;
+    transform: translate(-50%, -50%);
+    background: rgba(15, 15, 15, 0.9);
+    padding: 30px 40px;
+    border-radius: 15px;
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    color: #60a5fa;
+    font-size: 16px;
+    z-index: 2000;
+    display: none;
 }
 
-.toggle-btn {
-    padding: 10px 20px;
-    background: rgba(15, 15, 15, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(20px);
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.toggle-btn:hover {
-    background: rgba(59, 130, 246, 0.2);
-    border-color: rgba(59, 130, 246, 0.4);
-    color: #fff;
-}
-
-/* ========== RESPONSIVO ========== */
-@media (max-width: 768px) {
-    #sidebar {
-        width: 270px;
-        left: 12px;
-        top: 12px;
-    }
-
-    #header {
-        right: 12px;
-        top: 12px;
-    }
-
-    #info-card {
-        width: calc(100% - 24px);
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-    }
-
-    #zoom-controls {
-        left: 12px;
-        bottom: 12px;
-    }
-
-    #svg-container {
-        height: 75vh;
-    }
-
-    #mode-toggle {
-        top: auto;
-        bottom: 100px;
-        left: 50%;
-    }
+#loading-status.visible {
+    display: block;
 }
 </style>
 </head>
 
 <body>
 
+<!-- STATUS DE CARREGAMENTO -->
+<div id="loading-status">
+    <div>🔄 Carregando mapa...</div>
+</div>
+
 <!-- HEADER -->
 <div id="header" class="glass">
     <h2>🗺️ SAM - Hortolândia</h2>
-    <p>v.01/2026</p>
-</div>
-
-<!-- TOGGLE DE MODO -->
-<div id="mode-toggle">
-    <button class="toggle-btn" onclick="toggleMarkerMode()">
-        <span id="mode-text">📸 Modo: Imagens</span>
-    </button>
+    <p>v.03/2026 • MODO ROBUSTO</p>
 </div>
 
 <!-- CONTAINER DO MAPA -->
@@ -623,7 +440,7 @@ body {
 <!-- SIDEBAR -->
 <div id="sidebar" class="glass">
     <h3>📍 Localidades</h3>
-    <div class="total-count" id="total-count">38 localidades</div>
+    <div class="total-count" id="total-count">35 localidades</div>
     <div id="bairros-list"></div>
 </div>
 
@@ -641,138 +458,132 @@ body {
 
 <!-- CONTROLES -->
 <div id="zoom-controls">
-    <button class="zoom-btn" onclick="zoom(1.3)" title="Aumentar Zoom">+</button>
-    <button class="zoom-btn" onclick="zoom(0.77)" title="Diminuir Zoom">−</button>
-    <button class="zoom-btn" onclick="resetZoom()" title="Resetar Visualização">⟲</button>
+    <button class="zoom-btn" onclick="zoom(1.3)">+</button>
+    <button class="zoom-btn" onclick="zoom(0.77)">−</button>
+    <button class="zoom-btn" onclick="resetZoom()">⟲</button>
 </div>
 
 <script>
-// ============================================
-// CONFIGURAÇÃO DE MODO
-// ============================================
-let useImageMarkers = true;
-
-function toggleMarkerMode() {
-    useImageMarkers = !useImageMarkers;
-    document.getElementById('mode-text').textContent = 
-        useImageMarkers ? '📸 Modo: Imagens' : '🏛️ Modo: Emojis';
-    
-    console.log('🔄 Modo alterado:', useImageMarkers ? 'Imagens' : 'Emojis');
-    
-    document.querySelectorAll('.marker').forEach(m => m.remove());
-    criarMarcadores();
-    renderizarLista();
-}
+console.log('🗺️ Iniciando Sistema SAM - Hortolândia v3');
+console.log('==========================================');
 
 // ============================================
-// CARREGAR E ANIMAR SVG
-// ============================================
-fetch('assets/hortolandia-roads.svg')
-    .then(response => response.text())
-    .then(svgText => {
-        document.getElementById('svg-container').innerHTML = svgText;
-        const svgElement = document.querySelector('#svg-container svg');
-        if (svgElement) {
-            svgElement.id = "city-map";
-            console.log('✅ SVG carregado com sucesso');
-        }
-        criarMarcadores();
-    })
-    .catch(error => {
-        console.error('❌ Erro ao carregar SVG:', error);
-    });
-
-// ============================================
-// DADOS DAS 38 LOCALIDADES
+// DADOS DAS LOCALIDADES
 // ============================================
 const bairros = [
-    {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, imagem: "assets/fotos/jardim-santana.png"},
-    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, imagem: "assets/fotos/jardim-santa-izabel.png"},
-    {nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, imagem: "assets/fotos/jardim-sao-pedro.png"},
-    {nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, imagem: "assets/fotos/jardim-mirante.png"},
-    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, imagem: "assets/fotos/jardim-novo-angulo.png"},
-    {nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, imagem: "assets/fotos/vila-real.png"},
-    {nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, imagem: "assets/fotos/amanda-1.png"},
-    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, imagem: "assets/fotos/jardim-santa-esmeralda.png"},
-    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, imagem: "assets/fotos/jardim-santa-luzia.png"},
-    {nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, imagem: "assets/fotos/parque-do-horto.png"},
-    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, imagem: "assets/fotos/jardim-santa-clara.png"},
-    {nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, imagem: "assets/fotos/amanda-2.png"},
-    {nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, imagem: "assets/fotos/jardim-adelaide.png"},
-    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, imagem: "assets/fotos/parque-orestes-ongaro.png"},
-    {nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, imagem: "assets/fotos/jardim-sao-jorge.png"},
-    {nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, imagem: "assets/fotos/jardim-sao-sebastiao.png"},
-    {nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, imagem: "assets/fotos/jardim-do-bosque.png"},
-    {nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, imagem: "assets/fotos/vila-inema.png"},
-    {nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, imagem: "assets/fotos/jardim-aline.png"},
-    {nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, imagem: "assets/fotos/amanda-3.png"},
-    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, imagem: "assets/fotos/chacaras-recreio-2000.png"},
-    {nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, imagem: "assets/fotos/jardim-nova-europa.png"},
-    {nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, imagem: "assets/fotos/jardim-das-colinas.png"},
-    {nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, imagem: "assets/fotos/residencial-joao-luiz.png"},
-    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, imagem: "assets/fotos/jardim-auxiliadora.png"},
-    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, imagem: "assets/fotos/jardim-novo-horizonte.png"},
-    {nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, imagem: "assets/fotos/jardim-nova-america.png"},
-    {nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, imagem: "assets/fotos/jardim-interlagos.png"},
-    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, imagem: "assets/fotos/terras-santo-antonio.png"},
-    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, imagem: "assets/fotos/residencial-firenze.png"},
-    {nome: "Jardim Boa Vista", codigo: "BR-22-4424", x: 566, y: 469, imagem: "assets/fotos/jardim-boa-vista-stella.png"},
-    {nome: "Estrada do Furlan", codigo: "BR-22-4933", x: 746, y: 274, imagem: "assets/fotos/estrada-furlan.png"},
-    {nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, imagem: "assets/fotos/recanto-do-sol.png"},
-    {nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, imagem: "assets/fotos/amanda-4.png"},
-    {nome: "Residencial Bellaville", codigo: "BR-22-5420", x: 525, y: 35, imagem: "assets/fotos/residencial-bellaville.png"},
-    {nome: "Nova Hortolandia", codigo: "BR-22-5421", x: 615, y: 144, imagem: "assets/fotos/nova-hortolandia.png"},
-    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, imagem: "assets/fotos/jardim-novo-cambui.png"},
-    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, imagem: "assets/fotos/terras-santa-maria.png"}
+    {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, img: "jardim-santana"},
+    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, img: "jardim-santa-izabel"},
+    {nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, img: "jardim-sao-pedro"},
+    {nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, img: "jardim-mirante"},
+    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, img: "jardim-novo-angulo"},
+    {nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, img: "vila-real"},
+    {nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, img: "amanda-1"},
+    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, img: "jardim-santa-esmeralda"},
+    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, img: "jardim-santa-luzia"},
+    {nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, img: "parque-do-horto"},
+    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, img: "jardim-santa-clara"},
+    {nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, img: "amanda-2"},
+    {nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, img: "jardim-adelaide"},
+    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, img: "parque-orestes-ongaro"},
+    {nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, img: "jardim-sao-jorge"},
+    {nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, img: "jardim-sao-sebastiao"},
+    {nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, img: "jardim-do-bosque"},
+    {nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, img: "vila-inema"},
+    {nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, img: "jardim-aline"},
+    {nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, img: "amanda-3"},
+    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, img: "chacaras-recreio-2000"},
+    {nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, img: "jardim-nova-europa"},
+    {nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, img: "jardim-das-colinas"},
+    {nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, img: "residencial-joao-luiz"},
+    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, img: "jardim-auxiliadora"},
+    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, img: "jardim-novo-horizonte"},
+    {nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, img: "jardim-nova-america"},
+    {nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, img: "jardim-interlagos"},
+    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, img: "terras-santo-antonio"},
+    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, img: "residencial-firenze"},
+    {nome: "Nova Hortolandia", codigo: "BR-22-5421", x: 615, y: 144, img: "nova-hortolandia"},
+    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, img: "jardim-novo-cambui"},
+    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, img: "terras-santa-maria"},
+    {nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, img: "amanda-4"},
+    {nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, img: "recanto-do-sol"}
 ];
 
-// ============================================
-// VARIÁVEIS GLOBAIS
-// ============================================
 let bairroAtivo = null;
 let scale = 1;
 let translateX = 0;
 let translateY = 0;
-let isDragging = false;
-let startX, startY;
+
+// ============================================
+// CARREGAR SVG
+// ============================================
+const loadingStatus = document.getElementById('loading-status');
+loadingStatus.classList.add('visible');
+
+console.log('📂 Tentando carregar: assets/hortolandia-roads.svg');
+
+fetch('assets/hortolandia-roads.svg')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        console.log('✅ SVG encontrado! Status:', response.status);
+        return response.text();
+    })
+    .then(svgText => {
+        console.log('✅ SVG carregado! Tamanho:', svgText.length, 'caracteres');
+        document.getElementById('svg-container').innerHTML = svgText;
+        const svgElement = document.querySelector('#svg-container svg');
+        if (svgElement) {
+            svgElement.id = "city-map";
+            console.log('✅ SVG inserido no DOM');
+        }
+        loadingStatus.classList.remove('visible');
+        criarMarcadores();
+    })
+    .catch(error => {
+        console.error('❌ Erro ao carregar SVG:', error);
+        console.log('⚠️ Criando mapa sem SVG...');
+        loadingStatus.textContent = '⚠️ Mapa carregado sem fundo SVG';
+        setTimeout(() => {
+            loadingStatus.classList.remove('visible');
+        }, 2000);
+        criarMarcadores();
+    });
 
 // ============================================
 // RENDERIZAR LISTA
 // ============================================
 function renderizarLista() {
+    console.log('📋 Renderizando lista de', bairros.length, 'localidades');
     const lista = document.getElementById("bairros-list");
     lista.innerHTML = "";
 
     bairros.forEach((bairro, index) => {
         const item = document.createElement("div");
         item.className = "bairro-item";
-        
-        if (useImageMarkers && bairro.imagem) {
-            item.innerHTML = `
-                <img src="${bairro.imagem}" alt="${bairro.nome}" class="bairro-thumb" 
-                     onerror="console.warn('⚠️ Imagem não encontrada:', '${bairro.imagem}'); this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
-                <span class="bairro-icon" style="display: none;">🏛️</span>
-                <span class="bairro-nome">${bairro.nome}</span>
-            `;
-        } else {
-            item.innerHTML = `
-                <span class="bairro-icon">🏛️</span>
-                <span class="bairro-nome">${bairro.nome}</span>
-            `;
-        }
-        
+        item.innerHTML = `
+            <span class="bairro-icon">🏛️</span>
+            <span class="bairro-nome">${bairro.nome}</span>
+        `;
         item.onclick = () => focarBairro(index);
         lista.appendChild(item);
     });
 
     document.getElementById('total-count').textContent = `${bairros.length} localidades`;
+    console.log('✅ Lista renderizada');
 }
 
 // ============================================
 // CRIAR MARCADORES
 // ============================================
 function criarMarcadores() {
-    console.log('🎯 Criando marcadores... Modo:', useImageMarkers ? 'Imagens' : 'Emojis');
+    console.log('🎯 Criando marcadores...');
+    console.log('📂 Pasta desenhos: assets/fotos/');
+    console.log('📂 Pasta reais: assets/fotosreal/');
+    
+    let marcadoresOk = 0;
+    let imagensDesenhOk = 0;
+    let imagensRealOk = 0;
     
     bairros.forEach((bairro, index) => {
         const marker = document.createElement("div");
@@ -781,30 +592,49 @@ function criarMarcadores() {
         marker.style.left = `${bairro.x}px`;
         marker.style.top = `${bairro.y}px`;
         
-        if (useImageMarkers && bairro.imagem) {
-            console.log(`📸 Tentando carregar imagem: ${bairro.imagem}`);
-            const img = document.createElement("img");
-            img.src = bairro.imagem;
-            img.alt = bairro.nome;
-            img.className = "marker-image";
-            img.onload = function() {
-                console.log(`✅ Imagem carregada: ${bairro.nome}`);
-            };
-            img.onerror = function() {
-                console.warn(`⚠️ Falha ao carregar: ${bairro.imagem}`);
-                this.remove();
-                const emoji = document.createElement("span");
-                emoji.className = "marker-emoji";
-                emoji.textContent = "🏛️";
-                marker.appendChild(emoji);
-            };
-            marker.appendChild(img);
-        } else {
+        const imgDesenho = `assets/fotos/${bairro.img}.png`;
+        const imgReal = `assets/fotosreal/${bairro.img}.jpg`;
+        
+        // Container para as duas imagens
+        const imagesContainer = document.createElement("div");
+        imagesContainer.className = "marker-images";
+        
+        // Imagem de desenho
+        const desenho = document.createElement("img");
+        desenho.src = imgDesenho;
+        desenho.alt = `${bairro.nome} - Desenho`;
+        desenho.className = "marker-image-desenho";
+        desenho.onload = function() {
+            imagensDesenhOk++;
+            console.log(`✅ Desenho ${imagensDesenhOk}/35: ${bairro.img}.png`);
+        };
+        desenho.onerror = function() {
+            console.warn(`⚠️ Desenho não encontrado: ${imgDesenho}`);
+            // Fallback para emoji
             const emoji = document.createElement("span");
             emoji.className = "marker-emoji";
             emoji.textContent = "🏛️";
+            emoji.style.position = "absolute";
+            emoji.style.zIndex = "10";
             marker.appendChild(emoji);
-        }
+        };
+        
+        // Imagem realista
+        const real = document.createElement("img");
+        real.src = imgReal;
+        real.alt = `${bairro.nome} - Real`;
+        real.className = "marker-image-real";
+        real.onload = function() {
+            imagensRealOk++;
+            console.log(`✅ Foto real ${imagensRealOk}/35: ${bairro.img}.jpg`);
+        };
+        real.onerror = function() {
+            console.warn(`⚠️ Foto real não encontrada: ${imgReal}`);
+        };
+        
+        imagesContainer.appendChild(real);
+        imagesContainer.appendChild(desenho);
+        marker.appendChild(imagesContainer);
         
         marker.onclick = (e) => {
             e.stopPropagation();
@@ -812,9 +642,26 @@ function criarMarcadores() {
         };
         
         document.getElementById("map-wrapper").appendChild(marker);
+        marcadoresOk++;
     });
     
-    console.log(`✅ ${bairros.length} marcadores criados`);
+    console.log(`✅ ${marcadoresOk} marcadores criados no mapa`);
+    console.log('');
+    console.log('📊 RESUMO DO CARREGAMENTO:');
+    console.log(`- Marcadores criados: ${marcadoresOk}/35`);
+    
+    setTimeout(() => {
+        console.log(`- Desenhos carregados: ${imagensDesenhOk}/35`);
+        console.log(`- Fotos reais carregadas: ${imagensRealOk}/35`);
+        if (imagensDesenhOk === 0) {
+            console.error('❌ NENHUM DESENHO FOI CARREGADO!');
+            console.log('Verifique se a pasta assets/fotos/ existe e contém os arquivos .png');
+        }
+        if (imagensRealOk === 0) {
+            console.error('❌ NENHUMA FOTO REAL FOI CARREGADA!');
+            console.log('Verifique se a pasta assets/fotosreal/ existe e contém os arquivos .jpg');
+        }
+    }, 3000);
 }
 
 // ============================================
@@ -822,6 +669,7 @@ function criarMarcadores() {
 // ============================================
 function focarBairro(index) {
     const bairro = bairros[index];
+    console.log('🎯 Focando em:', bairro.nome);
     
     document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
     document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
@@ -850,15 +698,10 @@ function focarBairro(index) {
     bairroAtivo = bairro;
 }
 
-// ============================================
-// CARD
-// ============================================
 function mostrarCard(bairro) {
     const card = document.getElementById("info-card");
-    
     document.getElementById("card-title").textContent = bairro.nome;
     document.getElementById("card-description").textContent = bairro.codigo;
-    
     card.classList.add("visible");
 }
 
@@ -871,13 +714,10 @@ function fecharCard() {
 
 function verDados() {
     if (bairroAtivo) {
-        alert(`🚧 Funcionalidade em desenvolvimento!\n\nEm breve: dados completos sobre ${bairroAtivo.nome}`);
+        alert(`🚧 Em desenvolvimento!\n\nDados de: ${bairroAtivo.nome}`);
     }
 }
 
-// ============================================
-// ZOOM
-// ============================================
 function zoom(factor) {
     scale *= factor;
     scale = Math.max(0.5, Math.min(scale, 3));
@@ -889,128 +729,22 @@ function resetZoom() {
     translateX = 0;
     translateY = 0;
     updateTransform();
-    
-    document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
-    document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
     fecharCard();
 }
 
 function updateTransform() {
-    const wrapper = document.getElementById("map-wrapper");
-    wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    document.getElementById("map-wrapper").style.transform = 
+        `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 }
-
-// ============================================
-// PAN (ARRASTAR)
-// ============================================
-const mapWrapper = document.getElementById("map-wrapper");
-
-mapWrapper.addEventListener("mousedown", (e) => {
-    const svg = document.getElementById("city-map");
-    if (e.target === svg || e.target.tagName === 'path' || e.target.id === 'svg-container') {
-        isDragging = true;
-        startX = e.clientX - translateX;
-        startY = e.clientY - translateY;
-        mapWrapper.style.cursor = "grabbing";
-    }
-});
-
-document.addEventListener("mousemove", (e) => {
-    if (isDragging) {
-        translateX = e.clientX - startX;
-        translateY = e.clientY - startY;
-        updateTransform();
-    }
-});
-
-document.addEventListener("mouseup", () => {
-    isDragging = false;
-    mapWrapper.style.cursor = "grab";
-});
-
-// ============================================
-// ZOOM COM SCROLL
-// ============================================
-mapWrapper.addEventListener("wheel", (e) => {
-    e.preventDefault();
-    
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    const newScale = scale * delta;
-    
-    if (newScale >= 0.5 && newScale <= 3) {
-        const rect = mapWrapper.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const xs = (x - translateX) / scale;
-        const ys = (y - translateY) / scale;
-        
-        scale = newScale;
-        
-        translateX = x - xs * scale;
-        translateY = y - ys * scale;
-        
-        updateTransform();
-    }
-}, { passive: false });
-
-// ============================================
-// TOUCH SUPPORT
-// ============================================
-let touchStartDistance = 0;
-let touchStartScale = 1;
-
-mapWrapper.addEventListener("touchstart", (e) => {
-    if (e.touches.length === 2) {
-        touchStartDistance = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-        );
-        touchStartScale = scale;
-    } else if (e.touches.length === 1) {
-        isDragging = true;
-        startX = e.touches[0].clientX - translateX;
-        startY = e.touches[0].clientY - translateY;
-    }
-});
-
-mapWrapper.addEventListener("touchmove", (e) => {
-    if (e.touches.length === 2) {
-        e.preventDefault();
-        const distance = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-        );
-        const newScale = touchStartScale * (distance / touchStartDistance);
-        if (newScale >= 0.5 && newScale <= 3) {
-            scale = newScale;
-            updateTransform();
-        }
-    } else if (isDragging && e.touches.length === 1) {
-        e.preventDefault();
-        translateX = e.touches[0].clientX - startX;
-        translateY = e.touches[0].clientY - startY;
-        updateTransform();
-    }
-}, { passive: false });
-
-mapWrapper.addEventListener("touchend", () => {
-    isDragging = false;
-});
 
 // ============================================
 // INICIALIZAÇÃO
 // ============================================
 window.onload = () => {
     renderizarLista();
-    console.log('🗺️ Hortolândia SAM carregado!');
-    console.log(`📍 ${bairros.length} localidades configuradas`);
-    console.log('📸 Modo inicial:', useImageMarkers ? 'Imagens' : 'Emojis');
     console.log('');
-    console.log('💡 INSTRUÇÕES:');
-    console.log('1. As fotos devem estar em: assets/fotos/');
-    console.log('2. Veja o console para erros de carregamento');
-    console.log('3. Use o botão no topo para alternar entre Imagens/Emojis');
+    console.log('✅ Sistema iniciado!');
+    console.log('💡 Abra o Console (F12) para ver detalhes do carregamento');
 };
 </script>
 
