@@ -706,7 +706,6 @@ fetch('assets/hortolandia-roads.svg')
             svgElement.id = "city-map";
             console.log('✅ SVG inserido no DOM');
             
-            // Aguarda o SVG renderizar antes de criar marcadores
             setTimeout(() => {
                 calcularPosicoes();
                 criarMarcadores();
@@ -773,7 +772,6 @@ function criarMarcadores() {
     let imagensDesenhOk = 0;
     let imagensRealOk = 0;
     
-    // Criar container de marcadores FORA do SVG
     let markersContainer = document.getElementById('markers-overlay');
     if (!markersContainer) {
         markersContainer = document.createElement('div');
@@ -798,11 +796,9 @@ function criarMarcadores() {
         const imgDesenho = `assets/fotos/${bairro.img}.png`;
         const imgReal = `assets/fotosreal/${bairro.img}.jpg`;
         
-        // Container para as duas imagens
         const imagesContainer = document.createElement("div");
         imagesContainer.className = "marker-images";
         
-        // Imagem de desenho
         const desenho = document.createElement("img");
         desenho.src = imgDesenho;
         desenho.alt = `${bairro.nome} - Desenho`;
@@ -813,14 +809,12 @@ function criarMarcadores() {
         };
         desenho.onerror = function() {
             console.warn(`⚠️ Desenho não encontrado: ${imgDesenho}`);
-            // Fallback para emoji
             const emoji = document.createElement("span");
             emoji.className = "marker-emoji";
             emoji.textContent = "🏛️";
             marker.appendChild(emoji);
         };
         
-        // Imagem realista
         const real = document.createElement("img");
         real.src = imgReal;
         real.alt = `${bairro.nome} - Real`;
@@ -847,7 +841,6 @@ function criarMarcadores() {
     });
     
     console.log(`✅ ${marcadoresOk} marcadores criados no mapa`);
-    console.log('');
     console.log('📊 RESUMO DO CARREGAMENTO:');
     console.log(`- Marcadores criados: ${marcadoresOk}/${bairros.length}`);
     
@@ -856,14 +849,13 @@ function criarMarcadores() {
         console.log(`- Fotos reais carregadas: ${imagensRealOk}/${bairros.length}`);
         if (imagensDesenhOk === 0) {
             console.error('❌ NENHUM DESENHO FOI CARREGADO!');
-            console.log('Verifique se a pasta assets/fotos/ existe e contém os arquivos .png');
         }
         if (imagensRealOk === 0) {
             console.error('❌ NENHUMA FOTO REAL FOI CARREGADA!');
-            console.log('Verifique se a pasta assets/fotosreal/ existe e contém os arquivos .jpg');
         }
     }, 3000);
 }
+
 // ============================================
 // FOCAR EM BAIRRO
 // ============================================
@@ -910,6 +902,7 @@ function fecharCard() {
     document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
     document.querySelectorAll('.bairro-item').forEach(m => m.classList.remove('active'));
     bairroAtivo = null;
+    resetZoom();
 }
 
 function verDados() {
@@ -928,11 +921,13 @@ function zoom(factor) {
 }
 
 function resetZoom() {
+    const wrapper = document.getElementById("map-wrapper");
+    wrapper.classList.add('zooming');
     scale = 1;
     translateX = 0;
     translateY = 0;
     updateTransform();
-    fecharCard();
+    setTimeout(() => wrapper.classList.remove('zooming'), 1000);
 }
 
 function updateTransform() {
@@ -943,15 +938,18 @@ function updateTransform() {
 // ============================================
 // PAN (ARRASTAR)
 // ============================================
-const mapWrapper = document.getElementById("map-wrapper");
+const mapContainer = document.getElementById("map-container");
 
-mapWrapper.addEventListener("mousedown", (e) => {
-    const svg = document.getElementById("city-map");
-    if (e.target === svg || e.target.tagName === 'path' || e.target.id === 'svg-container') {
+mapContainer.addEventListener("mousedown", (e) => {
+    if (!e.target.closest('.marker') && 
+        !e.target.closest('#sidebar') && 
+        !e.target.closest('#header') && 
+        !e.target.closest('#info-card') &&
+        !e.target.closest('#zoom-controls')) {
         isDragging = true;
         startX = e.clientX - translateX;
         startY = e.clientY - translateY;
-        mapWrapper.style.cursor = "grabbing";
+        e.preventDefault();
     }
 });
 
@@ -964,21 +962,23 @@ document.addEventListener("mousemove", (e) => {
 });
 
 document.addEventListener("mouseup", () => {
-    isDragging = false;
-    mapWrapper.style.cursor = "grab";
+    if (isDragging) {
+        isDragging = false;
+    }
 });
 
 // ============================================
 // ZOOM COM SCROLL
 // ============================================
-mapWrapper.addEventListener("wheel", (e) => {
+mapContainer.addEventListener("wheel", (e) => {
     e.preventDefault();
     
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
     const newScale = scale * delta;
     
     if (newScale >= 0.5 && newScale <= 3) {
-        const rect = mapWrapper.getBoundingClientRect();
+        const wrapper = document.getElementById("map-wrapper");
+        const rect = wrapper.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         
@@ -1000,7 +1000,15 @@ mapWrapper.addEventListener("wheel", (e) => {
 let touchStartDistance = 0;
 let touchStartScale = 1;
 
-mapWrapper.addEventListener("touchstart", (e) => {
+mapContainer.addEventListener("touchstart", (e) => {
+    if (e.target.closest('.marker') || 
+        e.target.closest('#sidebar') || 
+        e.target.closest('#header') || 
+        e.target.closest('#info-card') ||
+        e.target.closest('#zoom-controls')) {
+        return;
+    }
+    
     if (e.touches.length === 2) {
         touchStartDistance = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
@@ -1014,7 +1022,7 @@ mapWrapper.addEventListener("touchstart", (e) => {
     }
 });
 
-mapWrapper.addEventListener("touchmove", (e) => {
+mapContainer.addEventListener("touchmove", (e) => {
     if (e.touches.length === 2) {
         e.preventDefault();
         const distance = Math.hypot(
@@ -1034,7 +1042,7 @@ mapWrapper.addEventListener("touchmove", (e) => {
     }
 }, { passive: false });
 
-mapWrapper.addEventListener("touchend", () => {
+mapContainer.addEventListener("touchend", () => {
     isDragging = false;
 });
 
@@ -1043,7 +1051,6 @@ mapWrapper.addEventListener("touchend", () => {
 // ============================================
 window.onload = () => {
     renderizarLista();
-    console.log('');
     console.log('✅ Sistema iniciado!');
     console.log('💡 Funcionalidades:');
     console.log('- ✅ Mapa SVG responsivo');
@@ -1051,11 +1058,7 @@ window.onload = () => {
     console.log('- ✅ Zoom suave com scroll/pinch');
     console.log('- ✅ Pan (arrastar) com mouse/touch');
     console.log('- ✅ Marcadores mantêm posição em qualquer zoom');
-    console.log('');
-    console.log('📂 Estrutura de pastas necessária:');
-    console.log('assets/hortolandia-roads.svg');
-    console.log('assets/fotos/ (imagens de desenho .png)');
-    console.log('assets/fotosreal/ (fotos reais .jpg)');
+    console.log('- ✅ Reset automático ao fechar card');
 };
 </script>
 
