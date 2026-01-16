@@ -12,46 +12,28 @@
 }
 
 :root {
-    --primary: #2563eb;
-    --primary-light: #60a5fa;
-    --accent: #7dd3fc;
-    --dark: #0a0a0a;
-    --dark-secondary: #111827;
-    --dark-tertiary: #1f2937;
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #141414;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --accent-cyan: #7dd3fc;
+}
+
+[data-theme="light"] {
+    --bg-primary: #f5f1e8;
+    --bg-secondary: #ebe7de;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--dark);
-    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
     overflow-x: hidden;
-    line-height: 1.6;
-}
-
-/* ========== CUSTOM CURSOR ========== */
-.cursor {
-    width: 10px;
-    height: 10px;
-    border: 2px solid var(--accent);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transition: all 0.15s ease;
-    transform: translate(-50%, -50%);
-    mix-blend-mode: difference;
-}
-
-.cursor-follower {
-    width: 40px;
-    height: 40px;
-    border: 1px solid rgba(125, 211, 252, 0.3);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transition: all 0.3s ease;
-    transform: translate(-50%, -50%);
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* ========== NAVIGATION ========== */
@@ -61,93 +43,74 @@ nav {
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 25px 50px;
+    padding: 20px 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, transparent 100%);
     backdrop-filter: blur(20px);
-    transition: all 0.4s ease;
-}
-
-nav.scrolled {
-    padding: 15px 50px;
-    background: rgba(10, 10, 10, 0.98);
+    background: rgba(10, 10, 10, 0.8);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.logo {
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    background: linear-gradient(135deg, #fff, var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    cursor: pointer;
+[data-theme="light"] nav {
+    background: rgba(245, 241, 232, 0.9);
+    border-bottom-color: rgba(0, 0, 0, 0.05);
 }
 
-.nav-links {
+.nav-logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.nav-right {
     display: flex;
-    gap: 40px;
     align-items: center;
+    gap: 30px;
 }
 
 .nav-link {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    position: relative;
     transition: color 0.3s ease;
 }
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--accent);
-    transition: width 0.3s ease;
-}
-
 .nav-link:hover {
-    color: #fff;
+    color: var(--text-primary);
 }
 
-.nav-link:hover::after {
-    width: 100%;
-}
-
-.menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 6px;
+.theme-toggle {
+    width: 50px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 13px;
+    position: relative;
     cursor: pointer;
-    z-index: 1001;
+    transition: background 0.3s ease;
 }
 
-.menu-toggle span {
-    width: 28px;
-    height: 2px;
-    background: #fff;
-    transition: all 0.3s ease;
-    border-radius: 2px;
+.theme-toggle::before {
+    content: '◐';
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background: var(--text-primary);
+    border-radius: 50%;
+    transition: left 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--bg-primary);
 }
 
-.menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(8px, 8px);
-}
-
-.menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.menu-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
+.theme-toggle.active::before {
+    left: 27px;
 }
 
 /* ========== HERO SECTION ========== */
@@ -157,135 +120,46 @@ nav.scrolled {
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden;
-    background: radial-gradient(ellipse at top, #1e3a8a 0%, #0a0a0a 60%);
-}
-
-.hero-bg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-}
-
-.grid-overlay {
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background-image: 
-        linear-gradient(rgba(125, 211, 252, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(125, 211, 252, 0.03) 1px, transparent 1px);
-    background-size: 100px 100px;
-    animation: gridScroll 30s linear infinite;
-    opacity: 0.5;
-}
-
-@keyframes gridScroll {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(100px, 100px); }
-}
-
-.floating-elements {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-.float-element {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
-    animation: float 20s ease-in-out infinite;
-}
-
-.float-element:nth-child(1) {
-    background: var(--primary);
-    top: 20%;
-    left: 10%;
-    animation-delay: 0s;
-}
-
-.float-element:nth-child(2) {
-    background: var(--accent);
-    bottom: 20%;
-    right: 10%;
-    animation-delay: 5s;
-}
-
-.float-element:nth-child(3) {
-    background: var(--primary-light);
-    top: 50%;
-    left: 50%;
-    animation-delay: 10s;
-}
-
-@keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(50px, -50px) scale(1.1); }
-    66% { transform: translate(-50px, 50px) scale(0.9); }
+    padding: 120px 60px 60px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, transparent 100%);
 }
 
 .hero-content {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    max-width: 1200px;
-    padding: 0 50px;
+    max-width: 1400px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
 }
 
-.hero-subtitle {
-    font-size: 14px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 30px;
-    opacity: 0;
-    animation: fadeInUp 1s ease 0.2s forwards;
+.hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.hero-title-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.hero-title {
-    font-size: clamp(60px, 10vw, 140px);
-    font-weight: 200;
+.multiplica-text {
+    font-size: clamp(48px, 6vw, 72px);
+    font-weight: 300;
     letter-spacing: -2px;
-    line-height: 1.1;
-    margin-bottom: 20px;
-}
-
-.typing-container {
-    display: inline-block;
+    color: var(--text-primary);
     position: relative;
-}
-
-.typing-text {
-    opacity: 0;
-    animation: fadeIn 0.3s ease forwards;
-}
-
-@keyframes fadeIn {
-    to { opacity: 1; }
 }
 
 .typing-cursor {
     display: inline-block;
     width: 3px;
     height: 0.9em;
-    background: var(--accent);
-    margin-left: 8px;
+    background: var(--accent-cyan);
+    margin-left: 5px;
     animation: blink 1s infinite;
     vertical-align: middle;
 }
@@ -296,281 +170,165 @@ nav.scrolled {
 }
 
 .sam-text {
-    font-size: clamp(80px, 15vw, 180px);
+    font-size: clamp(72px, 9vw, 110px);
     font-weight: 900;
-    letter-spacing: -4px;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--primary-light) 100%);
+    letter-spacing: -3px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 80px rgba(125, 211, 252, 0.3);
-    opacity: 0;
-    animation: fadeInUp 1s ease 1.5s forwards;
 }
 
-.hero-description {
+.hero-subtitle {
     font-size: 18px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: 30px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0;
-    animation: fadeInUp 1s ease 1.8s forwards;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 500px;
 }
 
-.scroll-indicator {
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
+.hero-location {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.location-item {
+    display: flex;
     align-items: center;
     gap: 10px;
-    opacity: 0;
-    animation: fadeInUp 1s ease 2s forwards;
-    cursor: pointer;
 }
 
-.scroll-text {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.scroll-line {
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(180deg, var(--accent), transparent);
-    animation: scrollLine 2s ease-in-out infinite;
-}
-
-@keyframes scrollLine {
-    0% { transform: translateY(-20px); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateY(20px); opacity: 0; }
-}
-
-/* ========== INFO SECTION ========== */
-.info-section {
-    padding: 100px 50px;
-    background: var(--dark-secondary);
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.info-grid {
-    max-width: 1400px;
-    margin: 0 auto;
+.hero-stats {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 80px;
-    align-items: center;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    padding-top: 20px;
 }
 
-.info-text h2 {
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 700;
-    margin-bottom: 30px;
-    line-height: 1.2;
-}
-
-.info-text .location {
-    font-size: 24px;
-    color: var(--accent);
-    margin-bottom: 15px;
-    font-weight: 600;
-}
-
-.info-text .year {
-    font-size: 72px;
-    font-weight: 900;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    line-height: 1;
-    margin-bottom: 40px;
-}
-
-.info-text p {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.8;
-    margin-bottom: 20px;
-}
-
-/* ========== STATS SECTION ========== */
-.stats-section {
-    padding: 120px 50px;
-    background: linear-gradient(180deg, var(--dark-secondary) 0%, var(--dark) 100%);
-    position: relative;
-}
-
-.stats-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1px;
-    height: 100px;
-    background: linear-gradient(180deg, transparent, var(--accent), transparent);
-}
-
-.stats-container {
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.section-title {
+.stat-mini {
     text-align: center;
-    font-size: clamp(32px, 4vw, 48px);
-    font-weight: 700;
-    margin-bottom: 80px;
-    background: linear-gradient(135deg, #fff, var(--primary-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 50px;
-}
-
-.stat-card {
-    position: relative;
-    padding: 50px 40px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-}
-
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.8s ease;
-}
-
-.stat-card:hover::before {
-    transform: translateX(100%);
-}
-
-.stat-card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(59, 130, 246, 0.2);
-    transform: translateY(-10px);
-}
-
-.stat-icon {
-    font-size: 56px;
-    margin-bottom: 25px;
-    display: inline-block;
-    filter: grayscale(0.3);
-    transition: all 0.3s ease;
-}
-
-.stat-card:hover .stat-icon {
-    filter: grayscale(0);
-    transform: scale(1.1);
-}
-
-.stat-label {
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 15px;
-}
-
-.stat-value {
-    font-size: 64px;
-    font-weight: 900;
-    line-height: 1;
-    background: linear-gradient(135deg, var(--primary-light), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.stat-value.progress {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-}
-
-.stat-value.progress .current {
-    color: #fbbf24;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.stat-value.progress .total {
+.stat-mini-value {
     font-size: 32px;
-    color: rgba(255, 255, 255, 0.3);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 5px;
 }
 
-.progress-bar {
-    margin-top: 20px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 2px;
-    overflow: hidden;
+.stat-mini-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
 }
 
-.progress-fill {
+.hero-right {
+    position: relative;
+    height: 600px;
+}
+
+/* ========== MAP EMBED ========== */
+.map-preview {
+    width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, #fbbf24, #f59e0b);
-    border-radius: 2px;
-    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    background: var(--bg-secondary);
 }
 
-/* ========== SEARCH SECTION ========== */
-.search-section {
-    min-height: 100vh;
-    padding: 120px 50px;
-    background: var(--dark);
+.map-container-embed {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#svg-container-embed {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.search-container {
-    max-width: 900px;
+#city-map-embed {
+    width: 90%;
+    height: 90%;
+    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.2));
+}
+
+#city-map-embed path {
+    stroke: rgba(59, 130, 246, 0.6);
+    stroke-width: 1;
+    fill: none;
+    transition: stroke 0.3s ease;
+}
+
+#city-map-embed path:hover {
+    stroke: var(--accent-cyan);
+    stroke-width: 2;
+}
+
+.map-markers-embed {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.marker-embed {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.marker-embed:hover {
+    transform: translate(-50%, -50%) scale(1.4);
+    filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.5));
+}
+
+/* ========== SEARCH SECTION ========== */
+.search-section {
+    padding: 80px 60px;
+    background: var(--bg-secondary);
+}
+
+.search-container {
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .search-header {
-    text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 50px;
 }
 
-.search-header h2 {
-    font-size: clamp(36px, 5vw, 56px);
+.search-title {
+    font-size: 36px;
     font-weight: 700;
-    margin-bottom: 20px;
-    background: linear-gradient(135deg, #fff, var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.search-header p {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 15px;
 }
 
 .search-box {
     position: relative;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
+}
+
+.search-input-wrapper {
+    position: relative;
 }
 
 .search-icon {
@@ -578,360 +336,340 @@ nav.scrolled {
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 24px;
-    color: rgba(255, 255, 255, 0.3);
-    transition: all 0.3s ease;
+    font-size: 20px;
+    color: var(--text-secondary);
 }
 
 .search-input {
     width: 100%;
-    padding: 30px 0 30px 50px;
+    padding: 20px 20px 20px 40px;
     background: transparent;
     border: none;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    color: #fff;
-    font-size: 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-size: 20px;
     font-weight: 300;
     outline: none;
-    transition: all 0.4s ease;
+    transition: border-color 0.3s ease;
+}
+
+[data-theme="light"] .search-input {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
 }
 
 .search-input:focus {
     border-bottom-color: var(--accent);
 }
 
-.search-input:focus ~ .search-icon {
-    color: var(--accent);
-    transform: translateY(-50%) scale(1.1);
-}
-
 .search-placeholder {
     position: absolute;
-    left: 50px;
+    left: 40px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 28px;
+    font-size: 20px;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--text-secondary);
     pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.location-card {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+[data-theme="light"] .location-card {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+.location-card:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+}
+
+.location-emoji {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.location-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.location-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.location-code {
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    color: var(--text-secondary);
+}
+
+/* ========== MODAL ========== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-primary);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 1200px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s ease;
 }
 
-.search-input:focus ~ .search-placeholder {
-    opacity: 0;
-    transform: translateY(-50%) translateX(-20px);
+.modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+    transform: rotate(90deg);
 }
 
-.results-grid {
+.modal-header {
+    margin-bottom: 30px;
+}
+
+.modal-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.modal-subtitle {
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    color: var(--text-secondary);
+}
+
+.modal-body {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    max-height: 600px;
-    overflow-y: auto;
-    padding-right: 10px;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
 }
 
-.result-card {
-    padding: 25px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.result-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
+.modal-map {
     width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.1), transparent);
-    transition: left 0.6s ease;
+    height: 400px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
 }
 
-.result-card:hover::before {
-    left: 100%;
+.modal-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.result-card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(59, 130, 246, 0.3);
-    transform: translateY(-5px);
+.info-item {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.result-icon {
-    font-size: 28px;
-    margin-bottom: 15px;
-    display: inline-block;
-}
-
-.result-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
+.info-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
     margin-bottom: 8px;
 }
 
-.result-code {
-    font-size: 12px;
-    font-family: 'Courier New', monospace;
-    color: rgba(255, 255, 255, 0.4);
-    letter-spacing: 0.5px;
-}
-
-/* ========== SCROLLBAR ========== */
-.results-grid::-webkit-scrollbar {
-    width: 6px;
-}
-
-.results-grid::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 3px;
-}
-
-.results-grid::-webkit-scrollbar-thumb {
-    background: rgba(59, 130, 246, 0.3);
-    border-radius: 3px;
-}
-
-.results-grid::-webkit-scrollbar-thumb:hover {
-    background: rgba(59, 130, 246, 0.5);
+.info-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 1024px) {
-    .info-grid {
+    .hero-content {
         grid-template-columns: 1fr;
-        gap: 50px;
+        gap: 60px;
     }
     
-    .stats-grid {
-        grid-template-columns: 1fr;
+    .hero-right {
+        height: 400px;
     }
     
-    .results-grid {
+    .modal-body {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 768px) {
     nav {
-        padding: 20px 30px;
+        padding: 15px 30px;
     }
     
-    .nav-links {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 80%;
-        height: 100vh;
-        background: rgba(10, 10, 10, 0.98);
-        backdrop-filter: blur(20px);
+    .hero {
+        padding: 100px 30px 40px;
+    }
+    
+    .hero-title-wrapper {
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-        transition: right 0.4s ease;
-        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        gap: 10px;
     }
     
-    .nav-links.active {
-        right: 0;
+    .hero-stats {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
     
-    .menu-toggle {
-        display: flex;
-    }
-    
-    .hero-content {
-        padding: 0 30px;
-    }
-    
-    .info-section,
-    .stats-section,
     .search-section {
-        padding: 80px 30px;
+        padding: 60px 30px;
     }
     
-    .scroll-indicator {
-        bottom: 30px;
+    .locations-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        padding: 30px;
     }
 }
 
-/* ========== LOADING ANIMATION ========== */
-.page-loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--dark);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar {
+    width: 8px;
 }
 
-.page-loader.hidden {
-    opacity: 0;
-    visibility: hidden;
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.loader-content {
-    text-align: center;
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.3);
+    border-radius: 4px;
 }
 
-.loader-logo {
-    font-size: 48px;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--accent), var(--primary-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 30px;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(0.95); }
-}
-
-.loader-bar {
-    width: 200px;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 1px;
-    overflow: hidden;
-}
-
-.loader-progress {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    animation: loading 2s ease-in-out infinite;
-}
-
-@keyframes loading {
-    0% { width: 0%; }
-    50% { width: 70%; }
-    100% { width: 100%; }
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.5);
 }
 </style>
 </head>
 <body>
 
-<!-- Page Loader -->
-<div class="page-loader">
-    <div class="loader-content">
-        <div class="loader-logo">SAM</div>
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Custom Cursor -->
-<div class="cursor"></div>
-<div class="cursor-follower"></div>
-
 <!-- Navigation -->
-<nav id="navbar">
-    <div class="logo">SAM</div>
-    <div class="nav-links" id="navLinks">
-        <a href="#home" class="nav-link">Início</a>
-        <a href="#about" class="nav-link">Sobre</a>
-        <a href="#stats" class="nav-link">Estatísticas</a>
-        <a href="mapa.html" class="nav-link">Status</a>
-        <a href="#search" class="nav-link">Buscar</a>
-    </div>
-    <div class="menu-toggle" id="menuToggle">
-        <span></span>
-        <span></span>
-        <span></span>
+<nav>
+    <div class="nav-logo">MULTIPLICA SAM</div>
+    <div class="nav-right">
+        <a href="#hero" class="nav-link">Início</a>
+        <a href="#search" class="nav-link">Localidades</a>
+        <div class="theme-toggle" id="themeToggle"></div>
     </div>
 </nav>
 
 <!-- Hero Section -->
-<section class="hero" id="home">
-    <div class="hero-bg">
-        <div class="grid-overlay"></div>
-        <div class="floating-elements">
-            <div class="float-element"></div>
-            <div class="float-element"></div>
-            <div class="float-element"></div>
-        </div>
-    </div>
-    
+<section class="hero" id="hero">
     <div class="hero-content">
-        <div class="hero-subtitle">Sistema Avançado de Monitoramento</div>
-        <h1 class="hero-title">
-            <div class="typing-container">
-                <span class="typing-text" id="typingText"></span><span class="typing-cursor"></span>
-            </div>
-        </h1>
-        <div class="sam-text">SAM</div>
-        <p class="hero-description">
-            Plataforma inteligente para gestão e monitoramento educacional em tempo real
-        </p>
-    </div>
-    
-    <div class="scroll-indicator" onclick="scrollToSection('about')">
-        <span class="scroll-text">Role para baixo</span>
-        <div class="scroll-line"></div>
-    </div>
-</section>
-
-<!-- Info Section -->
-<section class="info-section" id="about">
-    <div class="info-grid">
-        <div class="info-text">
-            <div class="location">Hortolândia, São Paulo</div>
-            <div class="year">2026</div>
-            <p>
-                O MULTIPLICA SAM representa a evolução do monitoramento educacional, 
-                oferecendo insights em tempo real sobre 35 localidades estratégicas 
-                da região metropolitana.
-            </p>
-            <p>
-                Uma ferramenta desenvolvida para transformar dados em ação, 
-                conectando educadores, gestores e a comunidade através de 
-                tecnologia de ponta.
-            </p>
-        </div>
-        <div class="info-visual">
-            <!-- Espaço reservado para visualização futura -->
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<section class="stats-section" id="stats">
-    <div class="stats-container">
-        <h2 class="section-title">Números que Transformam</h2>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">🎓</div>
-                <div class="stat-label">Turmas Ativas</div>
-                <div class="stat-value">87</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">👨‍🎓</div>
-                <div class="stat-label">Estudantes Matriculados</div>
-                <div class="stat-value">478</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📚</div>
-                <div class="stat-label">Aulas Lançadas</div>
-                <div class="stat-value progress">
-                    <span class="current">87</span>
-                    <span class="total">/235</span>
+        <div class="hero-left">
+            <div class="hero-title-wrapper">
+                <div class="multiplica-text">
+                    <span id="typingText"></span><span class="typing-cursor"></span>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
+                <div class="sam-text">SAM</div>
+            </div>
+            
+            <p class="hero-subtitle">
+                Sistema Avançado de Monitoramento educacional para Hortolândia, 
+                oferecendo insights em tempo real sobre 35 localidades estratégicas.
+            </p>
+            
+            <div class="hero-location">
+                <div class="location-item">
+                    <span>📍</span>
+                    <span>Hortolândia, SP</span>
+                </div>
+                <div class="location-item">
+                    <span>📅</span>
+                    <span>2026</span>
+                </div>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-mini">
+                    <div class="stat-mini-value">87</div>
+                    <div class="stat-mini-label">Turmas</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-value">478</div>
+                    <div class="stat-mini-label">Matriculados</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-value">87/235</div>
+                    <div class="stat-mini-label">Aulas</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-right">
+            <div class="map-preview">
+                <div class="map-container-embed">
+                    <div id="svg-container-embed"></div>
+                    <div class="map-markers-embed" id="mapMarkersEmbed"></div>
                 </div>
             </div>
         </div>
@@ -942,139 +680,174 @@ nav.scrolled {
 <section class="search-section" id="search">
     <div class="search-container">
         <div class="search-header">
-            <h2>Encontre uma Localidade</h2>
-            <p>Explore 35 regiões estratégicas de Hortolândia</p>
+            <h2 class="search-title">Explorar Localidades</h2>
         </div>
         
         <div class="search-box">
-            <div class="search-icon">🔍</div>
-            <input 
-                type="text" 
-                class="search-input" 
-                id="searchInput"
-                autocomplete="off"
-                oninput="handleSearch(this.value)"
-            />
-            <div class="search-placeholder" id="searchPlaceholder"></div>
+            <div class="search-input-wrapper">
+                <div class="search-icon">🔍</div>
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput"
+                    autocomplete="off"
+                    oninput="handleSearch(this.value)"
+                />
+                <div class="search-placeholder" id="searchPlaceholder"></div>
+            </div>
         </div>
         
-        <div class="results-grid" id="resultsGrid"></div>
+        <div class="locations-grid" id="locationsGrid"></div>
     </div>
 </section>
+
+<!-- Modal -->
+<div class="modal" id="locationModal">
+    <div class="modal-content">
+        <div class="modal-close" onclick="closeModal()">×</div>
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle"></h3>
+            <div class="modal-subtitle" id="modalSubtitle"></div>
+        </div>
+        <div class="modal-body">
+            <div class="modal-map" id="modalMap"></div>
+            <div class="modal-info">
+                <div class="info-item">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">Ativo</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Região</div>
+                    <div class="info-value">Hortolândia</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Última Atualização</div>
+                    <div class="info-value">16/01/2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 // ========== DATA ==========
 const localidades = [
-    {nome: "Jardim Santana - Central", codigo: "BR-22-1431"},
-    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434"},
-    {nome: "Jardim São Pedro", codigo: "BR-22-1585"},
-    {nome: "Jardim Mirante", codigo: "BR-22-1632"},
-    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633"},
-    {nome: "Vila Real", codigo: "BR-22-1997"},
-    {nome: "Jardim Amanda I", codigo: "BR-22-2052"},
-    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133"},
-    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141"},
-    {nome: "Parque do Horto", codigo: "BR-22-2157"},
-    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227"},
-    {nome: "Jardim Amanda II", codigo: "BR-22-2272"},
-    {nome: "Jardim Adelaide", codigo: "BR-22-2273"},
-    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381"},
-    {nome: "Jardim São Jorge", codigo: "BR-22-2591"},
-    {nome: "Jardim São Sebastião", codigo: "BR-22-2592"},
-    {nome: "Jardim do Bosque", codigo: "BR-22-2716"},
-    {nome: "Vila Inema", codigo: "BR-22-2717"},
-    {nome: "Jardim Aline", codigo: "BR-22-2795"},
-    {nome: "Jardim Amanda III", codigo: "BR-22-3005"},
-    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057"},
-    {nome: "Jardim Nova Europa", codigo: "BR-22-3178"},
-    {nome: "Jardim das Colinas", codigo: "BR-22-3238"},
-    {nome: "Residencial João Luiz", codigo: "BR-22-3342"},
-    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400"},
-    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493"},
-    {nome: "Jardim Nova América", codigo: "BR-22-3654"},
-    {nome: "Jardim Interlagos", codigo: "BR-22-3833"},
-    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939"},
-    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039"},
-    {nome: "Nova Hortolandia", codigo: "BR-22-5421"},
-    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550"},
-    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607"},
-    {nome: "Jardim Amanda IV", codigo: "BR-22-5419"},
-    {nome: "Recanto do Sol", codigo: "BR-22-5266"}
+    {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, emoji: "🏛️"},
+    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, emoji: "🏘️"},
+    {nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, emoji: "⛪"},
+    {nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, emoji: "🏞️"},
+    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, emoji: "🌆"},
+    {nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, emoji: "🏰"},
+    {nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, emoji: "🌸"},
+    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, emoji: "💎"},
+    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, emoji: "✨"},
+    {nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, emoji: "🌳"},
+    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, emoji: "🌊"},
+    {nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, emoji: "🌺"},
+    {nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, emoji: "🌹"},
+    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, emoji: "🌲"},
+    {nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, emoji: "⚔️"},
+    {nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, emoji: "🏹"},
+    {nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, emoji: "🌴"},
+    {nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, emoji: "🏡"},
+    {nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, emoji: "🦋"},
+    {nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, emoji: "🌷"},
+    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, emoji: "🏕️"},
+    {nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, emoji: "🗼"},
+    {nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, emoji: "⛰️"},
+    {nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, emoji: "🏠"},
+    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, emoji: "🙏"},
+    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, emoji: "🌅"},
+    {nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, emoji: "🗽"},
+    {nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, emoji: "🏁"},
+    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, emoji: "⛪"},
+    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, emoji: "🎨"},
+    {nome: "Nova Hortolandia", codigo: "BR-22-5421", x: 615, y: 144, emoji: "🌟"},
+    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, emoji: "🌿"},
+    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, emoji: "👼"},
+    {nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, emoji: "🌼"},
+    {nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, emoji: "☀️"}
 ];
 
-// ========== PAGE LOADER ==========
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        document.querySelector('.page-loader').classList.add('hidden');
-    }, 2000);
-});
+// ========== THEME TOGGLE ==========
+const themeToggle = document.getElementById('themeToggle');
+let isDark = true;
 
-// ========== CUSTOM CURSOR ==========
-const cursor = document.querySelector('.cursor');
-const follower = document.querySelector('.cursor-follower');
-
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
-
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
-});
-
-function animateFollower() {
-    followerX += (mouseX - followerX) * 0.1;
-    followerY += (mouseY - followerY) * 0.1;
-    
-    follower.style.left = followerX + 'px';
-    follower.style.top = followerY + 'px';
-    
-    requestAnimationFrame(animateFollower);
-}
-animateFollower();
-
-// ========== NAVBAR SCROLL ==========
-window.addEventListener('scroll', () => {
-    const navbar = document.getElementById('navbar');
-    if (window.scrollY > 100) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
-
-// ========== MENU TOGGLE ==========
-const menuToggle = document.getElementById('menuToggle');
-const navLinks = document.getElementById('navLinks');
-
-menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('active');
-    navLinks.classList.toggle('active');
+themeToggle.addEventListener('click', () => {
+    isDark = !isDark;
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    themeToggle.classList.toggle('active');
 });
 
 // ========== TYPING EFFECT ==========
 const text = "MULTIPLICA";
 let charIndex = 0;
+let isTypingForward = true;
 
 function typeText() {
     const element = document.getElementById('typingText');
-    if (charIndex < text.length) {
-        element.textContent = text.substring(0, charIndex + 1);
-        charIndex++;
-        setTimeout(typeText, 150);
+    
+    if (isTypingForward) {
+        if (charIndex < text.length) {
+            element.textContent = text.substring(0, charIndex + 1);
+            charIndex++;
+            setTimeout(typeText, 150);
+        } else {
+            setTimeout(() => {
+                isTypingForward = false;
+                typeText();
+            }, 2000);
+        }
+    } else {
+        if (charIndex > 0) {
+            charIndex--;
+            element.textContent = text.substring(0, charIndex);
+            setTimeout(typeText, 100);
+        } else {
+            setTimeout(() => {
+                isTypingForward = true;
+                typeText();
+            }, 500);
+        }
     }
 }
 
 setTimeout(typeText, 500);
 
+// ========== LOAD SVG ==========
+fetch('assets/hortolandia-roads.svg')
+    .then(response => response.text())
+    .then(svgText => {
+        document.getElementById('svg-container-embed').innerHTML = svgText;
+        const svgElement = document.querySelector('#svg-container-embed svg');
+        if (svgElement) {
+            svgElement.id = "city-map-embed";
+            createEmbedMarkers();
+        }
+    })
+    .catch(() => {
+        document.getElementById('svg-container-embed').innerHTML = '<div style="color: var(--text-secondary); font-size: 14px;">Mapa não disponível</div>';
+    });
+
+// ========== CREATE EMBED MARKERS ==========
+function createEmbedMarkers() {
+    const container = document.getElementById('mapMarkersEmbed');
+    localidades.forEach(loc => {
+        const marker = document.createElement('div');
+        marker.className = 'marker-embed';
+        marker.style.left = `${loc.x}px`;
+        marker.style.top = `${loc.y}px`;
+        marker.textContent = loc.emoji;
+        marker.onclick = () => openModal(loc);
+        container.appendChild(marker);
+    });
+}
+
 // ========== PLACEHOLDER ANIMATION ==========
 const placeholders = [
     "Digite o nome do bairro...",
     "Ex: Jardim Santana",
-    "Ex: Vila Real",
-    "Ex: Parque do Horto"
+    "Ex: Vila Real"
 ];
 let placeholderIndex = 0;
 let placeholderCharIndex = 0;
@@ -1104,24 +877,9 @@ function animatePlaceholder() {
     setTimeout(animatePlaceholder, isDeleting ? 30 : 80);
 }
 
-setTimeout(animatePlaceholder, 2000);
+setTimeout(animatePlaceholder, 1000);
 
-// ========== PROGRESS BAR ANIMATION ==========
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const progressFill = document.getElementById('progressFill');
-            const percentage = (87 / 235) * 100;
-            setTimeout(() => {
-                progressFill.style.width = percentage + '%';
-            }, 300);
-        }
-    });
-}, { threshold: 0.5 });
-
-observer.observe(document.querySelector('.stats-section'));
-
-// ========== SEARCH FUNCTIONALITY ==========
+// ========== SEARCH ==========
 function handleSearch(value) {
     const input = value.toLowerCase().trim();
     const placeholder = document.getElementById('searchPlaceholder');
@@ -1130,7 +888,7 @@ function handleSearch(value) {
         placeholder.style.opacity = '0';
     } else {
         placeholder.style.opacity = '1';
-        renderResults(localidades);
+        renderLocations(localidades);
         return;
     }
     
@@ -1139,15 +897,15 @@ function handleSearch(value) {
         loc.codigo.toLowerCase().includes(input)
     );
     
-    renderResults(filtered);
+    renderLocations(filtered);
 }
 
-function renderResults(items) {
-    const grid = document.getElementById('resultsGrid');
+function renderLocations(items) {
+    const grid = document.getElementById('locationsGrid');
     
     if (items.length === 0) {
         grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: rgba(255,255,255,0.3);">
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-secondary);">
                 <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
                 <div>Nenhuma localidade encontrada</div>
             </div>
@@ -1156,43 +914,39 @@ function renderResults(items) {
     }
     
     grid.innerHTML = items.map(item => `
-        <div class="result-card" onclick="selectLocation('${item.nome}')">
-            <div class="result-icon">📍</div>
-            <div class="result-name">${item.nome}</div>
-            <div class="result-code">${item.codigo}</div>
+        <div class="location-card" onclick='openModal(${JSON.stringify(item)})'>
+            <div class="location-emoji">${item.emoji}</div>
+            <div class="location-info">
+                <div class="location-name">${item.nome}</div>
+                <div class="location-code">${item.codigo}</div>
+            </div>
         </div>
     `).join('');
 }
 
-function selectLocation(nome) {
-    window.location.href = `mapa.html?local=${encodeURIComponent(nome)}`;
+// ========== MODAL ==========
+function openModal(location) {
+    const modal = document.getElementById('locationModal');
+    document.getElementById('modalTitle').textContent = location.nome;
+    document.getElementById('modalSubtitle').textContent = location.codigo;
+    document.getElementById('modalMap').textContent = location.emoji;
+    modal.classList.add('active');
 }
 
-// ========== SMOOTH SCROLL ==========
-function scrollToSection(id) {
-    const element = document.getElementById(id);
-    element.scrollIntoView({ behavior: 'smooth' });
+function closeModal() {
+    document.getElementById('locationModal').classList.remove('active');
 }
-
-// Smooth scroll for nav links
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', (e) => {
-        const href = link.getAttribute('href');
-        if (href.startsWith('#')) {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-                navLinks.classList.remove('active');
-                menuToggle.classList.remove('active');
-            }
-        }
-    });
-});
 
 // ========== INITIALIZE ==========
 window.addEventListener('DOMContentLoaded', () => {
-    renderResults(localidades);
+    renderLocations(localidades);
+});
+
+// Close modal on outside click
+document.getElementById('locationModal').addEventListener('click', (e) => {
+    if (e.target.id === 'locationModal') {
+        closeModal();
+    }
 });
 </script>
 
