@@ -369,12 +369,16 @@ nav {
     background: var(--bg-primary);
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease, padding 0.5s ease;
+    opacity: 0;
+    transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                padding 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.8s ease;
 }
 
 .map-section.expanded {
     max-height: 1200px;
     padding: 80px 60px;
+    opacity: 1;
 }
 
 .map-container-full {
@@ -386,6 +390,18 @@ nav {
     margin-bottom: 30px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.map-header-left {
+    flex: 1;
+}
+
+.map-header-right {
+    display: flex;
+    gap: 15px;
     align-items: center;
 }
 
@@ -399,6 +415,75 @@ nav {
     font-family: 'Courier New', monospace;
     color: var(--text-secondary);
     margin-top: 5px;
+}
+
+.view-data-btn {
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    border: 2px solid rgba(59, 130, 246, 0.5);
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 20px rgba(59, 130, 246, 0.3),
+        0 0 0 0 rgba(59, 130, 246, 0.4);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.view-data-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.view-data-btn:hover::before {
+    left: 100%;
+}
+
+.view-data-btn.visible {
+    opacity: 1;
+    transform: scale(1);
+    animation: elegantPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes elegantPulse {
+    0%, 100% {
+        box-shadow: 
+            0 4px 20px rgba(59, 130, 246, 0.3),
+            0 0 0 0 rgba(59, 130, 246, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 
+            0 6px 30px rgba(59, 130, 246, 0.5),
+            0 0 0 8px rgba(59, 130, 246, 0);
+        transform: scale(1.02);
+    }
+}
+
+.view-data-btn:hover {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 
+        0 8px 35px rgba(59, 130, 246, 0.6),
+        0 0 0 0 rgba(59, 130, 246, 0);
+}
+
+.view-data-btn:active {
+    transform: scale(0.98);
 }
 
 .map-close-btn {
@@ -416,6 +501,7 @@ nav {
 .map-close-btn:hover {
     background: rgba(239, 68, 68, 0.2);
     border-color: rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
 }
 
 .map-viewer {
@@ -426,6 +512,14 @@ nav {
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+}
+
+.map-section.expanded .map-viewer {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .map-canvas {
@@ -440,11 +534,15 @@ nav {
 #map-wrapper {
     position: relative;
     cursor: grab;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #map-wrapper:active {
     cursor: grabbing;
+}
+
+#map-wrapper.zooming {
+    transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #svg-container-main {
@@ -677,8 +775,19 @@ nav {
     
     .map-header {
         flex-direction: column;
-        gap: 20px;
-        align-items: flex-start;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .map-header-right {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .view-data-btn,
+    .map-close-btn {
+        width: 100%;
+        text-align: center;
     }
 }
 
@@ -785,11 +894,16 @@ nav {
 <section class="map-section" id="mapSection">
     <div class="map-container-full">
         <div class="map-header">
-            <div>
+            <div class="map-header-left">
                 <h3 class="map-title" id="mapLocationName">Mapa de Hortolândia</h3>
                 <div class="map-subtitle" id="mapLocationCode">Visualização Interativa</div>
             </div>
-            <button class="map-close-btn" onclick="closeMap()">✕ Fechar Mapa</button>
+            <div class="map-header-right">
+                <button class="view-data-btn" id="viewDataBtn" onclick="viewData()">
+                    📊 Ver Dados Completos
+                </button>
+                <button class="map-close-btn" onclick="closeMap()">✕ Fechar</button>
+            </div>
         </div>
         
         <div class="map-viewer">
@@ -1061,10 +1175,8 @@ function selectLocation(index) {
     document.querySelectorAll('.marker').forEach(marker => {
         marker.classList.remove('active');
     });
-    const marker = document.getElementById(`marker-${index}`);
-    if (marker) marker.classList.add('active');
     
-    // Open map section
+    // Open map section (full view first)
     const mapSection = document.getElementById('mapSection');
     mapSection.classList.add('expanded');
     
@@ -1072,17 +1184,54 @@ function selectLocation(index) {
     document.getElementById('mapLocationName').textContent = location.nome;
     document.getElementById('mapLocationCode').textContent = location.codigo;
     
-    // Focus on location in map
+    // Reset zoom to show full map first
     const wrapper = document.getElementById("map-wrapper");
-    scale = 1.7;
-    translateX = (window.innerWidth / 2) - (location.x * scale);
-    translateY = (window.innerHeight / 2) - (location.y * scale);
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
     updateTransform();
     
-    // Scroll to map
+    // Hide button initially
+    const viewBtn = document.getElementById('viewDataBtn');
+    viewBtn.classList.remove('visible');
+    
+    // Scroll to map section
     setTimeout(() => {
         mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+    
+    // Wait 1.2s, then activate marker and zoom to location
+    setTimeout(() => {
+        const marker = document.getElementById(`marker-${index}`);
+        if (marker) marker.classList.add('active');
+        
+        // Add zooming class for smooth transition
+        wrapper.classList.add('zooming');
+        
+        // Zoom to location
+        scale = 1.8;
+        translateX = (window.innerWidth / 2) - (location.x * scale);
+        translateY = ((window.innerHeight / 2) - 100) - (location.y * scale);
+        updateTransform();
+        
+        // Remove zooming class after animation
+        setTimeout(() => wrapper.classList.remove('zooming'), 2000);
+        
+        // Show and pulse the view data button after zoom starts
+        setTimeout(() => {
+            viewBtn.classList.add('visible');
+            
+            // Smooth scroll to button after it appears
+            setTimeout(() => {
+                viewBtn.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }, 400);
+        }, 800);
+        
+    }, 1200);
 }
 
 function selectLocationFromMap(location, index) {
@@ -1099,13 +1248,27 @@ function selectLocationFromMap(location, index) {
     document.getElementById('mapLocationName').textContent = location.nome;
     document.getElementById('mapLocationCode').textContent = location.codigo;
     
+    // Show view data button
+    const viewBtn = document.getElementById('viewDataBtn');
+    viewBtn.classList.add('visible');
+    
     // Highlight the card in the grid
     renderLocations(localidades);
+}
+
+function viewData() {
+    if (selectedLocation) {
+        alert(`🚀 Redirecionando para dados detalhados...\n\n📍 Localidade: ${selectedLocation.nome}\n🔢 Código: ${selectedLocation.codigo}\n\n✨ Em breve: Dashboard completo com estatísticas, gráficos e análises!`);
+    }
 }
 
 function closeMap() {
     const mapSection = document.getElementById('mapSection');
     mapSection.classList.remove('expanded');
+    
+    // Hide view data button
+    const viewBtn = document.getElementById('viewDataBtn');
+    viewBtn.classList.remove('visible');
     
     // Clear selection
     selectedLocation = null;
@@ -1117,7 +1280,9 @@ function closeMap() {
     });
     
     // Reset zoom
-    resetZoom();
+    setTimeout(() => {
+        resetZoom();
+    }, 500);
     
     // Scroll back to locations
     document.getElementById('search').scrollIntoView({ behavior: 'smooth' });
