@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MULTIPLICA SAM - Hortolândia</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* ========== MENU HAMBURGER ========== */
+.hamburger {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.hamburger:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.hamburger span {
+    width: 24px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    height: 100vh;
+    background: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(30px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1999;
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 100px 30px 30px;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.nav-item {
+    padding: 18px 20px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.nav-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #fff;
+    transform: translateX(5px);
+}
+
+.nav-item span {
+    font-size: 20px;
+}
+
+/* ========== SECTION 1: MULTIPLICA SAM ========== */
+.section-hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-hero::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
+.hero-content {
+    text-align: center;
+    z-index: 10;
+    position: relative;
+}
+
+.typing-text {
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 300;
+    color: #fff;
+    letter-spacing: 8px;
+    margin-bottom: 15px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cursor {
+    display: inline-block;
+    width: 3px;
+    height: 1em;
+    background: #fff;
+    margin-left: 5px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+.sam-text {
+    font-size: clamp(64px, 12vw, 140px);
+    font-weight: 800;
+    color: #7dd3fc;
+    letter-spacing: 12px;
+    text-shadow: 0 0 40px rgba(125, 211, 252, 0.5);
+}
+
+/* ========== SECTION 2: LOCALIZAÇÃO ========== */
+.section-location {
+    background: #1f2937;
+    padding: 60px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.location-item {
+    font-size: clamp(20px, 3vw, 32px);
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.location-city {
+    color: #93c5fd;
+}
+
+.location-year {
+    color: #fbbf24;
+}
+
+/* ========== SECTION 3: ESTATÍSTICAS ========== */
+.section-stats {
+    background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+    padding: 80px 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stats-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.stat-value {
+    font-size: 48px;
+    font-weight: 700;
+    color: #60a5fa;
+}
+
+.stat-value.partial {
+    color: #fbbf24;
+}
+
+.stat-value small {
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
+}
+
+/* ========== SEARCH SECTION ========== */
+.search-section {
+    background: #0a0a0a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-container {
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+}
+
+.search-title {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.search-wrapper {
+    position: relative;
+    margin-top: 40px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 25px 25px 25px 70px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 300;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.search-input:focus {
+    border-bottom-color: #3b82f6;
+}
+
+.search-placeholder {
+    position: absolute;
+    left: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.suggestions-list {
+    margin-top: 30px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 18px 25px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.suggestion-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateX(5px);
+}
+
+.suggestion-icon {
+    font-size: 20px;
+}
+
+.suggestion-text {
+    flex: 1;
+}
+
+.suggestion-name {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.suggestion-code {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Courier New', monospace;
+}
+
+/* ========== RESPONSIVO ========== */
+@media (max-width: 768px) {
+    .section-location {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 40px 30px;
+        gap: 20px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .hamburger {
+        top: 20px;
+        left: 20px;
+    }
+
+    .sidebar {
+        width: 280px;
+        left: -280px;
+    }
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.5);
+}
+</style>
+</head>
+<body>
+
+<!-- Menu Hamburger -->
+<div class="hamburger" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar-overlay" onclick="toggleMenu()"></div>
+<div class="sidebar">
+    <div class="nav-item" onclick="navigateTo('home')">
+        <span>🏠</span>
+        <div>Início</div>
+    </div>
+    <div class="nav-item" onclick="navigateTo('status')">
+        <span>🗺️</span>
+        <div>Status</div>
+    </div>
+    <div class="nav-item" onclick="navigateTo('relatorios')">
+        <span>📊</span>
+        <div>Relatórios</div>
+    </div>
+    <div class="nav-item" onclick="navigateTo('equipe')">
+        <span>👥</span>
+        <div>Equipe</div>
+    </div>
+    <div class="nav-item" onclick="navigateTo('configuracoes')">
+        <span>⚙️</span>
+        <div>Configurações</div>
+    </div>
+</div>
+
+<!-- Section 1: Hero -->
+<section class="section-hero">
+    <div class="hero-content">
+        <div class="typing-text" id="typingText"></div>
+        <div class="sam-text">SAM</div>
+    </div>
+</section>
+
+<!-- Section 2: Localização -->
+<section class="section-location">
+    <div class="location-item location-city">Hortolândia/SP</div>
+    <div class="location-item location-year">2026</div>
+</section>
+
+<!-- Section 3: Estatísticas -->
+<section class="section-stats">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">🎓</div>
+            <div class="stat-label">Turmas</div>
+            <div class="stat-value">87</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👨‍🎓</div>
+            <div class="stat-label">Matriculados</div>
+            <div class="stat-value">478</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-label">Aulas Lançadas</div>
+            <div class="stat-value partial">87<small>/235</small></div>
+        </div>
+    </div>
+</section>
+
+<!-- Section 4: Busca -->
+<section class="search-section">
+    <div class="search-container">
+        <h2 class="search-title">Localize uma região</h2>
+        
+        <div class="search-wrapper">
+            <div class="search-icon">🔍</div>
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput"
+                autocomplete="off"
+                oninput="handleSearch(this.value)"
+                onfocus="showAllSuggestions()"
+            />
+            <div class="search-placeholder" id="searchPlaceholder"></div>
+        </div>
+
+        <div class="suggestions-list" id="suggestionsList"></div>
+    </div>
+</section>
+
+<script>
+// Dados das localidades
+const localidades = [
+    {nome: "Jardim Santana - Central", codigo: "BR-22-1431"},
+    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434"},
+    {nome: "Jardim São Pedro", codigo: "BR-22-1585"},
+    {nome: "Jardim Mirante", codigo: "BR-22-1632"},
+    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633"},
+    {nome: "Vila Real", codigo: "BR-22-1997"},
+    {nome: "Jardim Amanda I", codigo: "BR-22-2052"},
+    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133"},
+    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141"},
+    {nome: "Parque do Horto", codigo: "BR-22-2157"},
+    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227"},
+    {nome: "Jardim Amanda II", codigo: "BR-22-2272"},
+    {nome: "Jardim Adelaide", codigo: "BR-22-2273"},
+    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381"},
+    {nome: "Jardim São Jorge", codigo: "BR-22-2591"},
+    {nome: "Jardim São Sebastião", codigo: "BR-22-2592"},
+    {nome: "Jardim do Bosque", codigo: "BR-22-2716"},
+    {nome: "Vila Inema", codigo: "BR-22-2717"},
+    {nome: "Jardim Aline", codigo: "BR-22-2795"},
+    {nome: "Jardim Amanda III", codigo: "BR-22-3005"},
+    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057"},
+    {nome: "Jardim Nova Europa", codigo: "BR-22-3178"},
+    {nome: "Jardim das Colinas", codigo: "BR-22-3238"},
+    {nome: "Residencial João Luiz", codigo: "BR-22-3342"},
+    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400"},
+    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493"},
+    {nome: "Jardim Nova América", codigo: "BR-22-3654"},
+    {nome: "Jardim Interlagos", codigo: "BR-22-3833"},
+    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939"},
+    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039"},
+    {nome: "Nova Hortolandia", codigo: "BR-22-5421"},
+    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550"},
+    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607"},
+    {nome: "Jardim Amanda IV", codigo: "BR-22-5419"},
+    {nome: "Recanto do Sol", codigo: "BR-22-5266"}
+];
+
+// Typing effect para MULTIPLICA
+const text = "MULTIPLICA";
+let index = 0;
+
+function typeText() {
+    const element = document.getElementById('typingText');
+    if (index < text.length) {
+        element.innerHTML = text.substring(0, index + 1) + '<span class="cursor"></span>';
+        index++;
+        setTimeout(typeText, 150);
+    } else {
+        element.innerHTML = text;
+    }
+}
+
+// Placeholder animado
+const placeholders = [
+    "Digite o nome do bairro...",
+    "Ex: Jardim Santana",
+    "Ex: Vila Real",
+    "Ex: Parque do Horto"
+];
+let placeholderIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+
+function animatePlaceholder() {
+    const element = document.getElementById('searchPlaceholder');
+    const currentText = placeholders[placeholderIndex];
+    
+    if (!isDeleting) {
+        element.textContent = currentText.substring(0, charIndex + 1);
+        charIndex++;
+        
+        if (charIndex === currentText.length) {
+            setTimeout(() => isDeleting = true, 2000);
+        }
+    } else {
+        element.textContent = currentText.substring(0, charIndex - 1);
+        charIndex--;
+        
+        if (charIndex === 0) {
+            isDeleting = false;
+            placeholderIndex = (placeholderIndex + 1) % placeholders.length;
+        }
+    }
+    
+    setTimeout(animatePlaceholder, isDeleting ? 50 : 100);
+}
+
+// Menu toggle
+function toggleMenu() {
+    const hamburger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    hamburger.classList.toggle('active');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+// Navegação
+function navigateTo(page) {
+    if (page === 'status') {
+        window.location.href = 'mapa.html';
+    } else {
+        alert(`Navegando para: ${page.toUpperCase()}\n\nEm desenvolvimento!`);
+    }
+    toggleMenu();
+}
+
+// Busca inteligente
+function handleSearch(value) {
+    const input = value.toLowerCase().trim();
+    const placeholder = document.getElementById('searchPlaceholder');
+    
+    if (input) {
+        placeholder.style.display = 'none';
+    } else {
+        placeholder.style.display = 'block';
+        showAllSuggestions();
+        return;
+    }
+    
+    const filtered = localidades.filter(loc => 
+        loc.nome.toLowerCase().includes(input) ||
+        loc.codigo.toLowerCase().includes(input)
+    );
+    
+    renderSuggestions(filtered);
+}
+
+function showAllSuggestions() {
+    renderSuggestions(localidades);
+}
+
+function renderSuggestions(items) {
+    const list = document.getElementById('suggestionsList');
+    
+    if (items.length === 0) {
+        list.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.3); padding: 40px;">Nenhuma localidade encontrada</div>';
+        return;
+    }
+    
+    list.innerHTML = items.map(item => `
+        <div class="suggestion-item" onclick="selectLocation('${item.nome}')">
+            <div class="suggestion-icon">📍</div>
+            <div class="suggestion-text">
+                <div class="suggestion-name">${item.nome}</div>
+                <div class="suggestion-code">${item.codigo}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function selectLocation(nome) {
+    alert(`✅ Localidade selecionada: ${nome}\n\nRedirecionando para o mapa...`);
+    // Aqui você pode redirecionar para o mapa com a localidade já focada
+    // window.location.href = `map.html?local=${encodeURIComponent(nome)}`;
+}
+
+// Inicialização
+window.onload = () => {
+    typeText();
+    setTimeout(animatePlaceholder, 1500);
+    showAllSuggestions();
+};
+</script>
+
+</body>
+</html>
