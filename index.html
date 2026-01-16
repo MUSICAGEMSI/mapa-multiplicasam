@@ -127,16 +127,11 @@ nav {
 .hero-content {
     max-width: 1400px;
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-}
-
-.hero-left {
     display: flex;
     flex-direction: column;
     gap: 40px;
+    align-items: center;
+    text-align: center;
 }
 
 .hero-title-wrapper {
@@ -144,6 +139,7 @@ nav {
     align-items: baseline;
     gap: 20px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .multiplica-text {
@@ -182,7 +178,7 @@ nav {
     font-size: 18px;
     color: var(--text-secondary);
     line-height: 1.6;
-    max-width: 500px;
+    max-width: 700px;
 }
 
 .hero-location {
@@ -222,83 +218,6 @@ nav {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--text-secondary);
-}
-
-.hero-right {
-    position: relative;
-    height: 600px;
-}
-
-/* ========== MAP EMBED ========== */
-.map-preview {
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    position: relative;
-    background: var(--bg-secondary);
-}
-
-.map-container-embed {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-#svg-container-embed {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#city-map-embed {
-    width: 90%;
-    height: 90%;
-    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.2));
-}
-
-#city-map-embed path {
-    stroke: rgba(59, 130, 246, 0.6);
-    stroke-width: 1;
-    fill: none;
-    transition: stroke 0.3s ease;
-}
-
-#city-map-embed path:hover {
-    stroke: var(--accent-cyan);
-    stroke-width: 2;
-}
-
-.map-markers-embed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.marker-embed {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    pointer-events: auto;
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-.marker-embed:hover {
-    transform: translate(-50%, -50%) scale(1.4);
-    filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.5));
 }
 
 /* ========== SEARCH SECTION ========== */
@@ -402,9 +321,16 @@ nav {
     transform: translateY(-2px);
 }
 
-.location-emoji {
-    font-size: 28px;
+.location-card.active {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.location-icon {
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
+    object-fit: contain;
 }
 
 .location-info {
@@ -428,137 +354,168 @@ nav {
     color: var(--text-secondary);
 }
 
-/* ========== MODAL ========== */
-.modal {
-    position: fixed;
+/* ========== MAP SECTION ========== */
+.map-section {
+    padding: 0;
+    background: var(--bg-primary);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, padding 0.5s ease;
+}
+
+.map-section.expanded {
+    max-height: 1000px;
+    padding: 80px 60px;
+}
+
+.map-container-full {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.map-header {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.map-title {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.map-subtitle {
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    color: var(--text-secondary);
+    margin-top: 5px;
+}
+
+.map-close-btn {
+    padding: 12px 24px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.map-close-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.map-viewer {
+    width: 100%;
+    height: 600px;
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.map-canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#svg-container-main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#city-map-main {
+    width: 90%;
+    height: 90%;
+    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.2));
+}
+
+#city-map-main path {
+    stroke: rgba(59, 130, 246, 0.6);
+    stroke-width: 1;
+    fill: none;
+    transition: stroke 0.3s ease;
+}
+
+#city-map-main path:hover {
+    stroke: var(--accent-cyan);
+    stroke-width: 2;
+}
+
+.map-markers {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 2000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
+    pointer-events: none;
 }
 
-.modal.active {
-    display: flex;
-}
-
-.modal-content {
-    background: var(--bg-primary);
-    border-radius: 20px;
-    padding: 40px;
-    max-width: 1200px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.modal-close {
+.marker {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    transform: translate(-50%, -50%);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    pointer-events: auto;
     transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-.modal-close:hover {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.5);
-    transform: rotate(90deg);
-}
-
-.modal-header {
-    margin-bottom: 30px;
-}
-
-.modal-title {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.modal-subtitle {
-    font-size: 14px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-secondary);
-}
-
-.modal-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-}
-
-.modal-map {
+.marker img {
     width: 100%;
-    height: 400px;
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
+    height: 100%;
+    object-fit: contain;
 }
 
-.modal-info {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.marker:hover {
+    transform: translate(-50%, -50%) scale(1.3);
+    filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.5));
 }
 
-.info-item {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+.marker.active {
+    transform: translate(-50%, -50%) scale(1.4);
+    filter: drop-shadow(0 6px 12px rgba(59, 130, 246, 0.7));
+    animation: pulse 2s infinite;
 }
 
-.info-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }
 
-.info-value {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-primary);
+.marker-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    margin-bottom: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+.marker:hover .marker-tooltip {
+    opacity: 1;
 }
 
 /* ========== RESPONSIVE ========== */
-@media (max-width: 1024px) {
-    .hero-content {
-        grid-template-columns: 1fr;
-        gap: 60px;
-    }
-    
-    .hero-right {
-        height: 400px;
-    }
-    
-    .modal-body {
-        grid-template-columns: 1fr;
-    }
-}
-
 @media (max-width: 768px) {
     nav {
         padding: 15px 30px;
@@ -586,8 +543,18 @@ nav {
         grid-template-columns: 1fr;
     }
     
-    .modal-content {
-        padding: 30px;
+    .map-section.expanded {
+        padding: 60px 30px;
+    }
+    
+    .map-viewer {
+        height: 400px;
+    }
+    
+    .map-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
     }
 }
 
@@ -625,52 +592,41 @@ nav {
 <!-- Hero Section -->
 <section class="hero" id="hero">
     <div class="hero-content">
-        <div class="hero-left">
-            <div class="hero-title-wrapper">
-                <div class="multiplica-text">
-                    <span id="typingText"></span><span class="typing-cursor"></span>
-                </div>
-                <div class="sam-text">SAM</div>
+        <div class="hero-title-wrapper">
+            <div class="multiplica-text">
+                <span id="typingText"></span><span class="typing-cursor"></span>
             </div>
-            
-            <p class="hero-subtitle">
-                Sistema Avançado de Monitoramento educacional para Hortolândia, 
-                oferecendo insights em tempo real sobre 35 localidades estratégicas.
-            </p>
-            
-            <div class="hero-location">
-                <div class="location-item">
-                    <span>📍</span>
-                    <span>Hortolândia, SP</span>
-                </div>
-                <div class="location-item">
-                    <span>📅</span>
-                    <span>2026</span>
-                </div>
+            <div class="sam-text">SAM</div>
+        </div>
+        
+        <p class="hero-subtitle">
+            Sistema Avançado de Monitoramento educacional para Hortolândia, 
+            oferecendo insights em tempo real sobre 35 localidades estratégicas.
+        </p>
+        
+        <div class="hero-location">
+            <div class="location-item">
+                <span>📍</span>
+                <span>Hortolândia, SP</span>
             </div>
-            
-            <div class="hero-stats">
-                <div class="stat-mini">
-                    <div class="stat-mini-value">87</div>
-                    <div class="stat-mini-label">Turmas</div>
-                </div>
-                <div class="stat-mini">
-                    <div class="stat-mini-value">478</div>
-                    <div class="stat-mini-label">Matriculados</div>
-                </div>
-                <div class="stat-mini">
-                    <div class="stat-mini-value">87/235</div>
-                    <div class="stat-mini-label">Aulas</div>
-                </div>
+            <div class="location-item">
+                <span>📅</span>
+                <span>2026</span>
             </div>
         </div>
         
-        <div class="hero-right">
-            <div class="map-preview">
-                <div class="map-container-embed">
-                    <div id="svg-container-embed"></div>
-                    <div class="map-markers-embed" id="mapMarkersEmbed"></div>
-                </div>
+        <div class="hero-stats">
+            <div class="stat-mini">
+                <div class="stat-mini-value">87</div>
+                <div class="stat-mini-label">Turmas</div>
+            </div>
+            <div class="stat-mini">
+                <div class="stat-mini-value">478</div>
+                <div class="stat-mini-label">Matriculados</div>
+            </div>
+            <div class="stat-mini">
+                <div class="stat-mini-value">87/235</div>
+                <div class="stat-mini-label">Aulas</div>
             </div>
         </div>
     </div>
@@ -701,73 +657,67 @@ nav {
     </div>
 </section>
 
-<!-- Modal -->
-<div class="modal" id="locationModal">
-    <div class="modal-content">
-        <div class="modal-close" onclick="closeModal()">×</div>
-        <div class="modal-header">
-            <h3 class="modal-title" id="modalTitle"></h3>
-            <div class="modal-subtitle" id="modalSubtitle"></div>
+<!-- Map Section -->
+<section class="map-section" id="mapSection">
+    <div class="map-container-full">
+        <div class="map-header">
+            <div>
+                <h3 class="map-title" id="mapLocationName">Mapa de Hortolândia</h3>
+                <div class="map-subtitle" id="mapLocationCode">Visualização Interativa</div>
+            </div>
+            <button class="map-close-btn" onclick="closeMap()">✕ Fechar Mapa</button>
         </div>
-        <div class="modal-body">
-            <div class="modal-map" id="modalMap"></div>
-            <div class="modal-info">
-                <div class="info-item">
-                    <div class="info-label">Status</div>
-                    <div class="info-value">Ativo</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Região</div>
-                    <div class="info-value">Hortolândia</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Última Atualização</div>
-                    <div class="info-value">16/01/2026</div>
-                </div>
+        
+        <div class="map-viewer">
+            <div class="map-canvas">
+                <div id="svg-container-main"></div>
+                <div class="map-markers" id="mapMarkers"></div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <script>
 // ========== DATA ==========
 const localidades = [
-    {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, emoji: "🏛️"},
-    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, emoji: "🏘️"},
-    {nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, emoji: "⛪"},
-    {nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, emoji: "🏞️"},
-    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, emoji: "🌆"},
-    {nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, emoji: "🏰"},
-    {nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, emoji: "🌸"},
-    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, emoji: "💎"},
-    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, emoji: "✨"},
-    {nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, emoji: "🌳"},
-    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, emoji: "🌊"},
-    {nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, emoji: "🌺"},
-    {nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, emoji: "🌹"},
-    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, emoji: "🌲"},
-    {nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, emoji: "⚔️"},
-    {nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, emoji: "🏹"},
-    {nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, emoji: "🌴"},
-    {nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, emoji: "🏡"},
-    {nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, emoji: "🦋"},
-    {nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, emoji: "🌷"},
-    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, emoji: "🏕️"},
-    {nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, emoji: "🗼"},
-    {nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, emoji: "⛰️"},
-    {nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, emoji: "🏠"},
-    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, emoji: "🙏"},
-    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, emoji: "🌅"},
-    {nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, emoji: "🗽"},
-    {nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, emoji: "🏁"},
-    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, emoji: "⛪"},
-    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, emoji: "🎨"},
-    {nome: "Nova Hortolandia", codigo: "BR-22-5421", x: 615, y: 144, emoji: "🌟"},
-    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, emoji: "🌿"},
-    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, emoji: "👼"},
-    {nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, emoji: "🌼"},
-    {nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, emoji: "☀️"}
+    {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, icon: "assets/marker-central.png"},
+    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, icon: "assets/marker-residential.png"},
+    {nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, icon: "assets/marker-church.png"},
+    {nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, icon: "assets/marker-park.png"},
+    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, icon: "assets/marker-urban.png"},
+    {nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, icon: "assets/marker-historic.png"},
+    {nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, icon: "assets/marker-garden.png"},
+    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, icon: "assets/marker-residential.png"},
+    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, icon: "assets/marker-residential.png"},
+    {nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, icon: "assets/marker-park.png"},
+    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, icon: "assets/marker-lake.png"},
+    {nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, icon: "assets/marker-garden.png"},
+    {nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, icon: "assets/marker-garden.png"},
+    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, icon: "assets/marker-park.png"},
+    {nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, icon: "assets/marker-residential.png"},
+    {nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, icon: "assets/marker-residential.png"},
+    {nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, icon: "assets/marker-park.png"},
+    {nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, icon: "assets/marker-residential.png"},
+    {nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, icon: "assets/marker-garden.png"},
+    {nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, icon: "assets/marker-garden.png"},
+    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, icon: "assets/marker-rural.png"},
+    {nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, icon: "assets/marker-residential.png"},
+    {nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, icon: "assets/marker-hill.png"},
+    {nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, icon: "assets/marker-residential.png"},
+    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, icon: "assets/marker-residential.png"},
+    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, icon: "assets/marker-residential.png"},
+    {nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, icon: "assets/marker-residential.png"},
+    {nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, icon: "assets/marker-residential.png"},
+    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, icon: "assets/marker-church.png"},
+    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, icon: "assets/marker-residential.png"},
+    {nome: "Nova Hortolandia", codigo: "BR-22-5421", x: 615, y: 144, icon: "assets/marker-urban.png"},
+    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, icon: "assets/marker-residential.png"},
+    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, icon: "assets/marker-park.png"},
+    {nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, icon: "assets/marker-garden.png"},
+    {nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, icon: "assets/marker-residential.png"}
 ];
+
+let selectedLocation = null;
 
 // ========== THEME TOGGLE ==========
 const themeToggle = document.getElementById('themeToggle');
@@ -818,27 +768,46 @@ setTimeout(typeText, 500);
 fetch('assets/hortolandia-roads.svg')
     .then(response => response.text())
     .then(svgText => {
-        document.getElementById('svg-container-embed').innerHTML = svgText;
-        const svgElement = document.querySelector('#svg-container-embed svg');
+        document.getElementById('svg-container-main').innerHTML = svgText;
+        const svgElement = document.querySelector('#svg-container-main svg');
         if (svgElement) {
-            svgElement.id = "city-map-embed";
-            createEmbedMarkers();
+            svgElement.id = "city-map-main";
+            createMapMarkers();
         }
     })
     .catch(() => {
-        document.getElementById('svg-container-embed').innerHTML = '<div style="color: var(--text-secondary); font-size: 14px;">Mapa não disponível</div>';
+        document.getElementById('svg-container-main').innerHTML = '<div style="color: var(--text-secondary); font-size: 14px;">Mapa não disponível</div>';
     });
 
-// ========== CREATE EMBED MARKERS ==========
-function createEmbedMarkers() {
-    const container = document.getElementById('mapMarkersEmbed');
+// ========== CREATE MAP MARKERS ==========
+function createMapMarkers() {
+    const container = document.getElementById('mapMarkers');
+    container.innerHTML = '';
+    
     localidades.forEach(loc => {
         const marker = document.createElement('div');
-        marker.className = 'marker-embed';
+        marker.className = 'marker';
         marker.style.left = `${loc.x}px`;
         marker.style.top = `${loc.y}px`;
-        marker.textContent = loc.emoji;
-        marker.onclick = () => openModal(loc);
+        marker.setAttribute('data-codigo', loc.codigo);
+        
+        const img = document.createElement('img');
+        img.src = loc.icon;
+        img.alt = loc.nome;
+        img.onerror = function() {
+            // Fallback to colored circle if image not found
+            this.style.display = 'none';
+            marker.style.background = 'radial-gradient(circle, #3b82f6, #1e40af)';
+            marker.style.borderRadius = '50%';
+        };
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'marker-tooltip';
+        tooltip.textContent = loc.nome;
+        
+        marker.appendChild(img);
+        marker.appendChild(tooltip);
+        marker.onclick = () => selectLocationFromMap(loc);
         container.appendChild(marker);
     });
 }
@@ -914,8 +883,8 @@ function renderLocations(items) {
     }
     
     grid.innerHTML = items.map(item => `
-        <div class="location-card" onclick='openModal(${JSON.stringify(item)})'>
-            <div class="location-emoji">${item.emoji}</div>
+        <div class="location-card ${selectedLocation?.codigo === item.codigo ? 'active' : ''}" onclick='selectLocation(${JSON.stringify(item)})'>
+            <img src="${item.icon}" alt="${item.nome}" class="location-icon" onerror="this.style.display='none'">
             <div class="location-info">
                 <div class="location-name">${item.nome}</div>
                 <div class="location-code">${item.codigo}</div>
@@ -924,29 +893,82 @@ function renderLocations(items) {
     `).join('');
 }
 
-// ========== MODAL ==========
-function openModal(location) {
-    const modal = document.getElementById('locationModal');
-    document.getElementById('modalTitle').textContent = location.nome;
-    document.getElementById('modalSubtitle').textContent = location.codigo;
-    document.getElementById('modalMap').textContent = location.emoji;
-    modal.classList.add('active');
+// ========== MAP FUNCTIONS ==========
+function selectLocation(location) {
+    selectedLocation = location;
+    
+    // Update active state in location cards
+    document.querySelectorAll('.location-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // Update active state in map markers
+    document.querySelectorAll('.marker').forEach(marker => {
+        marker.classList.remove('active');
+        if (marker.getAttribute('data-codigo') === location.codigo) {
+            marker.classList.add('active');
+        }
+    });
+    
+    // Open map section
+    const mapSection = document.getElementById('mapSection');
+    mapSection.classList.add('expanded');
+    
+    // Update map header
+    document.getElementById('mapLocationName').textContent = location.nome;
+    document.getElementById('mapLocationCode').textContent = location.codigo;
+    
+    // Scroll to map
+    setTimeout(() => {
+        mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
 }
 
-function closeModal() {
-    document.getElementById('locationModal').classList.remove('active');
+function selectLocationFromMap(location) {
+    selectedLocation = location;
+    
+    // Update active state in map markers
+    document.querySelectorAll('.marker').forEach(marker => {
+        marker.classList.remove('active');
+        if (marker.getAttribute('data-codigo') === location.codigo) {
+            marker.classList.add('active');
+        }
+    });
+    
+    // Update active state in location cards
+    document.querySelectorAll('.location-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    
+    // Update map header
+    document.getElementById('mapLocationName').textContent = location.nome;
+    document.getElementById('mapLocationCode').textContent = location.codigo;
+    
+    // Highlight the card in the grid
+    renderLocations(localidades);
+}
+
+function closeMap() {
+    const mapSection = document.getElementById('mapSection');
+    mapSection.classList.remove('expanded');
+    
+    // Clear selection
+    selectedLocation = null;
+    document.querySelectorAll('.marker').forEach(marker => {
+        marker.classList.remove('active');
+    });
+    document.querySelectorAll('.location-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    
+    // Scroll back to locations
+    document.getElementById('search').scrollIntoView({ behavior: 'smooth' });
 }
 
 // ========== INITIALIZE ==========
 window.addEventListener('DOMContentLoaded', () => {
     renderLocations(localidades);
-});
-
-// Close modal on outside click
-document.getElementById('locationModal').addEventListener('click', (e) => {
-    if (e.target.id === 'locationModal') {
-        closeModal();
-    }
 });
 </script>
 
