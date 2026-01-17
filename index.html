@@ -399,7 +399,7 @@ nav {
 #map-wrapper {
     position: relative;
     cursor: grab;
-    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #map-wrapper:active {
@@ -430,7 +430,7 @@ nav {
 }
 
 #city-map-main path.drawing {
-    animation: drawPath 1s ease-in-out forwards;
+    animation: drawPath 0.6s ease-in-out forwards;
 }
 
 @keyframes drawPath {
@@ -990,7 +990,8 @@ function createMapMarkers() {
         markersContainer.style.width = '100%';
         markersContainer.style.height = '100%';
         markersContainer.style.pointerEvents = 'none';
-        document.getElementById('svg-container-main').appendChild(markersContainer);
+        // Anexar ao map-wrapper para que sejam afetados pelo zoom junto com o SVG
+        document.getElementById('map-wrapper').appendChild(markersContainer);
     }
     
     localidades.forEach((loc, index) => {
@@ -1123,7 +1124,7 @@ function animateRoads() {
     paths.forEach((path, index) => {
         setTimeout(() => {
             path.classList.add('drawing');
-        }, index * 10);
+        }, index * 2); // Delay mínimo, quase simultâneo
     });
 }
 
@@ -1155,28 +1156,28 @@ function selectLocation(index) {
         document.getElementById('zoomControls').classList.add('visible');
     }, 200);
     
-    // ETAPA 2: Imediatamente começar a desenhar as ruas (leva 1s)
+    // ETAPA 2: Imediatamente começar a desenhar as ruas (leva 0.8s)
     setTimeout(() => {
         animateRoads();
-    }, 100);
+    }, 50);
     
-    // ETAPA 3: Após 1.2s, fazer aparecer TODOS os marcadores
+    // ETAPA 3: Após 1s (quando ruas terminam), fazer aparecer TODOS os marcadores
     setTimeout(() => {
         const markers = document.querySelectorAll('.marker');
         markers.forEach((marker, idx) => {
             setTimeout(() => {
                 marker.classList.add('visible');
-            }, idx * 15); // Aparecem RÁPIDO
+            }, idx * 10); // Aparecem BEM RÁPIDO
         });
-    }, 1200);
+    }, 1000);
     
-    // ETAPA 4: Após 2s, ativar o marcador selecionado
+    // ETAPA 4: Após 1.5s, ativar o marcador selecionado
     setTimeout(() => {
         const marker = document.getElementById(`marker-${index}`);
         if (marker) marker.classList.add('active');
-    }, 2000);
+    }, 1500);
     
-    // ETAPA 5: Após 2.3s, fazer o zoom gigante mantendo centralizado
+    // ETAPA 5: Após 1.7s, fazer o zoom gigante mantendo centralizado NO EMOJI
     setTimeout(() => {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
@@ -1184,7 +1185,8 @@ function selectLocation(index) {
         // ZOOM GIGANTE
         scale = 3.5;
         
-        // Centralizar PERFEITAMENTE no marcador
+        // Centralizar EXATAMENTE no marcador
+        // Como os marcadores estão dentro do map-wrapper, usamos coordenadas diretas
         translateX = (viewportWidth / 2) - (location.x * scale);
         translateY = (viewportHeight / 2) - (location.y * scale);
         
@@ -1195,9 +1197,9 @@ function selectLocation(index) {
             document.getElementById('cardTitle').textContent = location.nomeCompleto;
             document.getElementById('cardCode').textContent = location.codigo;
             document.getElementById('infoCard').classList.add('visible');
-        }, 1500);
+        }, 800);
         
-    }, 2300);
+    }, 1700);
 }
 
 function selectLocationFromMap(location, index) {
