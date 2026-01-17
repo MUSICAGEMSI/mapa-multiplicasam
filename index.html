@@ -294,7 +294,7 @@ nav {
 
 .locations-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 16px;
 }
 
@@ -352,9 +352,6 @@ nav {
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .location-code {
@@ -365,161 +362,29 @@ nav {
 
 /* ========== MAP SECTION ========== */
 .map-section {
-    padding: 0;
-    background: var(--bg-primary);
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
-                padding 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.8s ease;
-}
-
-.map-section.expanded {
-    max-height: 1200px;
-    padding: 80px 60px;
-    opacity: 1;
-}
-
-.map-container-full {
-    max-width: 1600px;
-    margin: 0 auto;
-}
-
-.map-header {
-    margin-bottom: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.map-header-left {
-    flex: 1;
-}
-
-.map-header-right {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.map-title {
-    font-size: 32px;
-    font-weight: 700;
-}
-
-.map-subtitle {
-    font-size: 14px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-secondary);
-    margin-top: 5px;
-}
-
-.view-data-btn {
-    padding: 16px 32px;
-    background: linear-gradient(135deg, #3b82f6, #6366f1);
-    border: 2px solid rgba(59, 130, 246, 0.5);
-    border-radius: 12px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 700;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
-        0 4px 20px rgba(59, 130, 246, 0.3),
-        0 0 0 0 rgba(59, 130, 246, 0.4);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    transform: scale(0.9);
-}
-
-.view-data-btn::before {
-    content: '';
-    position: absolute;
+    position: fixed;
     top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-primary);
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
 }
 
-.view-data-btn:hover::before {
-    left: 100%;
-}
-
-.view-data-btn.visible {
+.map-section.active {
     opacity: 1;
-    transform: scale(1);
-    animation: elegantPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes elegantPulse {
-    0%, 100% {
-        box-shadow: 
-            0 4px 20px rgba(59, 130, 246, 0.3),
-            0 0 0 0 rgba(59, 130, 246, 0.4);
-        transform: scale(1);
-    }
-    50% {
-        box-shadow: 
-            0 6px 30px rgba(59, 130, 246, 0.5),
-            0 0 0 8px rgba(59, 130, 246, 0);
-        transform: scale(1.02);
-    }
-}
-
-.view-data-btn:hover {
-    background: linear-gradient(135deg, #2563eb, #4f46e5);
-    transform: scale(1.05) translateY(-2px);
-    box-shadow: 
-        0 8px 35px rgba(59, 130, 246, 0.6),
-        0 0 0 0 rgba(59, 130, 246, 0);
-}
-
-.view-data-btn:active {
-    transform: scale(0.98);
-}
-
-.map-close-btn {
-    padding: 12px 24px;
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: 8px;
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.map-close-btn:hover {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.5);
-    transform: translateY(-2px);
+    pointer-events: all;
 }
 
 .map-viewer {
     width: 100%;
-    height: 700px;
+    height: 100%;
     background: radial-gradient(ellipse at center, #0d0d0d 0%, #000 100%);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.8s ease 0.3s, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
-}
-
-.map-section.expanded .map-viewer {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .map-canvas {
@@ -534,15 +399,11 @@ nav {
 #map-wrapper {
     position: relative;
     cursor: grab;
-    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #map-wrapper:active {
     cursor: grabbing;
-}
-
-#map-wrapper.zooming {
-    transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #svg-container-main {
@@ -562,15 +423,21 @@ nav {
 #city-map-main path {
     stroke-width: 1.2;
     fill: none;
-    animation: roadColors 20s ease-in-out infinite;
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    transition: stroke 0.3s ease;
 }
 
-@keyframes roadColors {
-    0% { stroke: rgba(212, 175, 55, 0.85); }
-    25% { stroke: rgba(192, 192, 192, 0.85); }
-    50% { stroke: rgba(59, 130, 246, 0.85); }
-    75% { stroke: rgba(255, 255, 255, 0.75); }
-    100% { stroke: rgba(212, 175, 55, 0.85); }
+#city-map-main path.drawing {
+    animation: drawPath 0.3s ease-out forwards;
+}
+
+@keyframes drawPath {
+    to {
+        stroke-dashoffset: 0;
+        stroke: rgba(59, 130, 246, 0.6);
+    }
 }
 
 .map-markers {
@@ -584,23 +451,28 @@ nav {
 
 .marker {
     position: absolute;
-    width: 46px;
-    height: 46px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.85));
-    border: 3px solid rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, rgba(100, 100, 100, 0.3), rgba(80, 80, 80, 0.3));
+    border: 2px solid rgba(255, 255, 255, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transform: translate(-50%, -50%);
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translate(-50%, -50%) scale(0);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.6),
-        0 0 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     overflow: hidden;
     pointer-events: auto;
+    filter: grayscale(1);
+    opacity: 0;
+}
+
+.marker.visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
 }
 
 .marker-images {
@@ -632,6 +504,22 @@ nav {
     z-index: 1;
 }
 
+.marker.active {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.9));
+    border-color: rgba(255, 255, 255, 1);
+    border-width: 3px;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.9),
+        0 0 60px rgba(59, 130, 246, 1),
+        0 0 90px rgba(59, 130, 246, 0.6);
+    z-index: 200;
+    filter: grayscale(0);
+    animation: activePulse 2s ease-in-out infinite;
+}
+
 .marker.active .marker-image-desenho {
     opacity: 0;
 }
@@ -640,77 +528,146 @@ nav {
     opacity: 1;
 }
 
-.marker::before {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-}
-
-.marker:hover {
-    transform: translate(-50%, -50%) scale(1.4);
-    box-shadow: 
-        0 6px 25px rgba(0, 0, 0, 0.8),
-        0 0 35px rgba(59, 130, 246, 0.7),
-        0 0 50px rgba(59, 130, 246, 0.4);
-    z-index: 200;
-}
-
-.marker:hover::before {
-    opacity: 1;
-    animation: ripple 1.5s ease-out infinite;
-}
-
-@keyframes ripple {
-    0% {
-        inset: -8px;
-        opacity: 0.5;
-    }
-    100% {
-        inset: -25px;
-        opacity: 0;
-    }
-}
-
-.marker.active {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.9));
-    border-color: rgba(255, 255, 255, 1);
-    transform: translate(-50%, -50%) scale(1.3);
-    box-shadow: 
-        0 6px 25px rgba(0, 0, 0, 0.8),
-        0 0 30px rgba(239, 68, 68, 0.8),
-        0 0 45px rgba(239, 68, 68, 0.5);
-    z-index: 150;
-    animation: activePulse 2s ease-in-out infinite;
-}
-
 @keyframes activePulse {
     0%, 100% { 
         box-shadow: 
-            0 6px 25px rgba(0, 0, 0, 0.8),
-            0 0 30px rgba(239, 68, 68, 0.8),
-            0 0 45px rgba(239, 68, 68, 0.5);
+            0 10px 40px rgba(0, 0, 0, 0.9),
+            0 0 60px rgba(59, 130, 246, 1),
+            0 0 90px rgba(59, 130, 246, 0.6);
     }
     50% { 
         box-shadow: 
-            0 8px 30px rgba(0, 0, 0, 0.9),
-            0 0 40px rgba(239, 68, 68, 1),
-            0 0 60px rgba(239, 68, 68, 0.6);
+            0 12px 50px rgba(0, 0, 0, 1),
+            0 0 80px rgba(59, 130, 246, 1),
+            0 0 120px rgba(59, 130, 246, 0.8);
     }
 }
 
-/* Zoom controls */
-.zoom-controls {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
+/* ========== INFO CARD ========== */
+.info-card {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 420px;
+    background: rgba(15, 15, 15, 0.95);
+    border: 2px solid rgba(59, 130, 246, 0.5);
+    backdrop-filter: blur(25px);
+    border-radius: 20px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.9),
+        0 0 40px rgba(59, 130, 246, 0.3);
+    z-index: 3000;
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+    pointer-events: none;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.info-card.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+.card-header {
+    padding: 25px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.1));
+}
+
+.card-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.card-code {
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    color: var(--accent-light);
+    letter-spacing: 1px;
+}
+
+.card-content {
+    padding: 30px;
+}
+
+.view-data-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    border: 2px solid rgba(59, 130, 246, 0.5);
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.view-data-btn:hover {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 35px rgba(59, 130, 246, 0.6);
+}
+
+/* ========== CLOSE BUTTON ========== */
+.close-map-btn {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.2);
+    border: 2px solid rgba(239, 68, 68, 0.5);
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 3000;
     display: flex;
-    gap: 11px;
-    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+.close-map-btn.visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: all;
+}
+
+.close-map-btn:hover {
+    background: rgba(239, 68, 68, 0.4);
+    border-color: rgba(239, 68, 68, 0.8);
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* ========== ZOOM CONTROLS ========== */
+.zoom-controls {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    display: flex;
+    gap: 12px;
+    z-index: 3000;
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+.zoom-controls.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
 }
 
 .zoom-btn {
@@ -765,29 +722,21 @@ nav {
         grid-template-columns: 1fr;
     }
     
-    .map-section.expanded {
-        padding: 60px 30px;
+    .info-card {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
     }
     
-    .map-viewer {
-        height: 500px;
+    .zoom-controls {
+        left: 20px;
+        bottom: 20px;
     }
     
-    .map-header {
-        flex-direction: column;
-        gap: 15px;
-        align-items: stretch;
-    }
-    
-    .map-header-right {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .view-data-btn,
-    .map-close-btn {
-        width: 100%;
-        text-align: center;
+    .close-map-btn {
+        top: 20px;
+        right: 20px;
     }
 }
 
@@ -892,73 +841,73 @@ nav {
 
 <!-- Map Section -->
 <section class="map-section" id="mapSection">
-    <div class="map-container-full">
-        <div class="map-header">
-            <div class="map-header-left">
-                <h3 class="map-title" id="mapLocationName">Mapa de Hortolândia</h3>
-                <div class="map-subtitle" id="mapLocationCode">Visualização Interativa</div>
-            </div>
-            <div class="map-header-right">
-                <button class="view-data-btn" id="viewDataBtn" onclick="viewData()">
-                    📊 Ver Dados Completos
-                </button>
-                <button class="map-close-btn" onclick="closeMap()">✕ Fechar</button>
+    <button class="close-map-btn" id="closeMapBtn" onclick="closeMap()">✕</button>
+    
+    <div class="map-viewer">
+        <div class="map-canvas">
+            <div id="map-wrapper">
+                <div id="svg-container-main"></div>
             </div>
         </div>
-        
-        <div class="map-viewer">
-            <div class="map-canvas">
-                <div id="map-wrapper">
-                    <div id="svg-container-main"></div>
-                </div>
-            </div>
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="zoom(1.3)" title="Aumentar Zoom">+</button>
-                <button class="zoom-btn" onclick="zoom(0.77)" title="Diminuir Zoom">−</button>
-                <button class="zoom-btn" onclick="resetZoom()" title="Resetar Visualização">⟲</button>
-            </div>
+    </div>
+    
+    <div class="info-card" id="infoCard">
+        <div class="card-header">
+            <div class="card-title" id="cardTitle">Localidade</div>
+            <div class="card-code" id="cardCode">BR-22-XXXX</div>
         </div>
+        <div class="card-content">
+            <button class="view-data-btn" onclick="viewData()">
+                📊 Ver Dados Completos
+            </button>
+        </div>
+    </div>
+    
+    <div class="zoom-controls" id="zoomControls">
+        <button class="zoom-btn" onclick="zoom(1.3)" title="Aumentar Zoom">+</button>
+        <button class="zoom-btn" onclick="zoom(0.77)" title="Diminuir Zoom">−</button>
+        <button class="zoom-btn" onclick="resetZoom()" title="Resetar Visualização">⟲</button>
     </div>
 </section>
 
 <script>
 // ========== DATA ==========
 const localidades = [
-    {nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, img: "jardim-santana"},
-    {nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, img: "jardim-santa-izabel"},
-    {nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, img: "jardim-sao-pedro"},
-    {nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, img: "jardim-mirante"},
-    {nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, img: "jardim-novo-angulo"},
-    {nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, img: "vila-real"},
-    {nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, img: "amanda-1"},
-    {nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, img: "jardim-santa-esmeralda"},
-    {nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, img: "jardim-santa-luzia"},
-    {nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, img: "parque-do-horto"},
-    {nome: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, img: "jardim-santa-clara"},
-    {nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, img: "amanda-2"},
-    {nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, img: "jardim-adelaide"},
-    {nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, img: "parque-orestes-ongaro"},
-    {nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, img: "jardim-sao-jorge"},
-    {nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, img: "jardim-sao-sebastiao"},
-    {nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, img: "jardim-do-bosque"},
-    {nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, img: "vila-inema"},
-    {nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, img: "jardim-aline"},
-    {nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, img: "amanda-3"},
-    {nome: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, img: "chacaras-recreio-2000"},
-    {nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, img: "jardim-nova-europa"},
-    {nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, img: "jardim-das-colinas"},
-    {nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, img: "residencial-joao-luiz"},
-    {nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, img: "jardim-auxiliadora"},
-    {nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, img: "jardim-novo-horizonte"},
-    {nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, img: "jardim-nova-america"},
-    {nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, img: "jardim-interlagos"},
-    {nome: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, img: "terras-santo-antonio"},
-    {nome: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, img: "residencial-firenze"},
-    {nome: "Nova Hortolandia", codigo: "BR-22-5421", x: 615, y: 144, img: "nova-hortolandia"},
-    {nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, img: "jardim-novo-cambui"},
-    {nome: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, img: "terras-santa-maria"},
-    {nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, img: "amanda-4"},
-    {nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, img: "recanto-do-sol"}
+    {nome: "Jd. Santana - Central", nomeCompleto: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, img: "jardim-santana"},
+    {nome: "Jd. Sta. Izabel", nomeCompleto: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, img: "jardim-santa-izabel"},
+    {nome: "Jd. São Pedro", nomeCompleto: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, img: "jardim-sao-pedro"},
+    {nome: "Jd. Mirante", nomeCompleto: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, img: "jardim-mirante"},
+    {nome: "Jd. Novo Ângulo", nomeCompleto: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, img: "jardim-novo-angulo"},
+    {nome: "Vila Real", nomeCompleto: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, img: "vila-real"},
+    {nome: "Jd. Amanda I", nomeCompleto: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, img: "amanda-1"},
+    {nome: "Jd. Sta. Esmeralda", nomeCompleto: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, img: "jardim-santa-esmeralda"},
+    {nome: "Jd. Sta. Luzia", nomeCompleto: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, img: "jardim-santa-luzia"},
+    {nome: "Pq. do Horto", nomeCompleto: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, img: "parque-do-horto"},
+    {nome: "Jd. Sta. Clara do Lago", nomeCompleto: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, img: "jardim-santa-clara"},
+    {nome: "Jd. Amanda II", nomeCompleto: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, img: "amanda-2"},
+    {nome: "Jd. Adelaide", nomeCompleto: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, img: "jardim-adelaide"},
+    {nome: "Pq. Orestes Ôngaro", nomeCompleto: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, img: "parque-orestes-ongaro"},
+    {nome: "Jd. São Jorge", nomeCompleto: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, img: "jardim-sao-jorge"},
+    {nome: "Jd. São Sebastião", nomeCompleto: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, img: "jardim-sao-sebastiao"},
+    {nome: "Jd. do Bosque", nomeCompleto: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, img: "jardim-do-bosque"},
+    {nome: "Vila Inema", nomeCompleto: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, img: "vila-inema"},
+    {nome: "Jd. Aline", nomeCompleto: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, img: "jardim-aline"},
+    {nome: "Jd. Amanda III", nomeCompleto: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, img: "amanda-3"},
+    {nome: "Chácaras Recreio 2000", nomeCompleto: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, img: "chacaras-recreio-2000"},
+    {nome: "Jd. Nova Europa", nomeCompleto: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, img: "jardim-nova-europa"},
+    {nome: "Jd. das Colinas", nomeCompleto: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, img: "jardim-das-colinas"},
+    {nome: "Res. João Luiz", nomeCompleto: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, img: "residencial-joao-luiz"},
+    {nome: "Jd. Auxiliadora", nomeCompleto: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, img: "jardim-auxiliadora"},
+    {nome: "Jd. Novo Horizonte", nomeCompleto: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, img: "jardim-novo-horizonte"},
+    {nome: "Jd. Nova América", nomeCompleto: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, img: "jardim-nova-america"},
+    {nome: "Jd. Interlagos", nomeCompleto: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, img: "jardim-interlagos"},
+    {nome: "Jd. Terras Sto. Antônio", nomeCompleto: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, img: "terras-santo-antonio"},
+    {nome: "Jd. Res. Firenze", nomeCompleto: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, img: "residencial-firenze"},
+    {nome: "Nova Hortolândia", nomeCompleto: "Nova Hortolândia", codigo: "BR-22-5421", x: 615, y: 144, img: "nova-hortolandia"},
+    {nome: "Jd. Novo Cambuí", nomeCompleto: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, img: "jardim-novo-cambui"},
+    {nome: "Pq. Terras Sta. Maria", nomeCompleto: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, img: "terras-santa-maria"},
+    {nome: "Jd. Amanda IV", nomeCompleto: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, img: "amanda-4"},
+    {nome: "Recanto do Sol", nomeCompleto: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, img: "recanto-do-sol"}
 ];
 
 let selectedLocation = null;
@@ -1035,6 +984,13 @@ function createMapMarkers() {
         markersContainer = document.createElement('div');
         markersContainer.id = 'markers-overlay';
         markersContainer.className = 'map-markers';
+        markersContainer.style.position = 'absolute';
+        markersContainer.style.top = '0';
+        markersContainer.style.left = '0';
+        markersContainer.style.width = '100%';
+        markersContainer.style.height = '100%';
+        markersContainer.style.pointerEvents = 'none';
+        // Anexar ao map-wrapper para que sejam afetados pelo zoom junto com o SVG
         document.getElementById('map-wrapper').appendChild(markersContainer);
     }
     
@@ -1042,6 +998,7 @@ function createMapMarkers() {
         const marker = document.createElement("div");
         marker.className = "marker";
         marker.id = `marker-${index}`;
+        marker.style.position = 'absolute';
         marker.style.left = `${loc.x}px`;
         marker.style.top = `${loc.y}px`;
         marker.setAttribute('data-codigo', loc.codigo);
@@ -1054,12 +1011,12 @@ function createMapMarkers() {
         
         const desenho = document.createElement("img");
         desenho.src = imgDesenho;
-        desenho.alt = `${loc.nome} - Desenho`;
+        desenho.alt = `${loc.nomeCompleto} - Desenho`;
         desenho.className = "marker-image-desenho";
         
         const real = document.createElement("img");
         real.src = imgReal;
-        real.alt = `${loc.nome} - Real`;
+        real.alt = `${loc.nomeCompleto} - Real`;
         real.className = "marker-image-real";
         
         imagesContainer.appendChild(real);
@@ -1078,7 +1035,7 @@ function createMapMarkers() {
 // ========== PLACEHOLDER ANIMATION ==========
 const placeholders = [
     "Digite o nome do bairro...",
-    "Ex: Jardim Santana",
+    "Ex: Jd. Santana",
     "Ex: Vila Real"
 ];
 let placeholderIndex = 0;
@@ -1126,6 +1083,7 @@ function handleSearch(value) {
     
     const filtered = localidades.filter(loc => 
         loc.nome.toLowerCase().includes(input) ||
+        loc.nomeCompleto.toLowerCase().includes(input) ||
         loc.codigo.toLowerCase().includes(input)
     );
     
@@ -1148,9 +1106,9 @@ function renderLocations(items) {
     grid.innerHTML = items.map(item => {
         const index = localidades.findIndex(l => l.codigo === item.codigo);
         return `
-        <div class="location-card ${selectedLocation?.codigo === item.codigo ? 'active' : ''}" onclick='selectLocation(${index})'>
+        <div class="location-card ${selectedLocation?.codigo === item.codigo ? 'active' : ''}" onclick='selectLocation(${index})' title="${item.nomeCompleto}">
             <div class="location-icon-wrapper">
-                <img src="assets/fotos/${item.img}.png" alt="${item.nome}" class="location-icon" onerror="this.style.display='none'">
+                <img src="assets/fotos/${item.img}.png" alt="${item.nomeCompleto}" class="location-icon" onerror="this.style.display='none'">
             </div>
             <div class="location-info">
                 <div class="location-name">${item.nome}</div>
@@ -1158,6 +1116,14 @@ function renderLocations(items) {
             </div>
         </div>
     `}).join('');
+}
+
+// ========== ANIMATE ROADS ==========
+function animateRoads() {
+    const paths = document.querySelectorAll('#city-map-main path');
+    paths.forEach((path) => {
+        path.classList.add('drawing');
+    });
 }
 
 // ========== MAP FUNCTIONS ==========
@@ -1171,127 +1137,150 @@ function selectLocation(index) {
     });
     event.currentTarget.classList.add('active');
     
-    // Update active state in map markers
-    document.querySelectorAll('.marker').forEach(marker => {
-        marker.classList.remove('active');
-    });
-    
-    // Open map section (full view first)
+    // ETAPA 1: Abrir mapa em tela cheia - mapa completo centralizado
     const mapSection = document.getElementById('mapSection');
-    mapSection.classList.add('expanded');
+    mapSection.classList.add('active');
+    document.body.style.overflow = 'hidden';
     
-    // Update map header
-    document.getElementById('mapLocationName').textContent = location.nome;
-    document.getElementById('mapLocationCode').textContent = location.codigo;
-    
-    // Reset zoom to show full map first
-    const wrapper = document.getElementById("map-wrapper");
+    // Resetar para mostrar mapa completo
     scale = 1;
     translateX = 0;
     translateY = 0;
     updateTransform();
     
-    // Hide button initially
-    const viewBtn = document.getElementById('viewDataBtn');
-    viewBtn.classList.remove('visible');
-    
-    // Scroll to map section
+    // Show controls
     setTimeout(() => {
-        mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+        document.getElementById('closeMapBtn').classList.add('visible');
+        document.getElementById('zoomControls').classList.add('visible');
+    }, 200);
     
-    // Wait 1.2s, then activate marker and zoom to location
+    // ETAPA 2: Imediatamente começar a desenhar as ruas (leva 0.3s)
+    setTimeout(() => {
+        animateRoads();
+    }, 50);
+    
+    // ETAPA 3: Após 0.4s (ruas completas) + 2s = 2.4s, fazer aparecer TODOS os marcadores
+    setTimeout(() => {
+        const markers = document.querySelectorAll('.marker');
+        markers.forEach((marker, idx) => {
+            setTimeout(() => {
+                marker.classList.add('visible');
+            }, idx * 8);
+        });
+    }, 2400);
+    
+    // ETAPA 4: Após 2.7s, ativar o marcador selecionado
     setTimeout(() => {
         const marker = document.getElementById(`marker-${index}`);
         if (marker) marker.classList.add('active');
+    }, 2700);
+    
+    // ETAPA 5: Após 2.9s, fazer o zoom gigante mantendo centralizado NO EMOJI
+    setTimeout(() => {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
         
-        // Add zooming class for smooth transition
-        wrapper.classList.add('zooming');
+        // ZOOM GIGANTE
+        scale = 3.5;
         
-        // Zoom to location
-        scale = 1.8;
-        translateX = (window.innerWidth / 2) - (location.x * scale);
-        translateY = ((window.innerHeight / 2) - 100) - (location.y * scale);
+        // Obter posição atual do marcador ANTES do zoom
+        const markerElement = document.getElementById(`marker-${index}`);
+        if (markerElement) {
+            const rect = markerElement.getBoundingClientRect();
+            const markerCenterX = rect.left + rect.width / 2;
+            const markerCenterY = rect.top + rect.height / 2;
+            
+            // Calcular quanto precisamos mover para centralizar
+            // Posição desejada: centro da viewport
+            // Posição atual do marcador: markerCenterX, markerCenterY
+            // Após zoom, a distância é multiplicada por scale
+            
+            const currentTranslateX = translateX;
+            const currentTranslateY = translateY;
+            
+            // Calcular nova translação para manter marcador no centro após zoom
+            translateX = currentTranslateX * scale - (markerCenterX - viewportWidth / 2) * (scale - 1);
+            translateY = currentTranslateY * scale - (markerCenterY - viewportHeight / 2) * (scale - 1);
+        }
+        
         updateTransform();
         
-        // Remove zooming class after animation
-        setTimeout(() => wrapper.classList.remove('zooming'), 2000);
-        
-        // Show and pulse the view data button after zoom starts
+        // ETAPA 6: Mostrar card após zoom completar
         setTimeout(() => {
-            viewBtn.classList.add('visible');
-            
-            // Smooth scroll to button after it appears
-            setTimeout(() => {
-                viewBtn.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'nearest',
-                    inline: 'center'
-                });
-            }, 400);
+            document.getElementById('cardTitle').textContent = location.nomeCompleto;
+            document.getElementById('cardCode').textContent = location.codigo;
+            document.getElementById('infoCard').classList.add('visible');
         }, 800);
         
-    }, 1200);
+    }, 2900);
 }
 
 function selectLocationFromMap(location, index) {
     selectedLocation = location;
     
-    // Update active state in map markers
+    // Update active state
     document.querySelectorAll('.marker').forEach(marker => {
         marker.classList.remove('active');
     });
     const marker = document.getElementById(`marker-${index}`);
     if (marker) marker.classList.add('active');
     
-    // Update map header
-    document.getElementById('mapLocationName').textContent = location.nome;
-    document.getElementById('mapLocationCode').textContent = location.codigo;
+    // Update card
+    document.getElementById('cardTitle').textContent = location.nomeCompleto;
+    document.getElementById('cardCode').textContent = location.codigo;
+    document.getElementById('infoCard').classList.add('visible');
     
-    // Show view data button
-    const viewBtn = document.getElementById('viewDataBtn');
-    viewBtn.classList.add('visible');
-    
-    // Highlight the card in the grid
-    renderLocations(localidades);
+    // Zoom to location
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    scale = 2.8;
+    translateX = (viewportWidth / 2) - (location.x * scale);
+    translateY = (viewportHeight / 2) - (location.y * scale);
+    updateTransform();
 }
 
 function viewData() {
     if (selectedLocation) {
-        alert(`🚀 Redirecionando para dados detalhados...\n\n📍 Localidade: ${selectedLocation.nome}\n🔢 Código: ${selectedLocation.codigo}\n\n✨ Em breve: Dashboard completo com estatísticas, gráficos e análises!`);
+        alert(`🚀 Redirecionando para dados detalhados...\n\n📍 Localidade: ${selectedLocation.nomeCompleto}\n🔢 Código: ${selectedLocation.codigo}\n\n✨ Em breve: Dashboard completo com estatísticas, gráficos e análises!`);
     }
 }
 
 function closeMap() {
     const mapSection = document.getElementById('mapSection');
-    mapSection.classList.remove('expanded');
+    mapSection.classList.remove('active');
+    document.body.style.overflow = '';
     
-    // Hide view data button
-    const viewBtn = document.getElementById('viewDataBtn');
-    viewBtn.classList.remove('visible');
+    // Hide controls
+    document.getElementById('closeMapBtn').classList.remove('visible');
+    document.getElementById('zoomControls').classList.remove('visible');
+    document.getElementById('infoCard').classList.remove('visible');
     
-    // Clear selection
+    // Clear selection and reset markers
     selectedLocation = null;
     document.querySelectorAll('.marker').forEach(marker => {
         marker.classList.remove('active');
+        marker.classList.remove('visible');
     });
     document.querySelectorAll('.location-card').forEach(card => {
         card.classList.remove('active');
+    });
+    
+    // Reset roads animation
+    const paths = document.querySelectorAll('#city-map-main path');
+    paths.forEach(path => {
+        path.classList.remove('drawing');
     });
     
     // Reset zoom
     setTimeout(() => {
         resetZoom();
     }, 500);
-    
-    // Scroll back to locations
-    document.getElementById('search').scrollIntoView({ behavior: 'smooth' });
 }
 
 // ========== ZOOM ==========
 function zoom(factor) {
     scale *= factor;
-    scale = Math.max(0.5, Math.min(scale, 3));
+    scale = Math.max(0.5, Math.min(scale, 6));
     updateTransform();
 }
 
