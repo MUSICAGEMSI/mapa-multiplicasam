@@ -430,7 +430,7 @@ nav {
 }
 
 #city-map-main path.drawing {
-    animation: drawPath 0.6s ease-in-out forwards;
+    animation: drawPath 0.3s ease-out forwards;
 }
 
 @keyframes drawPath {
@@ -1121,10 +1121,8 @@ function renderLocations(items) {
 // ========== ANIMATE ROADS ==========
 function animateRoads() {
     const paths = document.querySelectorAll('#city-map-main path');
-    paths.forEach((path, index) => {
-        setTimeout(() => {
-            path.classList.add('drawing');
-        }, index * 2); // Delay mínimo, quase simultâneo
+    paths.forEach((path) => {
+        path.classList.add('drawing');
     });
 }
 
@@ -1156,28 +1154,28 @@ function selectLocation(index) {
         document.getElementById('zoomControls').classList.add('visible');
     }, 200);
     
-    // ETAPA 2: Imediatamente começar a desenhar as ruas (leva 0.8s)
+    // ETAPA 2: Imediatamente começar a desenhar as ruas (leva 0.3s)
     setTimeout(() => {
         animateRoads();
     }, 50);
     
-    // ETAPA 3: Após 1s (quando ruas terminam), fazer aparecer TODOS os marcadores
+    // ETAPA 3: Após 0.4s (ruas completas) + 2s = 2.4s, fazer aparecer TODOS os marcadores
     setTimeout(() => {
         const markers = document.querySelectorAll('.marker');
         markers.forEach((marker, idx) => {
             setTimeout(() => {
                 marker.classList.add('visible');
-            }, idx * 10); // Aparecem BEM RÁPIDO
+            }, idx * 8);
         });
-    }, 1000);
+    }, 2400);
     
-    // ETAPA 4: Após 1.5s, ativar o marcador selecionado
+    // ETAPA 4: Após 2.7s, ativar o marcador selecionado
     setTimeout(() => {
         const marker = document.getElementById(`marker-${index}`);
         if (marker) marker.classList.add('active');
-    }, 1500);
+    }, 2700);
     
-    // ETAPA 5: Após 1.7s, fazer o zoom gigante mantendo centralizado NO EMOJI
+    // ETAPA 5: Após 2.9s, fazer o zoom gigante mantendo centralizado NO EMOJI
     setTimeout(() => {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
@@ -1185,10 +1183,25 @@ function selectLocation(index) {
         // ZOOM GIGANTE
         scale = 3.5;
         
-        // Centralizar EXATAMENTE no marcador
-        // Como os marcadores estão dentro do map-wrapper, usamos coordenadas diretas
-        translateX = (viewportWidth / 2) - (location.x * scale);
-        translateY = (viewportHeight / 2) - (location.y * scale);
+        // Obter posição atual do marcador ANTES do zoom
+        const markerElement = document.getElementById(`marker-${index}`);
+        if (markerElement) {
+            const rect = markerElement.getBoundingClientRect();
+            const markerCenterX = rect.left + rect.width / 2;
+            const markerCenterY = rect.top + rect.height / 2;
+            
+            // Calcular quanto precisamos mover para centralizar
+            // Posição desejada: centro da viewport
+            // Posição atual do marcador: markerCenterX, markerCenterY
+            // Após zoom, a distância é multiplicada por scale
+            
+            const currentTranslateX = translateX;
+            const currentTranslateY = translateY;
+            
+            // Calcular nova translação para manter marcador no centro após zoom
+            translateX = currentTranslateX * scale - (markerCenterX - viewportWidth / 2) * (scale - 1);
+            translateY = currentTranslateY * scale - (markerCenterY - viewportHeight / 2) * (scale - 1);
+        }
         
         updateTransform();
         
@@ -1199,7 +1212,7 @@ function selectLocation(index) {
             document.getElementById('infoCard').classList.add('visible');
         }, 800);
         
-    }, 1700);
+    }, 2900);
 }
 
 function selectLocationFromMap(location, index) {
