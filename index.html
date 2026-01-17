@@ -1,1332 +1,922 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MULTIPLICA SAM - Sistema Avançado de Monitoramento</title>
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #141414;
-    --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
-    --accent: #3b82f6;
-    --accent-light: #60a5fa;
-    --accent-cyan: #7dd3fc;
-}
-
-[data-theme="light"] {
-    --bg-primary: #f5f1e8;
-    --bg-secondary: #ebe7de;
-    --text-primary: #1a1a1a;
-    --text-secondary: #666666;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    overflow-x: hidden;
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* ========== NAVIGATION ========== */
-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    padding: 20px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    backdrop-filter: blur(20px);
-    background: rgba(10, 10, 10, 0.8);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-[data-theme="light"] nav {
-    background: rgba(245, 241, 232, 0.9);
-    border-bottom-color: rgba(0, 0, 0, 0.05);
-}
-
-.nav-logo {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-}
-
-.nav-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-    color: var(--text-primary);
-}
-
-.theme-toggle {
-    width: 50px;
-    height: 26px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 13px;
-    position: relative;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.theme-toggle::before {
-    content: '◐';
-    position: absolute;
-    left: 3px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background: var(--text-primary);
-    border-radius: 50%;
-    transition: left 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: var(--bg-primary);
-}
-
-.theme-toggle.active::before {
-    left: 27px;
-}
-
-/* ========== HERO SECTION ========== */
-.hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 120px 60px 60px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, transparent 100%);
-}
-
-.hero-content {
-    max-width: 1400px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    align-items: center;
-    text-align: center;
-}
-
-.hero-title-wrapper {
-    display: flex;
-    align-items: baseline;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.multiplica-text {
-    font-size: clamp(48px, 6vw, 72px);
-    font-weight: 300;
-    letter-spacing: -2px;
-    color: var(--text-primary);
-    position: relative;
-}
-
-.typing-cursor {
-    display: inline-block;
-    width: 3px;
-    height: 0.9em;
-    background: var(--accent-cyan);
-    margin-left: 5px;
-    animation: blink 1s infinite;
-    vertical-align: middle;
-}
-
-@keyframes blink {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0; }
-}
-
-.sam-text {
-    font-size: clamp(72px, 9vw, 110px);
-    font-weight: 900;
-    letter-spacing: -3px;
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.hero-subtitle {
-    font-size: 18px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    max-width: 700px;
-}
-
-.hero-location {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    font-size: 16px;
-    color: var(--text-secondary);
-}
-
-.location-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.hero-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    padding-top: 20px;
-}
-
-.stat-mini {
-    text-align: center;
-}
-
-.stat-mini-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 5px;
-}
-
-.stat-mini-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-}
-
-/* ========== SEARCH SECTION ========== */
-.search-section {
-    padding: 80px 60px;
-    background: var(--bg-secondary);
-}
-
-.search-container {
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.search-header {
-    margin-bottom: 50px;
-}
-
-.search-title {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 15px;
-}
-
-.search-box {
-    position: relative;
-    margin-bottom: 40px;
-}
-
-.search-input-wrapper {
-    position: relative;
-}
-
-.search-icon {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    color: var(--text-secondary);
-}
-
-.search-input {
-    width: 100%;
-    padding: 20px 20px 20px 40px;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    font-size: 20px;
-    font-weight: 300;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
-
-[data-theme="light"] .search-input {
-    border-bottom-color: rgba(0, 0, 0, 0.1);
-}
-
-.search-input:focus {
-    border-bottom-color: var(--accent);
-}
-
-.search-placeholder {
-    position: absolute;
-    left: 40px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    font-weight: 300;
-    color: var(--text-secondary);
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.locations-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-}
-
-.location-card {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-[data-theme="light"] .location-card {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.05);
-}
-
-.location-card:hover {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.3);
-    transform: translateY(-2px);
-}
-
-.location-card.active {
-    background: rgba(59, 130, 246, 0.15);
-    border-color: rgba(59, 130, 246, 0.5);
-}
-
-.location-icon-wrapper {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-    position: relative;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.location-icon {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-.location-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.location-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-}
-
-.location-code {
-    font-size: 11px;
-    font-family: 'Courier New', monospace;
-    color: var(--text-secondary);
-}
-
-/* ========== MAP SECTION ========== */
-.map-section {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: var(--bg-primary);
-    z-index: 2000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
-}
-
-.map-section.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.map-viewer {
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(ellipse at center, #0d0d0d 0%, #000 100%);
-    position: relative;
-    overflow: hidden;
-}
-
-.map-canvas {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#map-wrapper {
-    position: relative;
-    cursor: grab;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#map-wrapper:active {
-    cursor: grabbing;
-}
-
-#svg-container-main {
-    height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-#city-map-main {
-    height: 100%;
-    width: auto;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
-}
-
-#city-map-main path {
-    stroke-width: 1.2;
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.15);
-    stroke-dasharray: 2000;
-    stroke-dashoffset: 2000;
-    transition: stroke 0.3s ease;
-}
-
-#city-map-main path.drawing {
-    animation: drawPath 0.3s ease-out forwards;
-}
-
-@keyframes drawPath {
-    to {
-        stroke-dashoffset: 0;
-        stroke: rgba(59, 130, 246, 0.6);
-    }
-}
-
-.map-markers {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.marker {
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(100, 100, 100, 0.3), rgba(80, 80, 80, 0.3));
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transform: translate(-50%, -50%) scale(0);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-    pointer-events: auto;
-    filter: grayscale(1);
-    opacity: 0;
-}
-
-.marker.visible {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-}
-
-.marker-images {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-}
-
-.marker-image-desenho {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    opacity: 1;
-    transition: opacity 1.2s ease-in-out;
-    z-index: 2;
-}
-
-.marker-image-real {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 1.2s ease-in-out;
-    z-index: 1;
-}
-
-.marker.active {
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.9));
-    border-color: rgba(255, 255, 255, 1);
-    border-width: 3px;
-    transform: translate(-50%, -50%) scale(1);
-    box-shadow: 
-        0 10px 40px rgba(0, 0, 0, 0.9),
-        0 0 60px rgba(59, 130, 246, 1),
-        0 0 90px rgba(59, 130, 246, 0.6);
-    z-index: 200;
-    filter: grayscale(0);
-    animation: activePulse 2s ease-in-out infinite;
-}
-
-.marker.active .marker-image-desenho {
-    opacity: 0;
-}
-
-.marker.active .marker-image-real {
-    opacity: 1;
-}
-
-@keyframes activePulse {
-    0%, 100% { 
-        box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.9),
-            0 0 60px rgba(59, 130, 246, 1),
-            0 0 90px rgba(59, 130, 246, 0.6);
-    }
-    50% { 
-        box-shadow: 
-            0 12px 50px rgba(0, 0, 0, 1),
-            0 0 80px rgba(59, 130, 246, 1),
-            0 0 120px rgba(59, 130, 246, 0.8);
-    }
-}
-
-/* ========== INFO CARD ========== */
-.info-card {
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    width: 420px;
-    background: rgba(15, 15, 15, 0.95);
-    border: 2px solid rgba(59, 130, 246, 0.5);
-    backdrop-filter: blur(25px);
-    border-radius: 20px;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.9),
-        0 0 40px rgba(59, 130, 246, 0.3);
-    z-index: 3000;
-    opacity: 0;
-    transform: translateY(40px) scale(0.9);
-    pointer-events: none;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.info-card.visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: all;
-}
-
-.card-header {
-    padding: 25px 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.1));
-}
-
-.card-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 8px;
-}
-
-.card-code {
-    font-size: 14px;
-    font-family: 'Courier New', monospace;
-    color: var(--accent-light);
-    letter-spacing: 1px;
-}
-
-.card-content {
-    padding: 30px;
-}
-
-.view-data-btn {
-    width: 100%;
-    padding: 18px;
-    background: linear-gradient(135deg, #3b82f6, #6366f1);
-    border: 2px solid rgba(59, 130, 246, 0.5);
-    border-radius: 12px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
-.view-data-btn:hover {
-    background: linear-gradient(135deg, #2563eb, #4f46e5);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 35px rgba(59, 130, 246, 0.6);
-}
-
-/* ========== CLOSE BUTTON ========== */
-.close-map-btn {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(239, 68, 68, 0.2);
-    border: 2px solid rgba(239, 68, 68, 0.5);
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 3000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    opacity: 0;
-    transform: scale(0.8);
-    pointer-events: none;
-}
-
-.close-map-btn.visible {
-    opacity: 1;
-    transform: scale(1);
-    pointer-events: all;
-}
-
-.close-map-btn:hover {
-    background: rgba(239, 68, 68, 0.4);
-    border-color: rgba(239, 68, 68, 0.8);
-    transform: scale(1.1) rotate(90deg);
-}
-
-/* ========== ZOOM CONTROLS ========== */
-.zoom-controls {
-    position: fixed;
-    bottom: 40px;
-    left: 40px;
-    display: flex;
-    gap: 12px;
-    z-index: 3000;
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none;
-    transition: all 0.5s ease;
-}
-
-.zoom-controls.visible {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: all;
-}
-
-.zoom-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 13px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(15, 15, 15, 0.8);
-    backdrop-filter: blur(20px);
-    color: #fff;
-    font-size: 23px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-}
-
-.zoom-btn:hover {
-    background: rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.6);
-    transform: scale(1.12);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
-    nav {
-        padding: 15px 30px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MULTIPLICA SAM - Sistema Avançado de Monitoramento v3.0</title>
     
-    .hero {
-        padding: 100px 30px 40px;
-    }
-    
-    .hero-title-wrapper {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .hero-stats {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .search-section {
-        padding: 60px 30px;
-    }
-    
-    .locations-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .info-card {
-        width: calc(100% - 40px);
-        left: 20px;
-        right: 20px;
-        bottom: 20px;
-    }
-    
-    .zoom-controls {
-        left: 20px;
-        bottom: 20px;
-    }
-    
-    .close-map-btn {
-        top: 20px;
-        right: 20px;
-    }
-}
+    <style>
+        /* ========== VARIÁVEIS E RESET ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
 
-/* ========== SCROLLBAR ========== */
-::-webkit-scrollbar {
-    width: 8px;
-}
+        :root {
+            /* Tema Dark (Padrão) */
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #141416;
+            --bg-card: #1c1c1f;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(20, 20, 22, 0.8);
+            --nav-height: 80px;
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-}
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --border: rgba(0, 0, 0, 0.08);
+            --glass: rgba(248, 250, 252, 0.9);
+        }
 
-::-webkit-scrollbar-thumb {
-    background: rgba(59, 130, 246, 0.3);
-    border-radius: 4px;
-}
+        body {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
 
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(59, 130, 246, 0.5);
-}
-</style>
+        /* ========== SCROLLBAR PERSONALIZADA ========== */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--bg-card); 
+            border: 2px solid var(--bg-primary);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* ========== NAVEGAÇÃO ========== */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .brand-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: pulse 2s infinite;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-primary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after { width: 100%; }
+
+        .theme-control {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: var(--transition-smooth);
+        }
+
+        .theme-control:hover { border-color: var(--accent); color: var(--text-primary); }
+
+        /* ========== HERO SECTION ========== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 5% 60px;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            background-image: radial-gradient(var(--border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: linear-gradient(to bottom, black, transparent);
+            z-index: -1;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(48px, 8vw, 92px);
+            line-height: 0.95;
+            font-weight: 900;
+            letter-spacing: -4px;
+            margin-bottom: 24px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 10px 20px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px var(--accent-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover { background: var(--border); }
+
+        .hero-stats-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            position: relative;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .status-tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 100px;
+            margin-bottom: 24px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: var(--accent);
+            border-radius: 4px 4px 0 0;
+            opacity: 0.6;
+            transition: height 1.5s ease;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .stat-box {
+            padding: 16px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .stat-val { font-size: 24px; font-weight: 800; display: block; }
+        .stat-label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; }
+
+        /* ========== EXPLORER SECTION (SEARCH) ========== */
+        .section-padding { padding: 100px 5%; }
+        
+        .section-header {
+            margin-bottom: 60px;
+            max-width: 800px;
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .search-main {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 24px 30px 24px 60px;
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 18px;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .search-main:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .search-icon-fixed {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        .grid-localidades {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card-loc {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-loc:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-loc.active {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--bg-card), rgba(59, 130, 246, 0.05));
+        }
+
+        .card-img-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .card-info h3 { font-size: 18px; margin-bottom: 4px; }
+        .card-info p { font-size: 13px; color: var(--text-secondary); font-family: monospace; }
+
+        /* ========== MAPA INTERATIVO ========== */
+        .map-section {
+            background: var(--bg-secondary);
+            overflow: hidden;
+            display: none; /* Ativado via JS */
+        }
+
+        .map-section.visible { display: block; animation: fadeIn 0.8s ease; }
+
+        .map-container {
+            height: 700px;
+            background: #000;
+            border-radius: 30px;
+            position: relative;
+            border: 1px solid var(--border);
+            cursor: grab;
+            overflow: hidden;
+        }
+
+        .map-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .ctrl-btn {
+            width: 44px;
+            height: 44px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .ctrl-btn:hover { background: var(--accent); color: white; }
+
+        #map-wrapper {
+            width: 100%;
+            height: 100%;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        svg#hortolandia-svg {
+            height: 80%;
+            width: auto;
+        }
+
+        .road-path {
+            fill: none;
+            stroke: rgba(255,255,255,0.1);
+            stroke-width: 1.5;
+            transition: 0.3s;
+        }
+
+        .marker {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border: 3px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .marker:hover { transform: translate(-50%, -50%) scale(1.5); z-index: 100; }
+        .marker.active { 
+            background: var(--danger); 
+            scale: 1.8; 
+            box-shadow: 0 0 30px var(--danger);
+            animation: markerPulse 1.5s infinite;
+        }
+
+        @keyframes markerPulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* ========== DASHBOARD ANALÍTICO ========== */
+        .dashboard-section {
+            background: var(--bg-primary);
+            display: none;
+        }
+
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .analytics-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--border);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-label { color: var(--text-secondary); font-size: 14px; }
+        .data-value { font-weight: 700; font-size: 16px; }
+
+        .progress-container {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        /* ========== ANIMAÇÕES ========== */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+        /* ========== FOOTER ========== */
+        footer {
+            padding: 80px 5%;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-logo { font-size: 24px; font-weight: 900; margin-bottom: 20px; display: block; }
+        .footer-copy { color: var(--text-secondary); font-size: 14px; }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 1024px) {
+            .hero-grid { grid-template-columns: 1fr; }
+            .hero-content { text-align: center; }
+            .hero-actions { justify-content: center; }
+            .hero-stats-panel { max-width: 500px; margin: 0 auto; }
+            .dash-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body>
+<body data-theme="dark">
 
-<!-- Navigation -->
-<nav>
-    <div class="nav-logo">MULTIPLICA SAM</div>
-    <div class="nav-right">
-        <a href="#hero" class="nav-link">Início</a>
-        <a href="#search" class="nav-link">Localidades</a>
-        <div class="theme-toggle" id="themeToggle"></div>
-    </div>
-</nav>
-
-<!-- Hero Section -->
-<section class="hero" id="hero">
-    <div class="hero-content">
-        <div class="hero-title-wrapper">
-            <div class="multiplica-text">
-                <span id="typingText"></span><span class="typing-cursor"></span>
-            </div>
-            <div class="sam-text">SAM</div>
-        </div>
-        
-        <p class="hero-subtitle">
-            Sistema Avançado de Monitoramento educacional para Hortolândia, 
-            oferecendo insights em tempo real sobre 35 localidades estratégicas.
-        </p>
-        
-        <div class="hero-location">
-            <div class="location-item">
-                <span>📍</span>
-                <span>Hortolândia, SP</span>
-            </div>
-            <div class="location-item">
-                <span>📅</span>
-                <span>2026</span>
-            </div>
-        </div>
-        
-        <div class="hero-stats">
-            <div class="stat-mini">
-                <div class="stat-mini-value">87</div>
-                <div class="stat-mini-label">Turmas</div>
-            </div>
-            <div class="stat-mini">
-                <div class="stat-mini-value">478</div>
-                <div class="stat-mini-label">Matriculados</div>
-            </div>
-            <div class="stat-mini">
-                <div class="stat-mini-value">87/235</div>
-                <div class="stat-mini-label">Aulas</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Search Section -->
-<section class="search-section" id="search">
-    <div class="search-container">
-        <div class="search-header">
-            <h2 class="search-title">Explorar Localidades</h2>
-        </div>
-        
-        <div class="search-box">
-            <div class="search-input-wrapper">
-                <div class="search-icon">🔍</div>
-                <input 
-                    type="text" 
-                    class="search-input" 
-                    id="searchInput"
-                    autocomplete="off"
-                    oninput="handleSearch(this.value)"
-                />
-                <div class="search-placeholder" id="searchPlaceholder"></div>
-            </div>
-        </div>
-        
-        <div class="locations-grid" id="locationsGrid"></div>
-    </div>
-</section>
-
-<!-- Map Section -->
-<section class="map-section" id="mapSection">
-    <button class="close-map-btn" id="closeMapBtn" onclick="closeMap()">✕</button>
-    
-    <div class="map-viewer">
-        <div class="map-canvas">
-            <div id="map-wrapper">
-                <div id="svg-container-main"></div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="info-card" id="infoCard">
-        <div class="card-header">
-            <div class="card-title" id="cardTitle">Localidade</div>
-            <div class="card-code" id="cardCode">BR-22-XXXX</div>
-        </div>
-        <div class="card-content">
-            <button class="view-data-btn" onclick="viewData()">
-                📊 Ver Dados Completos
+    <nav>
+        <a href="#" class="nav-brand">
+            <div class="brand-dot"></div>
+            MULTIPLICA SAM
+        </a>
+        <div class="nav-menu">
+            <a href="#hero" class="nav-link active">Início</a>
+            <a href="#explorer" class="nav-link">Localidades</a>
+            <a href="#map-section" class="nav-link">Monitoramento</a>
+            <button class="theme-control" onclick="toggleTheme()">
+                <span id="theme-icon">🌙</span>
+                <span id="theme-text">MODO DARK</span>
             </button>
         </div>
-    </div>
-    
-    <div class="zoom-controls" id="zoomControls">
-        <button class="zoom-btn" onclick="zoom(1.3)" title="Aumentar Zoom">+</button>
-        <button class="zoom-btn" onclick="zoom(0.77)" title="Diminuir Zoom">−</button>
-        <button class="zoom-btn" onclick="resetZoom()" title="Resetar Visualização">⟲</button>
-    </div>
-</section>
+    </nav>
 
-<script>
-// ========== DATA ==========
-const localidades = [
-    {nome: "Jd. Santana - Central", nomeCompleto: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, img: "jardim-santana"},
-    {nome: "Jd. Sta. Izabel", nomeCompleto: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, img: "jardim-santa-izabel"},
-    {nome: "Jd. São Pedro", nomeCompleto: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, img: "jardim-sao-pedro"},
-    {nome: "Jd. Mirante", nomeCompleto: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, img: "jardim-mirante"},
-    {nome: "Jd. Novo Ângulo", nomeCompleto: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, img: "jardim-novo-angulo"},
-    {nome: "Vila Real", nomeCompleto: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, img: "vila-real"},
-    {nome: "Jd. Amanda I", nomeCompleto: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, img: "amanda-1"},
-    {nome: "Jd. Sta. Esmeralda", nomeCompleto: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, img: "jardim-santa-esmeralda"},
-    {nome: "Jd. Sta. Luzia", nomeCompleto: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, img: "jardim-santa-luzia"},
-    {nome: "Pq. do Horto", nomeCompleto: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, img: "parque-do-horto"},
-    {nome: "Jd. Sta. Clara do Lago", nomeCompleto: "Jardim Santa Clara do Lago", codigo: "BR-22-2227", x: 679, y: 341, img: "jardim-santa-clara"},
-    {nome: "Jd. Amanda II", nomeCompleto: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, img: "amanda-2"},
-    {nome: "Jd. Adelaide", nomeCompleto: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, img: "jardim-adelaide"},
-    {nome: "Pq. Orestes Ôngaro", nomeCompleto: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, img: "parque-orestes-ongaro"},
-    {nome: "Jd. São Jorge", nomeCompleto: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, img: "jardim-sao-jorge"},
-    {nome: "Jd. São Sebastião", nomeCompleto: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, img: "jardim-sao-sebastiao"},
-    {nome: "Jd. do Bosque", nomeCompleto: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, img: "jardim-do-bosque"},
-    {nome: "Vila Inema", nomeCompleto: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, img: "vila-inema"},
-    {nome: "Jd. Aline", nomeCompleto: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, img: "jardim-aline"},
-    {nome: "Jd. Amanda III", nomeCompleto: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, img: "amanda-3"},
-    {nome: "Chácaras Recreio 2000", nomeCompleto: "Chácaras Recreio 2000", codigo: "BR-22-3057", x: 349, y: 384, img: "chacaras-recreio-2000"},
-    {nome: "Jd. Nova Europa", nomeCompleto: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, img: "jardim-nova-europa"},
-    {nome: "Jd. das Colinas", nomeCompleto: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, img: "jardim-das-colinas"},
-    {nome: "Res. João Luiz", nomeCompleto: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, img: "residencial-joao-luiz"},
-    {nome: "Jd. Auxiliadora", nomeCompleto: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, img: "jardim-auxiliadora"},
-    {nome: "Jd. Novo Horizonte", nomeCompleto: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, img: "jardim-novo-horizonte"},
-    {nome: "Jd. Nova América", nomeCompleto: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, img: "jardim-nova-america"},
-    {nome: "Jd. Interlagos", nomeCompleto: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, img: "jardim-interlagos"},
-    {nome: "Jd. Terras Sto. Antônio", nomeCompleto: "Jardim Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, img: "terras-santo-antonio"},
-    {nome: "Jd. Res. Firenze", nomeCompleto: "Jardim Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, img: "residencial-firenze"},
-    {nome: "Nova Hortolândia", nomeCompleto: "Nova Hortolândia", codigo: "BR-22-5421", x: 615, y: 144, img: "nova-hortolandia"},
-    {nome: "Jd. Novo Cambuí", nomeCompleto: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, img: "jardim-novo-cambui"},
-    {nome: "Pq. Terras Sta. Maria", nomeCompleto: "Parque Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, img: "terras-santa-maria"},
-    {nome: "Jd. Amanda IV", nomeCompleto: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, img: "amanda-4"},
-    {nome: "Recanto do Sol", nomeCompleto: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, img: "recanto-do-sol"}
-];
-
-let selectedLocation = null;
-let scale = 1;
-let translateX = 0;
-let translateY = 0;
-let isDragging = false;
-let startX, startY;
-
-// ========== THEME TOGGLE ==========
-const themeToggle = document.getElementById('themeToggle');
-let isDark = true;
-
-themeToggle.addEventListener('click', () => {
-    isDark = !isDark;
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    themeToggle.classList.toggle('active');
-});
-
-// ========== TYPING EFFECT ==========
-const text = "MULTIPLICA";
-let charIndex = 0;
-let isTypingForward = true;
-
-function typeText() {
-    const element = document.getElementById('typingText');
-    
-    if (isTypingForward) {
-        if (charIndex < text.length) {
-            element.textContent = text.substring(0, charIndex + 1);
-            charIndex++;
-            setTimeout(typeText, 150);
-        } else {
-            setTimeout(() => {
-                isTypingForward = false;
-                typeText();
-            }, 2000);
-        }
-    } else {
-        if (charIndex > 0) {
-            charIndex--;
-            element.textContent = text.substring(0, charIndex);
-            setTimeout(typeText, 100);
-        } else {
-            setTimeout(() => {
-                isTypingForward = true;
-                typeText();
-            }, 500);
-        }
-    }
-}
-
-setTimeout(typeText, 500);
-
-// ========== LOAD SVG ==========
-fetch('assets/hortolandia-roads.svg')
-    .then(response => response.text())
-    .then(svgText => {
-        document.getElementById('svg-container-main').innerHTML = svgText;
-        const svgElement = document.querySelector('#svg-container-main svg');
-        if (svgElement) {
-            svgElement.id = "city-map-main";
-            createMapMarkers();
-        }
-    })
-    .catch(() => {
-        document.getElementById('svg-container-main').innerHTML = '<div style="color: rgba(255,255,255,0.5); font-size: 14px;">Mapa não disponível</div>';
-    });
-
-// ========== CREATE MAP MARKERS ==========
-function createMapMarkers() {
-    let markersContainer = document.getElementById('markers-overlay');
-    if (!markersContainer) {
-        markersContainer = document.createElement('div');
-        markersContainer.id = 'markers-overlay';
-        markersContainer.className = 'map-markers';
-        markersContainer.style.position = 'absolute';
-        markersContainer.style.top = '0';
-        markersContainer.style.left = '0';
-        markersContainer.style.width = '100%';
-        markersContainer.style.height = '100%';
-        markersContainer.style.pointerEvents = 'none';
-        // Anexar ao map-wrapper para que sejam afetados pelo zoom junto com o SVG
-        document.getElementById('map-wrapper').appendChild(markersContainer);
-    }
-    
-    localidades.forEach((loc, index) => {
-        const marker = document.createElement("div");
-        marker.className = "marker";
-        marker.id = `marker-${index}`;
-        marker.style.position = 'absolute';
-        marker.style.left = `${loc.x}px`;
-        marker.style.top = `${loc.y}px`;
-        marker.setAttribute('data-codigo', loc.codigo);
-        
-        const imgDesenho = `assets/fotos/${loc.img}.png`;
-        const imgReal = `assets/fotosreal/${loc.img}.jpg`;
-        
-        const imagesContainer = document.createElement("div");
-        imagesContainer.className = "marker-images";
-        
-        const desenho = document.createElement("img");
-        desenho.src = imgDesenho;
-        desenho.alt = `${loc.nomeCompleto} - Desenho`;
-        desenho.className = "marker-image-desenho";
-        
-        const real = document.createElement("img");
-        real.src = imgReal;
-        real.alt = `${loc.nomeCompleto} - Real`;
-        real.className = "marker-image-real";
-        
-        imagesContainer.appendChild(real);
-        imagesContainer.appendChild(desenho);
-        marker.appendChild(imagesContainer);
-        
-        marker.onclick = (e) => {
-            e.stopPropagation();
-            selectLocationFromMap(loc, index);
-        };
-        
-        markersContainer.appendChild(marker);
-    });
-}
-
-// ========== PLACEHOLDER ANIMATION ==========
-const placeholders = [
-    "Digite o nome do bairro...",
-    "Ex: Jd. Santana",
-    "Ex: Vila Real"
-];
-let placeholderIndex = 0;
-let placeholderCharIndex = 0;
-let isDeleting = false;
-
-function animatePlaceholder() {
-    const element = document.getElementById('searchPlaceholder');
-    const currentText = placeholders[placeholderIndex];
-    
-    if (!isDeleting) {
-        element.textContent = currentText.substring(0, placeholderCharIndex + 1);
-        placeholderCharIndex++;
-        
-        if (placeholderCharIndex === currentText.length) {
-            setTimeout(() => isDeleting = true, 2000);
-        }
-    } else {
-        element.textContent = currentText.substring(0, placeholderCharIndex - 1);
-        placeholderCharIndex--;
-        
-        if (placeholderCharIndex === 0) {
-            isDeleting = false;
-            placeholderIndex = (placeholderIndex + 1) % placeholders.length;
-        }
-    }
-    
-    setTimeout(animatePlaceholder, isDeleting ? 30 : 80);
-}
-
-setTimeout(animatePlaceholder, 1000);
-
-// ========== SEARCH ==========
-function handleSearch(value) {
-    const input = value.toLowerCase().trim();
-    const placeholder = document.getElementById('searchPlaceholder');
-    
-    if (input) {
-        placeholder.style.opacity = '0';
-    } else {
-        placeholder.style.opacity = '1';
-        renderLocations(localidades);
-        return;
-    }
-    
-    const filtered = localidades.filter(loc => 
-        loc.nome.toLowerCase().includes(input) ||
-        loc.nomeCompleto.toLowerCase().includes(input) ||
-        loc.codigo.toLowerCase().includes(input)
-    );
-    
-    renderLocations(filtered);
-}
-
-function renderLocations(items) {
-    const grid = document.getElementById('locationsGrid');
-    
-    if (items.length === 0) {
-        grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-secondary);">
-                <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
-                <div>Nenhuma localidade encontrada</div>
+    <section class="hero" id="hero">
+        <div class="hero-grid">
+            <div class="hero-content">
+                <span class="status-tag" style="margin-bottom: 20px; display: inline-block;">Hortolândia / SP • Live 2026</span>
+                <h1>Transformando a <span class="text-gradient">Educação</span> em Dados.</h1>
+                <p class="hero-subtitle">
+                    Acompanhe em tempo real a performance, frequência e infraestrutura das 35 unidades escolares integradas ao ecossistema MULTIPLICA.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary" onclick="scrollToSection('explorer')">Iniciar Exploração</button>
+                    <button class="btn btn-secondary" onclick="window.open('https://google.com')">Documentação</button>
+                </div>
             </div>
-        `;
-        return;
-    }
-    
-    grid.innerHTML = items.map(item => {
-        const index = localidades.findIndex(l => l.codigo === item.codigo);
-        return `
-        <div class="location-card ${selectedLocation?.codigo === item.codigo ? 'active' : ''}" onclick='selectLocation(${index})' title="${item.nomeCompleto}">
-            <div class="location-icon-wrapper">
-                <img src="assets/fotos/${item.img}.png" alt="${item.nomeCompleto}" class="location-icon" onerror="this.style.display='none'">
-            </div>
-            <div class="location-info">
-                <div class="location-name">${item.nome}</div>
-                <div class="location-code">${item.codigo}</div>
+
+            <div class="hero-stats-panel">
+                <div class="panel-header">
+                    <h3>Atividade do Sistema</h3>
+                    <span class="status-tag">Online</span>
+                </div>
+                <div class="mini-chart" id="heroChart">
+                    </div>
+                <div class="stat-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Total Alunos</span>
+                        <span class="stat-val" id="totalStudents">12.480</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Média Frequência</span>
+                        <span class="stat-val" id="avgAttendance">94.2%</span>
+                    </div>
+                </div>
             </div>
         </div>
-    `}).join('');
-}
+    </section>
 
-// ========== ANIMATE ROADS ==========
-function animateRoads() {
-    const paths = document.querySelectorAll('#city-map-main path');
-    paths.forEach((path) => {
-        path.classList.add('drawing');
-    });
-}
+    <section class="section-padding" id="explorer">
+        <div class="section-header">
+            <h2 class="section-title">Encontre uma Unidade</h2>
+            <p style="color: var(--text-secondary)">Utilize filtros inteligentes para localizar rapidamente qualquer ponto de monitoramento no município.</p>
+        </div>
 
-// ========== MAP FUNCTIONS ==========
-function selectLocation(index) {
-    const location = localidades[index];
-    selectedLocation = location;
-    
-    // Update active state in location cards
-    document.querySelectorAll('.location-card').forEach(card => {
-        card.classList.remove('active');
-    });
-    event.currentTarget.classList.add('active');
-    
-    // ETAPA 1: Abrir mapa em tela cheia - mapa completo centralizado
-    const mapSection = document.getElementById('mapSection');
-    mapSection.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    
-    // Resetar para mostrar mapa completo
-    scale = 1;
-    translateX = 0;
-    translateY = 0;
-    updateTransform();
-    
-    // Show controls
-    setTimeout(() => {
-        document.getElementById('closeMapBtn').classList.add('visible');
-        document.getElementById('zoomControls').classList.add('visible');
-    }, 200);
-    
-    // ETAPA 2: Imediatamente começar a desenhar as ruas (leva 0.3s)
-    setTimeout(() => {
-        animateRoads();
-    }, 50);
-    
-    // ETAPA 3: Após 0.4s (ruas completas) + 2s = 2.4s, fazer aparecer TODOS os marcadores
-    setTimeout(() => {
-        const markers = document.querySelectorAll('.marker');
-        markers.forEach((marker, idx) => {
-            setTimeout(() => {
-                marker.classList.add('visible');
-            }, idx * 8);
+        <div class="search-wrapper">
+            <span class="search-icon-fixed">🔍</span>
+            <input type="text" class="search-main" placeholder="Ex: Jardim Santana, BR-22, Vila Real..." oninput="filterLocations(this.value)">
+        </div>
+
+        <div class="grid-localidades" id="locGrid">
+            </div>
+    </section>
+
+    <section class="map-section section-padding" id="map-section">
+        <div class="section-header">
+            <h2 class="section-title">Mapa de Calor Operacional</h2>
+            <p style="color: var(--text-secondary)" id="map-subtitle">Selecione uma unidade no mapa para visualizar a telemetria específica.</p>
+        </div>
+
+        <div class="map-container">
+            <div class="map-controls">
+                <button class="ctrl-btn" onclick="mapZoom(1.2)">+</button>
+                <button class="ctrl-btn" onclick="mapZoom(0.8)">-</button>
+                <button class="ctrl-btn" onclick="resetMap()">⟲</button>
+            </div>
+            
+            <div id="map-wrapper">
+                <div id="svg-host"></div>
+                <div id="markers-overlay"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-section section-padding" id="dashboard">
+        <div class="section-header">
+            <h2 class="section-title" id="dash-title">Análise de Unidade</h2>
+            <p id="dash-subtitle">Consolidado de dados da unidade selecionada.</p>
+        </div>
+
+        <div class="dash-grid">
+            <div class="analytics-card">
+                <h3>Métricas de Desempenho</h3>
+                <div id="unit-metrics">
+                    </div>
+            </div>
+
+            <div class="analytics-card" style="display: flex; flex-direction: column; gap: 20px;">
+                <h3>Infraestrutura</h3>
+                <div class="stat-box">
+                    <span class="stat-label">Capacidade Salas</span>
+                    <span class="stat-val">32 / 32</span>
+                    <div class="progress-container"><div class="progress-fill" style="width: 100%"></div></div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Conectividade 5G</span>
+                    <span class="stat-val" style="color: var(--success)">Excelente</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Consumo Energia</span>
+                    <span class="stat-val">4.2 kW/h</span>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: auto;" onclick="alert('Gerando Relatório PDF...')">Baixar Relatório Completo</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <span class="footer-logo">MULTIPLICA SAM</span>
+        <p class="footer-copy">&copy; 2026 Hortolândia, SP. Sistema de Inteligência Governamental.</p>
+    </footer>
+
+    <script>
+        // 1. DATASET COMPLETO (35 LOCALIDADES)
+        const localidades = [
+            { id: 0, nome: "Jardim Santana - Central", codigo: "BR-22-1431", x: 600, y: 245, img: "jardim-santana", alunos: 450, freq: 92 },
+            { id: 1, nome: "Jardim Santa Izabel", codigo: "BR-22-1434", x: 809, y: 389, img: "jardim-santa-izabel", alunos: 320, freq: 88 },
+            { id: 2, nome: "Jardim São Pedro", codigo: "BR-22-1585", x: 605, y: 427, img: "jardim-sao-pedro", alunos: 290, freq: 95 },
+            { id: 3, nome: "Jardim Mirante", codigo: "BR-22-1632", x: 644, y: 306, img: "jardim-mirante", alunos: 510, freq: 91 },
+            { id: 4, nome: "Jardim Novo Ângulo", codigo: "BR-22-1633", x: 805, y: 276, img: "jardim-novo-angulo", alunos: 380, freq: 89 },
+            { id: 5, nome: "Vila Real", codigo: "BR-22-1997", x: 567, y: 129, img: "vila-real", alunos: 420, freq: 94 },
+            { id: 6, nome: "Jardim Amanda I", codigo: "BR-22-2052", x: 480, y: 365, img: "amanda-1", alunos: 680, freq: 85 },
+            { id: 7, nome: "Jardim Santa Esmeralda", codigo: "BR-22-2133", x: 680, y: 441, img: "jardim-santa-esmeralda", alunos: 310, freq: 96 },
+            { id: 8, nome: "Jardim Santa Luzia", codigo: "BR-22-2141", x: 676, y: 213, img: "jardim-santa-luzia", alunos: 275, freq: 93 },
+            { id: 9, nome: "Parque do Horto", codigo: "BR-22-2157", x: 610, y: 93, img: "parque-do-horto", alunos: 340, freq: 92 },
+            { id: 10, nome: "Jardim Santa Clara", codigo: "BR-22-2227", x: 679, y: 341, alunos: 390, freq: 90 },
+            { id: 11, nome: "Jardim Amanda II", codigo: "BR-22-2272", x: 450, y: 437, alunos: 720, freq: 86 },
+            { id: 12, nome: "Jardim Adelaide", codigo: "BR-22-2273", x: 778, y: 464, alunos: 295, freq: 94 },
+            { id: 13, nome: "Parque Orestes Ôngaro", codigo: "BR-22-2381", x: 546, y: 59, alunos: 415, freq: 91 },
+            { id: 14, nome: "Jardim São Jorge", codigo: "BR-22-2591", x: 647, y: 177, alunos: 330, freq: 95 },
+            { id: 15, nome: "Jardim São Sebastião", codigo: "BR-22-2592", x: 576, y: 370, alunos: 360, freq: 93 },
+            { id: 16, nome: "Jardim do Bosque", codigo: "BR-22-2716", x: 681, y: 288, alunos: 280, freq: 97 },
+            { id: 17, nome: "Vila Inema", codigo: "BR-22-2717", x: 771, y: 326, alunos: 440, freq: 92 },
+            { id: 18, nome: "Jardim Aline", codigo: "BR-22-2795", x: 877, y: 180, alunos: 310, freq: 88 },
+            { id: 19, nome: "Jardim Amanda III", codigo: "BR-22-3005", x: 411, y: 372, alunos: 650, freq: 87 },
+            { id: 20, nome: "Chácaras Recreio", codigo: "BR-22-3057", x: 349, y: 384, alunos: 220, freq: 98 },
+            { id: 21, nome: "Jardim Nova Europa", codigo: "BR-22-3178", x: 777, y: 181, alunos: 490, freq: 94 },
+            { id: 22, nome: "Jardim das Colinas", codigo: "BR-22-3238", x: 517, y: 136, alunos: 350, freq: 93 },
+            { id: 23, nome: "Residencial João Luiz", codigo: "BR-22-3342", x: 679, y: 391, alunos: 405, freq: 90 },
+            { id: 24, nome: "Jardim Auxiliadora", codigo: "BR-22-3400", x: 629, y: 121, alunos: 290, freq: 96 },
+            { id: 25, nome: "Jardim Novo Horizonte", codigo: "BR-22-3493", x: 342, y: 279, alunos: 510, freq: 89 },
+            { id: 26, nome: "Jardim Nova América", codigo: "BR-22-3654", x: 833, y: 317, alunos: 420, freq: 91 },
+            { id: 27, nome: "Jardim Interlagos", codigo: "BR-22-3833", x: 606, y: 350, alunos: 380, freq: 94 },
+            { id: 28, nome: "Terras de Santo Antônio", codigo: "BR-22-3939", x: 735, y: 402, alunos: 315, freq: 95 },
+            { id: 29, nome: "Residencial Firenze", codigo: "BR-22-4039", x: 456, y: 248, alunos: 460, freq: 93 },
+            { id: 30, nome: "Nova Hortolândia", codigo: "BR-22-5421", x: 615, y: 144, alunos: 580, freq: 92 },
+            { id: 31, nome: "Jardim Novo Cambuí", codigo: "BR-22-5550", x: 558, y: 297, alunos: 340, freq: 90 },
+            { id: 32, nome: "Terras de Santa Maria", codigo: "BR-22-5607", x: 510, y: 116, alunos: 290, freq: 96 },
+            { id: 33, nome: "Jardim Amanda IV", codigo: "BR-22-5419", x: 447, y: 332, alunos: 610, freq: 88 },
+            { id: 34, nome: "Recanto do Sol", codigo: "BR-22-5266", x: 651, y: 142, alunos: 425, freq: 94 }
+        ];
+
+        // 2. ESTADO DA APLICAÇÃO
+        let currentScale = 1;
+        let isDark = true;
+        let selectedId = null;
+
+        // 3. INICIALIZAÇÃO
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCards(localidades);
+            initHeroChart();
+            initMapMarkers();
         });
-    }, 2400);
-    
-    // ETAPA 4: Após 2.7s, ativar o marcador selecionado
-    setTimeout(() => {
-        const marker = document.getElementById(`marker-${index}`);
-        if (marker) marker.classList.add('active');
-    }, 2700);
-    
-    // ETAPA 5: Após 2.9s, fazer o zoom gigante mantendo centralizado NO EMOJI
-    setTimeout(() => {
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        
-        // ZOOM GIGANTE
-        scale = 3.5;
-        
-        // Obter posição atual do marcador ANTES do zoom
-        const markerElement = document.getElementById(`marker-${index}`);
-        if (markerElement) {
-            const rect = markerElement.getBoundingClientRect();
-            const markerCenterX = rect.left + rect.width / 2;
-            const markerCenterY = rect.top + rect.height / 2;
-            
-            // Calcular quanto precisamos mover para centralizar
-            // Posição desejada: centro da viewport
-            // Posição atual do marcador: markerCenterX, markerCenterY
-            // Após zoom, a distância é multiplicada por scale
-            
-            const currentTranslateX = translateX;
-            const currentTranslateY = translateY;
-            
-            // Calcular nova translação para manter marcador no centro após zoom
-            translateX = currentTranslateX * scale - (markerCenterX - viewportWidth / 2) * (scale - 1);
-            translateY = currentTranslateY * scale - (markerCenterY - viewportHeight / 2) * (scale - 1);
+
+        // 4. SISTEMA DE TEMA
+        function toggleTheme() {
+            isDark = !isDark;
+            document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-icon').innerText = isDark ? '🌙' : '☀️';
+            document.getElementById('theme-text').innerText = isDark ? 'MODO DARK' : 'MODO LIGHT';
         }
-        
-        updateTransform();
-        
-        // ETAPA 6: Mostrar card após zoom completar
-        setTimeout(() => {
-            document.getElementById('cardTitle').textContent = location.nomeCompleto;
-            document.getElementById('cardCode').textContent = location.codigo;
-            document.getElementById('infoCard').classList.add('visible');
-        }, 800);
-        
-    }, 2900);
-}
 
-function selectLocationFromMap(location, index) {
-    selectedLocation = location;
-    
-    // Update active state
-    document.querySelectorAll('.marker').forEach(marker => {
-        marker.classList.remove('active');
-    });
-    const marker = document.getElementById(`marker-${index}`);
-    if (marker) marker.classList.add('active');
-    
-    // Update card
-    document.getElementById('cardTitle').textContent = location.nomeCompleto;
-    document.getElementById('cardCode').textContent = location.codigo;
-    document.getElementById('infoCard').classList.add('visible');
-    
-    // Zoom to location
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    scale = 2.8;
-    translateX = (viewportWidth / 2) - (location.x * scale);
-    translateY = (viewportHeight / 2) - (location.y * scale);
-    updateTransform();
-}
+        // 5. RENDERIZAÇÃO DE CARDS
+        function renderCards(data) {
+            const grid = document.getElementById('locGrid');
+            grid.innerHTML = data.map(loc => `
+                <div class="card-loc" onclick="selectLocation(${loc.id})">
+                    <div class="card-img-wrapper">
+                        <img src="assets/fotos/${loc.img || 'default'}.png" class="card-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/167/167707.png'">
+                    </div>
+                    <div class="card-info">
+                        <h3>${loc.nome}</h3>
+                        <p>${loc.codigo}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-function viewData() {
-    if (selectedLocation) {
-        alert(`🚀 Redirecionando para dados detalhados...\n\n📍 Localidade: ${selectedLocation.nomeCompleto}\n🔢 Código: ${selectedLocation.codigo}\n\n✨ Em breve: Dashboard completo com estatísticas, gráficos e análises!`);
-    }
-}
+        // 6. BUSCA E FILTRO
+        function filterLocations(query) {
+            const filtered = localidades.filter(l => 
+                l.nome.toLowerCase().includes(query.toLowerCase()) || 
+                l.codigo.toLowerCase().includes(query.toLowerCase())
+            );
+            renderCards(filtered);
+        }
 
-function closeMap() {
-    const mapSection = document.getElementById('mapSection');
-    mapSection.classList.remove('active');
-    document.body.style.overflow = '';
-    
-    // Hide controls
-    document.getElementById('closeMapBtn').classList.remove('visible');
-    document.getElementById('zoomControls').classList.remove('visible');
-    document.getElementById('infoCard').classList.remove('visible');
-    
-    // Clear selection and reset markers
-    selectedLocation = null;
-    document.querySelectorAll('.marker').forEach(marker => {
-        marker.classList.remove('active');
-        marker.classList.remove('visible');
-    });
-    document.querySelectorAll('.location-card').forEach(card => {
-        card.classList.remove('active');
-    });
-    
-    // Reset roads animation
-    const paths = document.querySelectorAll('#city-map-main path');
-    paths.forEach(path => {
-        path.classList.remove('drawing');
-    });
-    
-    // Reset zoom
-    setTimeout(() => {
-        resetZoom();
-    }, 500);
-}
+        // 7. SELEÇÃO DE LOCALIDADE (CORE LOGIC)
+        function selectLocation(id) {
+            selectedId = id;
+            const loc = localidades.find(l => l.id === id);
+            
+            // Ativa Seção de Mapa
+            document.getElementById('map-section').classList.add('visible');
+            
+            // Scroll para o mapa
+            document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
 
-// ========== ZOOM ==========
-function zoom(factor) {
-    scale *= factor;
-    scale = Math.max(0.5, Math.min(scale, 6));
-    updateTransform();
-}
+            // Atualiza Dashboard
+            updateDashboard(loc);
 
-function resetZoom() {
-    scale = 1;
-    translateX = 0;
-    translateY = 0;
-    updateTransform();
-}
+            // Zoom no Mapa
+            focusOnMap(loc);
+        }
 
-function updateTransform() {
-    const wrapper = document.getElementById("map-wrapper");
-    wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-}
+        // 8. DASHBOARD ANALÍTICO
+        function updateDashboard(loc) {
+            const dash = document.getElementById('dashboard');
+            dash.style.display = 'block';
+            
+            document.getElementById('dash-title').innerText = loc.nome;
+            document.getElementById('dash-subtitle').innerText = `ID do Sistema: ${loc.codigo}`;
 
-// ========== PAN (DRAG) ==========
-const mapWrapper = document.getElementById("map-wrapper");
+            const metrics = document.getElementById('unit-metrics');
+            const metricsData = [
+                { label: "Matriculados", value: loc.alunos, progress: 85 },
+                { label: "Frequência Real", value: `${loc.freq}%`, progress: loc.freq },
+                { label: "Taxa de Retenção", value: "98.5%", progress: 98 },
+                { label: "Engajamento Plataforma", value: "76%", progress: 76 }
+            ];
 
-if (mapWrapper) {
-    mapWrapper.addEventListener("mousedown", (e) => {
-        if (!e.target.closest('.marker')) {
+            metrics.innerHTML = metricsData.map(m => `
+                <div class="data-row">
+                    <span class="data-label">${m.label}</span>
+                    <span class="data-value">${m.value}</span>
+                </div>
+                <div class="progress-container"><div class="progress-fill" style="width: ${m.progress}%"></div></div>
+            `).join('');
+        }
+
+        // 9. MAPA INTERATIVO (SVG & MARKERS)
+        function initMapMarkers() {
+            const overlay = document.getElementById('markers-overlay');
+            const svgHost = document.getElementById('svg-host');
+
+            // Carrega SVG Dummy (Simulando o hortolandia-roads.svg)
+            svgHost.innerHTML = `
+                <svg id="hortolandia-svg" viewBox="0 0 1200 600">
+                    <path class="road-path" d="M100,100 Q400,50 600,300 T1100,500" />
+                    <path class="road-path" d="M200,500 L1000,100" />
+                    <path class="road-path" d="M50,300 C200,100 800,500 1150,300" />
+                </svg>
+            `;
+
+            localidades.forEach(loc => {
+                const marker = document.createElement('div');
+                marker.className = 'marker';
+                marker.id = `marker-${loc.id}`;
+                marker.style.left = `${loc.x}px`;
+                marker.style.top = `${loc.y}px`;
+                marker.onclick = (e) => {
+                    e.stopPropagation();
+                    selectLocation(loc.id);
+                };
+                overlay.appendChild(marker);
+            });
+        }
+
+        function focusOnMap(loc) {
+            const wrapper = document.getElementById('map-wrapper');
+            const viewer = document.querySelector('.map-container');
+            
+            // Remove active markers
+            document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+            document.getElementById(`marker-${loc.id}`).classList.add('active');
+
+            const vW = viewer.offsetWidth;
+            const vH = viewer.offsetHeight;
+
+            currentScale = 2.5;
+            const tx = (vW / 2) - (loc.x * currentScale);
+            const ty = (vH / 2) - (loc.y * currentScale);
+
+            wrapper.style.transform = `translate(${tx}px, ${ty}px) scale(${currentScale})`;
+        }
+
+        function mapZoom(f) {
+            currentScale *= f;
+            currentScale = Math.min(Math.max(0.5, currentScale), 8);
+            document.getElementById('map-wrapper').style.transform = `scale(${currentScale})`;
+        }
+
+        function resetMap() {
+            currentScale = 1;
+            document.getElementById('map-wrapper').style.transform = `translate(0,0) scale(1)`;
+        }
+
+        // 10. CHART SIMULATION (HERO)
+        function initHeroChart() {
+            const chart = document.getElementById('heroChart');
+            for(let i=0; i<20; i++) {
+                const h = Math.floor(Math.random() * 80) + 20;
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${h}%`;
+                chart.appendChild(bar);
+            }
+
+            // Animação contínua
+            setInterval(() => {
+                document.querySelectorAll('.chart-bar').forEach(bar => {
+                    const h = Math.floor(Math.random() * 80) + 20;
+                    bar.style.height = `${h}%`;
+                });
+            }, 3000);
+        }
+
+        // 11. UTILITÁRIOS
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 12. DRAG MAP (MOUSE)
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+        const container = document.querySelector('.map-container');
+
+        container.addEventListener('mousedown', (e) => {
             isDragging = true;
-            startX = e.clientX - translateX;
-            startY = e.clientY - translateY;
-            e.preventDefault();
-        }
-    });
+            startX = e.pageX;
+            startY = e.pageY;
+            container.style.cursor = 'grabbing';
+        });
 
-    document.addEventListener("mousemove", (e) => {
-        if (isDragging) {
-            translateX = e.clientX - startX;
-            translateY = e.clientY - startY;
-            updateTransform();
-        }
-    });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.pageX - startX;
+            const dy = e.pageY - startY;
+            // Lógica de Pan pode ser adicionada aqui
+        });
 
-    document.addEventListener("mouseup", () => {
-        isDragging = false;
-    });
-}
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            container.style.cursor = 'grab';
+        });
 
-// ========== INITIALIZE ==========
-window.addEventListener('DOMContentLoaded', () => {
-    renderLocations(localidades);
-});
-</script>
+    </script>
 
-</body>
+    </body>
 </html>
