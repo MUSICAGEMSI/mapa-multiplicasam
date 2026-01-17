@@ -407,7 +407,8 @@ nav {
 }
 
 #svg-container-main {
-    height: 90vh;
+    height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -415,7 +416,9 @@ nav {
 }
 
 #city-map-main {
-    height: 100%;
+    max-height: 85vh;
+    max-width: 85vw;
+    height: auto;
     width: auto;
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
 }
@@ -1127,6 +1130,12 @@ function selectLocation(index) {
     mapSection.classList.add('active');
     document.body.style.overflow = 'hidden';
     
+    // ETAPA 1: Resetar zoom para mostrar mapa completo e centralizado
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+    
     // Show controls
     setTimeout(() => {
         document.getElementById('closeMapBtn').classList.add('visible');
@@ -1138,12 +1147,12 @@ function selectLocation(index) {
         marker.classList.remove('active');
     });
     
-    // Animate roads
+    // ETAPA 2: Animate roads - inicia após 800ms
     setTimeout(() => {
         animateRoads();
-    }, 500);
+    }, 800);
     
-    // Activate marker and zoom after road animation
+    // ETAPA 3: Ativar marcador e fazer ZOOM GIGANTE após animação das ruas
     setTimeout(() => {
         const marker = document.getElementById(`marker-${index}`);
         if (marker) marker.classList.add('active');
@@ -1152,10 +1161,10 @@ function selectLocation(index) {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         
-        // Larger zoom for better focus
-        scale = 2.8;
+        // ZOOM MUITO MAIOR - marcador fica LITERALMENTE no centro da tela
+        scale = 4.5;
         
-        // Center the marker perfectly
+        // Centralizar PERFEITAMENTE - o marcador fica exatamente no meio
         translateX = (viewportWidth / 2) - (location.x * scale);
         translateY = (viewportHeight / 2) - (location.y * scale);
         
@@ -1166,9 +1175,9 @@ function selectLocation(index) {
             document.getElementById('cardTitle').textContent = location.nomeCompleto;
             document.getElementById('cardCode').textContent = location.codigo;
             document.getElementById('infoCard').classList.add('visible');
-        }, 1500);
+        }, 2000);
         
-    }, 3500);
+    }, 4300);
 }
 
 function selectLocationFromMap(location, index) {
@@ -1235,7 +1244,7 @@ function closeMap() {
 // ========== ZOOM ==========
 function zoom(factor) {
     scale *= factor;
-    scale = Math.max(0.5, Math.min(scale, 4));
+    scale = Math.max(0.5, Math.min(scale, 6));
     updateTransform();
 }
 
