@@ -407,8 +407,7 @@ nav {
 }
 
 #svg-container-main {
-    height: 100%;
-    width: 100%;
+    height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -416,9 +415,7 @@ nav {
 }
 
 #city-map-main {
-    max-height: 85vh;
-    max-width: 85vw;
-    height: auto;
+    height: 100%;
     width: auto;
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
 }
@@ -454,22 +451,28 @@ nav {
 
 .marker {
     position: absolute;
-    width: 60px;
-    height: 60px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: linear-gradient(135deg, rgba(100, 100, 100, 0.3), rgba(80, 80, 80, 0.3));
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     overflow: hidden;
     pointer-events: auto;
     filter: grayscale(1);
+    opacity: 0;
+}
+
+.marker.visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
 }
 
 .marker-images {
@@ -502,9 +505,12 @@ nav {
 }
 
 .marker.active {
+    width: 70px;
+    height: 70px;
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.9));
     border-color: rgba(255, 255, 255, 1);
-    transform: translate(-50%, -50%) scale(1.5);
+    border-width: 3px;
+    transform: translate(-50%, -50%) scale(1);
     box-shadow: 
         0 10px 40px rgba(0, 0, 0, 0.9),
         0 0 60px rgba(59, 130, 246, 1),
@@ -1125,12 +1131,12 @@ function selectLocation(index) {
     });
     event.currentTarget.classList.add('active');
     
-    // Open map section
+    // ETAPA 1: Abrir mapa em tela cheia - mapa completo centralizado
     const mapSection = document.getElementById('mapSection');
     mapSection.classList.add('active');
     document.body.style.overflow = 'hidden';
     
-    // ETAPA 1: Resetar zoom para mostrar mapa completo e centralizado
+    // Resetar para mostrar mapa completo
     scale = 1;
     translateX = 0;
     translateY = 0;
@@ -1142,42 +1148,49 @@ function selectLocation(index) {
         document.getElementById('zoomControls').classList.add('visible');
     }, 300);
     
-    // Reset all markers
-    document.querySelectorAll('.marker').forEach(marker => {
-        marker.classList.remove('active');
-    });
-    
-    // ETAPA 2: Animate roads - inicia após 800ms
+    // ETAPA 2: Após 500ms, começar a desenhar as ruas (leva 3s)
     setTimeout(() => {
         animateRoads();
-    }, 800);
+    }, 500);
     
-    // ETAPA 3: Ativar marcador e fazer ZOOM GIGANTE após animação das ruas
+    // ETAPA 3: Após 3.5s (500ms + 3s), fazer aparecer TODOS os marcadores
+    setTimeout(() => {
+        const markers = document.querySelectorAll('.marker');
+        markers.forEach((marker, idx) => {
+            setTimeout(() => {
+                marker.classList.add('visible');
+            }, idx * 50); // Aparecem com pequeno delay sequencial
+        });
+    }, 3500);
+    
+    // ETAPA 4: Após 5.5s (3.5s + 2s), ativar o marcador selecionado
     setTimeout(() => {
         const marker = document.getElementById(`marker-${index}`);
         if (marker) marker.classList.add('active');
-        
-        // Calculate perfect center position
+    }, 5500);
+    
+    // ETAPA 5: Após 6s, fazer o zoom gigante mantendo centralizado
+    setTimeout(() => {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         
-        // ZOOM MUITO MAIOR - marcador fica LITERALMENTE no centro da tela
-        scale = 4.5;
+        // ZOOM GIGANTE
+        scale = 3.5;
         
-        // Centralizar PERFEITAMENTE - o marcador fica exatamente no meio
+        // Centralizar PERFEITAMENTE no marcador
         translateX = (viewportWidth / 2) - (location.x * scale);
         translateY = (viewportHeight / 2) - (location.y * scale);
         
         updateTransform();
         
-        // Show card after zoom
+        // ETAPA 6: Mostrar card após zoom completar
         setTimeout(() => {
             document.getElementById('cardTitle').textContent = location.nomeCompleto;
             document.getElementById('cardCode').textContent = location.codigo;
             document.getElementById('infoCard').classList.add('visible');
-        }, 2000);
+        }, 2500);
         
-    }, 4300);
+    }, 6000);
 }
 
 function selectLocationFromMap(location, index) {
@@ -1220,10 +1233,11 @@ function closeMap() {
     document.getElementById('zoomControls').classList.remove('visible');
     document.getElementById('infoCard').classList.remove('visible');
     
-    // Clear selection
+    // Clear selection and reset markers
     selectedLocation = null;
     document.querySelectorAll('.marker').forEach(marker => {
         marker.classList.remove('active');
+        marker.classList.remove('visible');
     });
     document.querySelectorAll('.location-card').forEach(card => {
         card.classList.remove('active');
