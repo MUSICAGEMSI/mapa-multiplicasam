@@ -399,7 +399,7 @@ nav {
 #map-wrapper {
     position: relative;
     cursor: grab;
-    transition: transform 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #map-wrapper:active {
@@ -430,7 +430,7 @@ nav {
 }
 
 #city-map-main path.drawing {
-    animation: drawPath 3s ease-in-out forwards;
+    animation: drawPath 1s ease-in-out forwards;
 }
 
 @keyframes drawPath {
@@ -984,13 +984,20 @@ function createMapMarkers() {
         markersContainer = document.createElement('div');
         markersContainer.id = 'markers-overlay';
         markersContainer.className = 'map-markers';
-        document.getElementById('map-wrapper').appendChild(markersContainer);
+        markersContainer.style.position = 'absolute';
+        markersContainer.style.top = '0';
+        markersContainer.style.left = '0';
+        markersContainer.style.width = '100%';
+        markersContainer.style.height = '100%';
+        markersContainer.style.pointerEvents = 'none';
+        document.getElementById('svg-container-main').appendChild(markersContainer);
     }
     
     localidades.forEach((loc, index) => {
         const marker = document.createElement("div");
         marker.className = "marker";
         marker.id = `marker-${index}`;
+        marker.style.position = 'absolute';
         marker.style.left = `${loc.x}px`;
         marker.style.top = `${loc.y}px`;
         marker.setAttribute('data-codigo', loc.codigo);
@@ -1116,7 +1123,7 @@ function animateRoads() {
     paths.forEach((path, index) => {
         setTimeout(() => {
             path.classList.add('drawing');
-        }, index * 30);
+        }, index * 10);
     });
 }
 
@@ -1146,30 +1153,30 @@ function selectLocation(index) {
     setTimeout(() => {
         document.getElementById('closeMapBtn').classList.add('visible');
         document.getElementById('zoomControls').classList.add('visible');
-    }, 300);
+    }, 200);
     
-    // ETAPA 2: Após 500ms, começar a desenhar as ruas (leva 3s)
+    // ETAPA 2: Imediatamente começar a desenhar as ruas (leva 1s)
     setTimeout(() => {
         animateRoads();
-    }, 500);
+    }, 100);
     
-    // ETAPA 3: Após 3.5s (500ms + 3s), fazer aparecer TODOS os marcadores
+    // ETAPA 3: Após 1.2s, fazer aparecer TODOS os marcadores
     setTimeout(() => {
         const markers = document.querySelectorAll('.marker');
         markers.forEach((marker, idx) => {
             setTimeout(() => {
                 marker.classList.add('visible');
-            }, idx * 50); // Aparecem com pequeno delay sequencial
+            }, idx * 15); // Aparecem RÁPIDO
         });
-    }, 3500);
+    }, 1200);
     
-    // ETAPA 4: Após 5.5s (3.5s + 2s), ativar o marcador selecionado
+    // ETAPA 4: Após 2s, ativar o marcador selecionado
     setTimeout(() => {
         const marker = document.getElementById(`marker-${index}`);
         if (marker) marker.classList.add('active');
-    }, 5500);
+    }, 2000);
     
-    // ETAPA 5: Após 6s, fazer o zoom gigante mantendo centralizado
+    // ETAPA 5: Após 2.3s, fazer o zoom gigante mantendo centralizado
     setTimeout(() => {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
@@ -1188,9 +1195,9 @@ function selectLocation(index) {
             document.getElementById('cardTitle').textContent = location.nomeCompleto;
             document.getElementById('cardCode').textContent = location.codigo;
             document.getElementById('infoCard').classList.add('visible');
-        }, 2500);
+        }, 1500);
         
-    }, 6000);
+    }, 2300);
 }
 
 function selectLocationFromMap(location, index) {
